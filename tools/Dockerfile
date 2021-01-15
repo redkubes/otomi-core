@@ -41,9 +41,12 @@ RUN apt-get update -qq \
   vim \
   nano \
   groff \
-  jq \
   awscli \
   && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && \
+    echo 'af986793a515d500ab2d35f8d2aecd656e764504b789b66d7e1a0b727a124c44  /usr/bin/jq' | sha256sum -c && \
+    chmod +x /usr/bin/jq
 
 COPY --from=mikefarah/yq:3 /usr/bin/yq /usr/bin/yq
 
