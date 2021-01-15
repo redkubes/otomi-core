@@ -9,3 +9,4 @@
 /docker-compose*
 /bin/
 core.yaml
+.otocomplete.yaml

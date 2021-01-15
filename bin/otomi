@@ -19,6 +19,35 @@ env_unset='false'
 ENV_DIR=${ENV_DIR:-$PWD}
 [ "$ENV_DIR" = "/home/app/stack" ] && ENV_DIR=$ENV_DIR/env
 
+LOADED=$([[ -n "${OTOMI_LOADED}" ]] && echo 1 || echo 0)
+
+sourced=0 #https://stackoverflow.com/questions/2683279/how-to-detect-if-a-script-is-being-sourced
+if [ -n "$ZSH_EVAL_CONTEXT" ]; then 
+  case $ZSH_EVAL_CONTEXT in *:file) sourced=1;; esac
+elif [ -n "$KSH_VERSION" ]; then
+  [ "$(cd $(dirname -- $0) && pwd -P)/$(basename -- $0)" != "$(cd $(dirname -- ${.sh.file}) && pwd -P)/$(basename -- ${.sh.file})" ] && sourced=1
+elif [ -n "$BASH_VERSION" ]; then
+  (return 0 2>/dev/null) && sourced=1 
+else # All other shells: examine $0 for known shell binary filenames
+  # Detects `sh` and `dash`; add additional shell filenames as needed.
+  case ${0##*/} in sh|dash) sourced=1;; esac
+fi
+if [[ ${sourced} -eq 1 ]]; then
+  if [[ -z ${OTOMI_ALIASES_LOADED} ]]; then
+    source bin/aliases
+  fi
+  if [[ -z ${OTOMI_OTOCOMPLETE_LOADED} ]]; then
+    source bin/otocomplete.sh "otocomplete.yaml"
+  else
+    echo "Otocomplete is already loaded, nothing happend."
+  fi
+  if [[ ${LOADED} -eq 0 ]]; then
+    echo "To get full otomi functionality run 'otomi config'"
+  fi
+  export OTOMI_SOURCED=1
+  return 0
+fi
+
 . bin/common.sh
 
 function verbose_env() {
@@ -70,11 +99,20 @@ function set_helm_config() {
   return 0
 }
 
-function show_usage() {
+function show_unloaded_usage() {
+  echo "otomi usage:
+    config           config values repo with artifacts corresponding to the cluster's stack version
+    help             print this help
+
+  More commands become available after 'otomi config'
+  "
+}
+
+function show_loaded_usage() {
   echo "otomi usage:
     apply               apply k8s resources (use labels like '-l name=prometheus-operator')
     bash                run interactive bash shell in otomi-core container
-    bootstrap           bootstrap values repo with artifacts corresponding to the cluster's stack version
+    config              config values repo with artifacts corresponding to the cluster's stack version
     commit              wrapper for encrypt > generate pipelines > git commit changed files
     console             starts Otomi Console (add any arg to quit) on http://127.0.0.1:3000 (licensed, so pull secret required for api)
     decrypt             decrypts file(s) given as arguments (relative to env folder), or all env/*.secrets.yaml to env/*.secrets.yaml.dec files
@@ -96,6 +134,15 @@ function show_usage() {
     VERBOSE=1;          Run otomi CLI in verbose mode
     CI=true             Exit the script after first error
   "
+}
+
+function show_usage() {
+  if [[ $LOADED -eq 1 ]]
+  then
+    show_loaded_usage
+  else
+    show_unloaded_usage
+  fi
 }
 
 function check_docker_running() {
@@ -269,10 +316,12 @@ function execute() {
       docker_terminal_params='-t'
       drun bash
       ;;
-    bootstrap)
+    config)
       check_kube_context=0
       validate_cluster_env
       drun bin/bootstrap.sh 1
+      export OTOMI_LOADED=1
+      [[ ${OTOMI_SOURCED} -ne 1 ]] && ech "You can 'source bin/otomi' to load otomi autocompletion"
       ;;
     console)
       check_kube_context=0
@@ -380,6 +429,9 @@ function execute() {
       check_kube_context=0
       evaluate_secrets
       drun bin/validate-values.sh
+      ;;
+    help)
+      show_usage
       ;;
     *)
       show_usage

@@ -30,7 +30,7 @@ mkdir -p $bin_path &>/dev/null
 img='otomi/core:latest'
 [ "$has_otomi" = 'true' ] && img="otomi/core:$(otomi_image_tag)"
 echo "Installing artifacts from $img"
-for f in 'aliases' 'common.sh' 'otomi'; do
+for f in 'aliases' 'common.sh' 'otomi' 'otocomplete.sh'; do
   cp $PWD/bin/$f $bin_path/
 done
 cp -r $PWD/.values/.vscode $ENV_DIR/
@@ -55,6 +55,7 @@ if [ -f "$secrets_file" ] && [ "$(cat $secrets_file | yq r - 'otomi.pullSecret')
   cp -rf $PWD/docker-compose $ENV_DIR/
   cp -f $PWD/core.yaml $ENV_DIR/
   cp -f $PWD/docker-compose.yml $ENV_DIR/
+  cp -f $PWD/otocomplete.yaml $ENV_DIR/
 fi
 if [ "$has_otomi" = "false" ]; then
   echo "You can now use otomi CLI"

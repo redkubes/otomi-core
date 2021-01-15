@@ -22,3 +22,5 @@ alias kce="$EDITOR ~/.kube/config"
 alias kcg="k config current-context"
 alias kcu="k config use-context"
 alias kp="k proxy &"
+
+export OTOMI_ALIASES_LOADED=1

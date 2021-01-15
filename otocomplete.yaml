@@ -1,0 +1,41 @@
+otomi:
+  apply:
+    test:
+      '-o': 'Something else'
+      '-l': 'Apply Some description'
+    '--long': 'Apply Some description'
+    '-o': 'Something else'
+    '-p':
+    '-m': 'More of else'
+    '-r':
+    applynow:
+    hello:
+      world:
+        '-o': 'Something else'
+        '-l': 'Apply Some description'
+      '-q': 'Something else'
+      '-m': 'More of else'
+  diff:
+  sync:
+  destroy: 'Desc'
+  bash:
+  bootstrap:
+  commit:
+  console:
+  config:
+    '-l': 'Config Some description'
+  decrypt:
+  deploy:
+  encrypt:
+  help:
+  hf:
+  pull:
+  switch:
+  template:
+  test:
+  values:
+  validate-templates:
+  validate-values:
+  x:
+  '-h': 'Hello'
+  '-l': 'List'

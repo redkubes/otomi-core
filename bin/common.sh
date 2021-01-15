@@ -1,11 +1,11 @@
 #!/usr/local/env bash
 ENV_DIR=${ENV_DIR:-./env}
 
-readonly otomiSettings="$ENV_DIR/env/settings.yaml"
-readonly clustersFile="$ENV_DIR/env/clusters.yaml"
-readonly helmfileOutputHide="(^\W+$|skipping|basePath=|Decrypting)"
-readonly helmfileOutputHideTpl="(^[\W^-]+$|skipping|basePath=|Decrypting)"
-readonly replacePathsPattern="s@../env@${ENV_DIR}@g"
+[[ -z ${otomiSettings+x} ]]         && readonly otomiSettings="$ENV_DIR/env/settings.yaml"
+[[ -z ${clustersFile+x} ]]          && readonly clustersFile="$ENV_DIR/env/clusters.yaml"
+[[ -z ${helmfileOutputHide+x} ]]    && readonly helmfileOutputHide="(^\W+$|skipping|basePath=|Decrypting)"
+[[ -z ${helmfileOutputHideTpl+x} ]] && readonly helmfileOutputHideTpl="(^[\W^-]+$|skipping|basePath=|Decrypting)"
+[[ -z ${replacePathsPattern+x} ]]   && readonly replacePathsPattern="s@../env@${ENV_DIR}@g"
 
 get_k8s_version() {
   yq r $clustersFile "clouds.$CLOUD.clusters.$CLUSTER.k8sVersion"
