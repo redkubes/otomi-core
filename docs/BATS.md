@@ -4,11 +4,11 @@ This document is relevant starting from [v0.11.52](https://github.com/redkubes/o
 
 ## Where can I find BATS?
 
-The otomi/tools:1.4.10 includes the [bats framework](https://github.com/bats-core/bats-core), including libraries [bats-assert](https://github.com/ztombol/bats-assert), [bats-file](https://github.com/ztombol/bats-support) and [bats-support](https://github.com/ztombol/bats-support). These links include relevant documentation, such as syntax, which won't be discussed on this page.
+The otomi/tools:1.4.12 includes the [bats framework](https://github.com/bats-core/bats-core), including libraries [bats-assert](https://github.com/ztombol/bats-assert), [bats-file](https://github.com/ztombol/bats-support) and [bats-support](https://github.com/ztombol/bats-support). These links include relevant documentation, such as syntax, which won't be discussed on this page.
 
 Example of calling the binary:
 
-`docker run --rm otomi/tools:1.4.10 bats bin/tests`
+`docker run --rm otomi/tools:1.4.12 bats bin/tests`
 
 This example assumes tests exist in the container directory `otomi-core/bin/tests`. You can call bats with a directory as parameter and it will execute any `*.bats` file.
 

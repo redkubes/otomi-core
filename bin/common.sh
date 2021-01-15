@@ -6,7 +6,7 @@ readonly clustersFile="$ENV_DIR/env/clusters.yaml"
 readonly helmfileOutputHide="(^\W+$|skipping|basePath=|Decrypting)"
 readonly helmfileOutputHideTpl="(^[\W^-]+$|skipping|basePath=|Decrypting)"
 readonly replacePathsPattern="s@../env@${ENV_DIR}@g"
-readonly otomiToolsImage="otomi/tools:1.4.10"
+readonly otomiToolsImage="otomi/tools:1.4.12"
 
 has_docker=$( docker --version &>/dev/null && echo "1" || echo "0")
 dind=0
@@ -40,10 +40,10 @@ function yq() {
   _shadow yq "${yq_args}"
 }
 
-# function jq() {
-#   local jq_args="$@"
-#   _shadow jq "${jq_args}"
-# }
+function jq() {
+  local jq_args="$@"
+  _shadow jq "${jq_args}"
+}
 
 function get_k8s_version() {
   yq r $clustersFile "clouds.$CLOUD.clusters.$CLUSTER.k8sVersion"
