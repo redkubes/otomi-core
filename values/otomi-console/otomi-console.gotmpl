@@ -50,6 +50,7 @@ env:
   CONSOLE_MODE: {{ and (ne ($v.otomi | get "pullSecret" "") "") (ne ($v.otomi | get "mode" "ee") "ce") | ternary "ee" "ce" }}
   CORE: '{"services":{{ $services | toJson }},"teamConfig":{"services":{{ $teamServices | toJson }}}}'
   CORE_VERSION: '{{ $version }}'
+  TEAM_SERVICES: '{{ $teamServices | toJson }}'
   TEAMS: '{{ keys $v.teamConfig.teams | sortAlpha | toJson }}'
 
 
