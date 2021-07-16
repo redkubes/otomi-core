@@ -1,8 +1,11 @@
 /.*
 !/.values
 /env
+/dist
 /node_modules
 /tools
 /*.json
 !/package.json
+!/package-lock.json
+!/tsconfig.json
 !/.cspell.json

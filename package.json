@@ -8,15 +8,38 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "dependencies": {
+    "ajv": "^8.6.0",
+    "debug": "^4.3.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "js-yaml": "^4.1.0",
+    "tar": "^6.1.0",
+    "yargs": "^17.0.1",
+    "zx": "^2.0.0"
+  },
   "description": "Otomi Core is an opinionated stack of Kubernetes apps and configurations. Part of Otomi Container Platform.",
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@hkdobrev/run-if-changed": "^0.3.1",
-    "ajv": "^8.6.0",
-    "commitizen": "^4.2.2",
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.13",
+    "@types/js-yaml": "^4.0.1",
+    "@types/node": "^15.12.4",
+    "@types/tar": "^4.0.4",
+    "@types/yargs": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
+    "@vercel/ncc": "^0.28.6",
+    "commitizen": "^4.2.4",
     "cspell": "^4.2.8",
     "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.29.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
     "git-cz": "^4.7.6",
     "github-release-from-changelog": "^2.1.1",
     "husky": "^6.0.0",
@@ -24,8 +47,10 @@
     "json2ts": "^0.0.7",
     "lint-staged": "^10.5.4",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.1.2",
-    "standard-version": "^9.3.0"
+    "prettier": "^2.3.1",
+    "standard-version": "^9.3.0",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.4"
   },
   "homepage": "https://github.com/redkubes/otomi-core#readme",
   "husky": {
@@ -42,8 +67,12 @@
   "lint-staged": {
     "*.{json,yml,yaml}": [
       "prettier --write"
+    ],
+    "*.ts": [
+      "eslint --fix"
     ]
   },
+  "main": "src/otomi.ts",
   "name": "otomi-core",
   "private": true,
   "repository": {
@@ -54,33 +83,42 @@
     "package-lock.json": "npm install --prefer-offline --no-audit"
   },
   "scripts": {
+    "check-policies": "TESTING=1 binzx/otomi check-policies",
+    "compile": "tsc && chmod +x ./dist/otomi.js",
+    "compile:watch": "npm run compile && tsc -w",
     "cz": "git-cz",
-    "check-policies": "TESTING=1 bin/otomi check-policies",
     "cz:retry": "git-cz --retry",
+    "eslint": "eslint --ext ts .",
+    "eslint:fix": "eslint --fix --ext ts .",
     "format": "prettier --check \"**/*.{json,md,yml,yaml}\"",
     "format:fix": "prettier --write \"**/*.{json,md,yml,yaml}\"",
     "husky:lint-staged": "lint-staged",
     "husky:pre-push": "run-p husky:lint-staged lint spellcheck",
-    "lint": "TESTING=1 bin/otomi hf lint",
+    "lint": "TESTING=1 binzx/otomi hf lint",
     "lint:fix": "prettier --write tests/**/*.yaml --write '.values/env/**/*.yaml'",
     "lint:all": "npx run-p spellcheck lint",
+    "ncc": "ncc build",
+    "prepare": "husky install",
     "release": "standard-version",
     "release:github": "github-release-from-changelog",
+    "score-templates": "TESTING=1 binzx/otomi score-templates",
     "spellcheck": "cspell '/docs/**/**.md' '/values-schema.yaml' '/*.md' '/.values/README.md'",
-    "score-templates": "TESTING=1 bin/otomi score-templates",
     "test": "run-s spellcheck test:bats lint validate-templates check-policies",
-    "test:bats": "TESTING=1 bin/otomi x bats -T bin/tests",
-    "test:ci": "TESTING=1 bin/otomi x bash -c 'bin/ci-tests.sh'",
-    "test:opa": "bin/otomi x opa test policies -v",
+    "test:bats": "TESTING=1 binzx/otomi x bats -T bin/tests",
+    "test:ci": "TESTING=1 binzx/otomi x bash -c 'bin/ci-tests.sh'",
+    "test:opa": "binzx/otomi x opa test policies -v",
     "un-release": "sh -c 'git tag -d $1 && git push origin :refs/tags/$1' sh",
-    "validate-templates": "TESTING=1 bin/otomi validate-templates",
-    "validate-values": "TESTING=1 bin/otomi validate-values",
-    "prepare": "husky install"
+    "validate-templates": "TESTING=1 binzx/otomi validate-templates",
+    "validate-values": "TESTING=1 binzx/otomi validate-values"
   },
   "standard-version": {
     "skip": {
       "tag": true
     }
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "type": "module",
   "version": "0.13.11"
 }

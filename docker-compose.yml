@@ -27,13 +27,13 @@ services:
     container_name: tools
     image: otomi/core:${TOOLS_TAG:-latest}
     user: ${USER_ID}:${GROUP_ID}
-    command: bin/server.sh
+    command: npm run compile && node --no-warnings --experimental-specifier-resolution=node ./dist/otomi.js -- server
     depends_on:
       - api
     expose:
       - 17771
     ports:
-      - 17771:17771
+      - 17771:192019
     volumes:
       - tmp:/tmp
       - $PWD:/home/app/stack

@@ -20,9 +20,21 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true,
+      "source.fixAll": true
+    }
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
   "cSpell.enabled": true,
   "editor.formatOnSave": true,
   "prettier.enable": true,
+  "eslint.format.enable": true,
+  "eslint.validate": ["javascript", "typescript"],
   "files.associations": {
     "*.gotmpl": "helm",
     "*.tmpl": "nginx",

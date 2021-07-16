@@ -121,7 +121,6 @@ extraRootCA: |
   {{- $v.letsencryptCA | nindent 2 }}
 {{- end }}
 
-# Can't be used (until Gitea 1.14) as gitea requires root in the docker image
 securityContext:
   runAsNonRoot: true
   runAsUser: 1000

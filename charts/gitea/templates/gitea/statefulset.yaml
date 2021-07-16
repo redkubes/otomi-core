@@ -101,6 +101,10 @@ spec:
             {{- end }}
           {{- if .Values.gitea.livenessProbe.enabled }}
           livenessProbe:
+            {{- toYaml .Values.gitea.customLivenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.gitea.readinessProbe.enabled }}
+          readinessProbe:
             tcpSocket:
               port: http
             initialDelaySeconds: {{ .Values.gitea.livenessProbe.initialDelaySeconds }}
@@ -114,6 +118,10 @@ spec:
           {{- end }}
           {{- if .Values.gitea.readinessProbe.enabled }}
           readinessProbe:
+            {{- toYaml .Values.gitea.customReadinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.gitea.startupProbe.enabled }}
+          startupProbe:
             tcpSocket:
               port: http
             initialDelaySeconds: {{ .Values.gitea.readinessProbe.initialDelaySeconds }}

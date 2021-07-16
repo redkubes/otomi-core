@@ -1,4 +1,5 @@
 alias otomi="bin/otomi"
+alias otomix="binzx/otomi"
 alias d="docker"
 alias oaws="otomi x aws"
 alias oaz="otomi x az"

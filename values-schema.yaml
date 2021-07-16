@@ -311,6 +311,7 @@ definitions:
         maxLength: 131072
         type: string
     nullable: true
+    type: object
     title: Environment variables
   files:
     additionalProperties: false
@@ -421,7 +422,6 @@ definitions:
         type: integer
       init:
         $ref: '#/definitions/containerSpec'
-        nullable: true
     required:
       - name
       - script
@@ -467,6 +467,7 @@ definitions:
         maxLength: 131072
         type: string
     nullable: true
+    type: object
     title: Kubernetes secrets
   podSpec:
     allOf:
@@ -722,7 +723,9 @@ definitions:
                       - additionalProperties: false
                         nullable: true
                         title: 'Off'
+                        type: string
                       - nullable: true
+                        type: object
                         properties:
                           additionalProperties: false
                           semver:
@@ -970,7 +973,7 @@ properties:
           email:
             $ref: '#/definitions/email'
           stage:
-            default: staging
+            default: production
             description: |
               The Let’s Encrypt environment that is used for issuing certificates.
               The 'production' environment issues trusted certificates but has narrow rate limits, whereas the 'staging' environment issues untrusted certificates but provides broader rate limits.
@@ -1792,6 +1795,7 @@ properties:
           seal:
             description: Use a KMS to encrypt and decrypt the master key
             nullable: true
+            type: object
             oneOf:
               - title: gcpckms
                 properties:
