@@ -141,8 +141,8 @@ spec:
               value: '1'
             - name: VERBOSE
               value: '1'
-            - name: CI
-              value: 'true'
+            # - name: CI
+            #   value: 'true'
             - name: ENV_DIR
               value: /home/app/stack/env
           envFrom:
