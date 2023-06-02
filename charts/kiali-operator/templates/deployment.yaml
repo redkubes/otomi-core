@@ -19,8 +19,13 @@ spec:
         # required for the operator SDK metric service selector
         name: {{ include "kiali-operator.fullname" . }}
       {{- include "kiali-operator.labels" . | nindent 8 }}
+      {{- if .Values.podLabels }}
+      {{- toYaml .Values.podLabels | nindent 8 }}
+      {{- end }}
       annotations:
         prometheus.io/scrape: {{ .Values.metrics.enabled | quote }}
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8080"
         {{- if .Values.podAnnotations }}
         {{- toYaml .Values.podAnnotations | nindent 8 }}
     {{- end }}
@@ -45,9 +50,16 @@ spec:
         - "--zap-log-level=info"
         - "--leader-election-id={{ include "kiali-operator.fullname" . }}"
         securityContext:
+      {{- if .Values.securityContext }}
+      {{- toYaml .Values.securityContext | nindent 10 }}
+      {{- else }}
           allowPrivilegeEscalation: false
           privileged: false
           runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+      {{- end }}
         volumeMounts:
         - mountPath: /tmp/ansible-operator/runner
           name: runner
@@ -66,6 +78,12 @@ spec:
           value: {{ .Values.allowAdHocKialiNamespace | quote }}
         - name: ALLOW_AD_HOC_KIALI_IMAGE
           value: {{ .Values.allowAdHocKialiImage | quote }}
+        - name: ALLOW_SECURITY_CONTEXT_OVERRIDE
+          value: {{ .Values.allowSecurityContextOverride | quote }}
+        - name: ALLOW_ALL_ACCESSIBLE_NAMESPACES
+          value: {{ or (and (.Values.cr.create) (has "**" .Values.cr.spec.deployment.accessible_namespaces)) (.Values.allowAllAccessibleNamespaces) | quote }}
+        - name: ACCESSIBLE_NAMESPACES_LABEL
+          value: {{ .Values.accessibleNamespacesLabel | quote }}
         - name: PROFILE_TASKS_TASK_OUTPUT_LIMIT
           value: "100"
         - name: ANSIBLE_DEBUG_LOGS

@@ -4,8 +4,6 @@
 {{- $appsDomain := printf "apps.%s" $v.cluster.domainSuffix }}
 
 image:
-  # @TODO:
-  tag: v1.49
   {{- with .Values.otomi | get "globalPullSecret" nil }}
   imagePullSecrets:
     - name: otomi-pullsecret-global
@@ -28,8 +26,6 @@ cr:
         issuer_uri: {{ $v._derived.oidcBaseUrl }}
         username_claim: email
     deployment:
-      accessible_namespaces:
-        - '**'
       pod_annotations:
         policy.otomi.io/ignore: psp-allowed-users
         sidecar.istio.io/inject: "true"
