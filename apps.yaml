@@ -138,7 +138,7 @@ appsInfo:
     integration: Httpbin is by default available for developers to use.
   ingress-nginx:
     title: Ingress-NGINX
-    appVersion: 1.1.2
+    appVersion: 1.4.0
     repo: https://github.com/kubernetes/ingress-nginx
     maintainers: NGINX
     relatedLinks: ['https://otomi.io/docs/apps/ingress-nginx', 'https://docs.nginx.com/nginx-ingress-controller/']

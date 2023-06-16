@@ -17,7 +17,7 @@ controller:
     controllerValue: k8s.io/{{ $ingress.className }}
   image:
     tag: v1.0.5
-    tag: {{ $n | get "image.tag" "v1.1.2" }}
+    tag: {{ $n | get "image.tag" "v1.4.0" }}
     pullPolicy:  {{ $n | get "image.pullPolicy" "IfNotPresent" }}
   scope:
     enabled: true
