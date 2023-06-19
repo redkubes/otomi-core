@@ -33,8 +33,6 @@ environments:
                 memory: 512Mi
           cluster-overprovisioner:
             enabled: false
-          demo-tlspass:
-            enabled: false
           drone:
             enabled: true
             debug: false
@@ -198,8 +196,6 @@ environments:
                 limits:
                   cpu: 400m
                   memory: 512Mi
-          hello:
-            enabled: false
           httpbin:
             enabled: false
           ingress-nginx:

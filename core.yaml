@@ -213,9 +213,6 @@ adminApps:
         paths: [/chartrepo/, /service/, /v1/, /v2/]
         forwardPath: true
         type: public
-  - name: hello
-    hide: true
-    tags: [demo]
   - name: httpbin
     tags: [dev, testing, debugging]
     isShared: true

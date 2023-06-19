@@ -12,14 +12,6 @@ bases:
 {{- $a := $v.apps }}
 
 releases:
-  - name: demo-tlspass
-    installed: {{ $a | get "demo-tlspass.enabled" }}
-    namespace: team-otomi
-    <<: *default
-  - name: hello
-    installed: {{ $a | get "hello.enabled" }}
-    namespace: team-otomi
-    <<: *default
   - name: httpbin
     installed: {{ $a | get "httpbin.enabled" }}
     namespace: httpbin

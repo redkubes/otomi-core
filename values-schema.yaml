@@ -1516,16 +1516,6 @@ properties:
             $ref: '#/definitions/cpuQuantity'
           memory:
             $ref: '#/definitions/memoryQuantity'
-      demo-tlspass:
-        additionalProperties: false
-        properties:
-          enabled:
-            default: false
-            type: boolean
-          tlsCert:
-            type: string
-          tlsKey:
-            type: string
       drone:
         additionalProperties: false
         properties:
@@ -1959,12 +1949,6 @@ properties:
                 $ref: '#/definitions/backupSchedule'
         required:
           - databasePassword
-      hello:
-        description: Hello world demo chart. When you turn this off you may also have to remove the ingress service.
-        properties:
-          enabled:
-            type: boolean
-            default: false
       httpbin:
         description: The famous httpbin application.
         properties:
