@@ -42,7 +42,7 @@ spec:
         {{- end }}
     spec:
       {{- include "thanos.imagePullSecrets" . | nindent 6 }}
-      serviceAccount: {{ include "thanos.serviceAccount.name" (dict "component" "receive" "context" $) }}
+      serviceAccountName: {{ include "thanos.serviceAccountName" (dict "component" "receive" "context" $) }}
       automountServiceAccountToken: {{ .Values.receiveDistributor.automountServiceAccountToken }}
       {{- if .Values.receiveDistributor.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.receiveDistributor.hostAliases "context" $) | nindent 8 }}
@@ -54,6 +54,9 @@ spec:
         podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.receiveDistributor.podAffinityPreset "component" "receive-distributor" "context" $) | nindent 10 }}
         podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.receiveDistributor.podAntiAffinityPreset "component" "receive-distributor" "context" $) | nindent 10 }}
         nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.receiveDistributor.nodeAffinityPreset.type "key" .Values.receiveDistributor.nodeAffinityPreset.key "values" .Values.receiveDistributor.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.receiveDistributor.dnsConfig }}
+      dnsConfig: {{- include "common.tplvalues.render" (dict "value" .Values.receiveDistributor.dnsConfig "context" $) | nindent 8 }}
       {{- end }}
       {{- if .Values.receiveDistributor.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.receiveDistributor.nodeSelector "context" $) | nindent 8 }}

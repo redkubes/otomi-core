@@ -150,6 +150,18 @@ Return the Thanos Ruler configuration configmap.
 {{- end -}}
 
 {{/*
+Return the queryURL used by Thanos Ruler.
+*/}}
+{{- define "thanos.ruler.queryURL" -}}
+{{- $query := (include "thanos.query.values" . | fromYaml) -}}
+{{- if .Values.ruler.queryURL -}}
+    {{- printf "%s" (tpl .Values.ruler.queryURL $) -}}
+{{- else -}}
+    {{- printf "http://%s-query.%s.svc.%s:%d" (include "common.names.fullname" . ) .Release.Namespace .Values.clusterDomain (int  $query.service.ports.http) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if a configmap object should be created
 */}}
 {{- define "thanos.ruler.createConfigmap" -}}
@@ -326,9 +338,9 @@ false
 
 {{/* Service account name
 Usage:
-{{ include "thanos.serviceAccount.name" (dict "component" "bucketweb" "context" $) }}
+{{ include "thanos.serviceAccountName" (dict "component" "bucketweb" "context" $) }}
 */}}
-{{- define "thanos.serviceAccount.name" -}}
+{{- define "thanos.serviceAccountName" -}}
 {{- $component := index .context.Values .component -}}
 {{- if eq .component "query-frontend" -}}
 {{- $component = index .context.Values "queryFrontend" -}}
@@ -337,7 +349,11 @@ Usage:
 {{- end -}}
 {{- if not (include "thanos.serviceAccount.useExisting" (dict "component" .component "context" .context)) -}}
     {{- if $component.serviceAccount.create -}}
-        {{ default (printf "%s-%s" (include "common.names.fullname" .context) .component) $component.serviceAccount.name }}
+        {{- if eq .context.Values.serviceAccount.name "" -}}
+            {{ default (printf "%s-%s" (include "common.names.fullname" .context) .component) $component.serviceAccount.name }}
+        {{- else -}}
+            {{ default (printf "%s-%s" (.context.Values.serviceAccount.name) .component) $component.serviceAccount.name }}
+        {{- end -}}
     {{- else if .context.Values.serviceAccount.create -}}
         {{ default (include "common.names.fullname" .context) .context.Values.serviceAccount.name  }}
     {{- else -}}
@@ -431,5 +447,24 @@ Usage:
 {{- else -}}
 {{- .Values.receive.config | toPrettyJson -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Labels to use on serviceMonitor.spec.selector and svc.metadata.labels
+*/}}
+{{- define "thanos.servicemonitor.matchLabels" -}}
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled -}}
+prometheus-operator/monitor: 'true'
+{{- end }}
+{{- end }}
+
+{{/*
+Labels to use on serviceMonitor.spec.selector
+*/}}
+{{- define "thanos.servicemonitor.selector" -}}
+{{- include "thanos.servicemonitor.matchLabels" $ }}
+{{- if .Values.metrics.serviceMonitor.selector -}}
+{{- include "common.tplvalues.render" (dict "value" .Values.metrics.serviceMonitor.selector "context" $)}}
 {{- end -}}
 {{- end -}}

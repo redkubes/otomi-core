@@ -1,5 +1,5 @@
 {{- if .Values.receive.enabled }}
-apiVersion: apps/v1
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
 kind: StatefulSet
 metadata:
   name: {{ include "common.names.fullname" . }}-receive
@@ -44,7 +44,7 @@ spec:
         {{- end }}
     spec:
       {{- include "thanos.imagePullSecrets" . | nindent 6 }}
-      serviceAccount: {{ include "thanos.serviceAccount.name" (dict "component" "receive" "context" $) }}
+      serviceAccountName: {{ include "thanos.serviceAccountName" (dict "component" "receive" "context" $) }}
       automountServiceAccountToken: {{ .Values.receive.automountServiceAccountToken }}
       {{- if .Values.receive.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.receive.hostAliases "context" $) | nindent 8 }}
@@ -56,6 +56,9 @@ spec:
         podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.receive.podAffinityPreset "component" "receive" "context" $) | nindent 10 }}
         podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.receive.podAntiAffinityPreset "component" "receive" "context" $) | nindent 10 }}
         nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.receive.nodeAffinityPreset.type "key" .Values.receive.nodeAffinityPreset.key "values" .Values.receive.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.receive.dnsConfig }}
+      dnsConfig: {{- include "common.tplvalues.render" (dict "value" .Values.receive.dnsConfig "context" $) | nindent 8 }}
       {{- end }}
       {{- if .Values.receive.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.receive.nodeSelector "context" $) | nindent 8 }}

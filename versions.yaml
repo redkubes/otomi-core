@@ -1,4 +1,4 @@
-api: kubeclarity
+api: thanos-azure-storage
 console: kubeclarity-logo
 tasks: main
 tools: 1.4.25

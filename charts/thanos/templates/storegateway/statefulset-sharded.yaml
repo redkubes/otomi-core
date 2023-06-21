@@ -59,7 +59,7 @@ spec:
         {{- end }}
     spec:
       {{- include "thanos.imagePullSecrets" $ | nindent 6 }}
-      serviceAccount: {{ include "thanos.serviceAccount.name" (dict "component" "storegateway" "context" $) }}
+      serviceAccountName: {{ include "thanos.serviceAccountName" (dict "component" "storegateway" "context" $) }}
       automountServiceAccountToken: {{ $.Values.storegateway.automountServiceAccountToken }}
       {{- if $.Values.storegateway.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" $.Values.storegateway.hostAliases "context" $) | nindent 8 }}
@@ -71,6 +71,9 @@ spec:
         podAffinity: {{- include "common.affinities.pods" (dict "type" $.Values.storegateway.podAffinityPreset "component" "storegateway" "context" $) | nindent 10 }}
         podAntiAffinity: {{- include "common.affinities.pods" (dict "type" $.Values.storegateway.podAntiAffinityPreset "component" "storegateway" "context" $) | nindent 10 }}
         nodeAffinity: {{- include "common.affinities.nodes" (dict "type" $.Values.storegateway.nodeAffinityPreset.type "key" $.Values.storegateway.nodeAffinityPreset.key "values" $.Values.storegateway.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if $.Values.storegateway.dnsConfig }}
+      dnsConfig: {{- include "common.tplvalues.render" (dict "value" $.Values.storegateway.dnsConfig "context" $) | nindent 8 }}
       {{- end }}
       {{- if $.Values.storegateway.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" $.Values.storegateway.nodeSelector "context" (set $ "shardLoopId" $index)) | nindent 8 }}
@@ -243,7 +246,14 @@ spec:
           {{- if $.Values.storegateway.lifecycleHooks }}
           lifecycle: {{- include "common.tplvalues.render" (dict "value" $.Values.storegateway.lifecycleHooks "context" $) | nindent 12 }}
           {{- end }}
-          {{- if $.Values.storegateway.resources }}
+          {{- if $timePartitioning }}
+          {{- $partion := (slice $.Values.storegateway.sharded.timePartitioning  $index) | first }}
+          {{- if $partion.resources }}
+          resources: {{- toYaml $partion.resources | nindent 12 }}
+          {{- else }}
+          resources: {{- toYaml $.Values.storegateway.resources | nindent 12 }}
+          {{- end }}
+          {{- else }}
           resources: {{- toYaml $.Values.storegateway.resources | nindent 12 }}
           {{- end }}
           volumeMounts:

@@ -103,6 +103,14 @@ objstoreConfig: |-
     secret_key: {{ $sp.s3.secretAccessKey }}
     insecure: true
 {{- end }}
+{{- if eq $sp.type "azureBlob" }}
+objstoreConfig: |-
+  type: azure
+    config:
+      account_name: {{ $sp.azureBlob.accountName }}
+      account_key: {{ $sp.azureBlob.accountKey }}
+      container_name: {{ $sp.azureBlob.containerName }}
+{{- end }}
 
 metrics:
   enabled: true

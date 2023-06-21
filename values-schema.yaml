@@ -2727,10 +2727,24 @@ properties:
                       - s3Url
                       - accessKeyId
                       - secretAccessKey
+                  azureBlob:
+                    properties:
+                      accountName:
+                        $ref: '#/definitions/wordCharacterPattern'
+                      containerName:
+                        $ref: '#/definitions/wordCharacterPattern'
+                      accountKey:
+                        $ref: '#/definitions/wordCharacterPattern'
+                        x-secret: ''
+                    required:
+                      - accountName
+                      - containerName
+                      - accountKey
                   type:
                     type: string
                     enum:
                       - s3
+                      - azureBlob
                       - minioLocal
                     default: minioLocal
           resources:
