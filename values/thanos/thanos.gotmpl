@@ -7,13 +7,17 @@
 query:
   enabled: true
   replicaCount: {{ $vl.query.replicaCount }}
+  service:
+    additionalHeadless: true
   dnsDiscovery:
     enabled: false
   stores:
     - "thanos-storegateway:10901"
-    {{- range $i := until $vl.receiver.replicaCount }}
-    - "thanos-receive-{{ $i }}.thanos-receive-headless.monitoring.svc.cluster.local:10901"
+    - dnssrv+_grpc._tcp.thanos-receive-headless.monitoring.svc
+    {{- if $vl.ruler.enabled }}
+    - dnssrv+_grpc._tcp.thanos-receiver-ruler-headless.monitoring.svc
     {{- end }}
+
   resources: {{- $vl.resources.query | toYaml | nindent 4 }}
   extraFlags:
     - "--query.auto-downsampling"
@@ -69,9 +73,14 @@ receiveDistributor:
 ## @section Thanos Ruler parameters
 ruler:
   enabled: {{ $vl.ruler.enabled }}
+  clusterName: {{ $v.cluster.domainSuffix }}
   persistence:
     size: {{ $vl.persistence.ruler.size }}
+  service:
+    additionalHeadless: true
   resources: {{- $vl.resources.ruler | toYaml | nindent 4 }}
+  queries:
+    - dnssrv+_http._tcp.thanos-query-headless.monitoring.svc
   alertmanagers:
     - http://prometheus-operator-alertmanager.monitoring.svc.cluster.local:9093
   config: |-
