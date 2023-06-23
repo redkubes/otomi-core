@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: push-binding
+spec:
+  params:
+    - name: clone_url
+      value: $(body.repository.clone_url)
+    - name: pusher_email
+      value: $(body.pusher.email)
+    - name: commit_id
+      value: $(body.head_commit.id)

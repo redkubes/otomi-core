@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: bootstrap
+spec:
+  params:
+    - name: email
+      type: string
+  steps:
+    - name: bootstrap
+      image: otomi/core:v0.21.5
+      script: |
+        #!/bin/bash
+        ENV_DIR=/repo/values/env
+        while true; do touch /repo/testfile || echo could not write && sleep 2;done
+        binzx/otomi bootstrap
+  workspaces:
+    - name: shared-workspace
+      mountPath: /repo

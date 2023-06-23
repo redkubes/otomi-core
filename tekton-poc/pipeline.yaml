@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: push-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: clone_url
+      type: string
+    - name: pusher_email
+      type: string
+    - name: commit_id
+      type: string
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.clone_url)
+      workspaces:
+        - name: shared-workspace
+    - name: bootstrap
+      runAfter:
+        - git-clone
+      taskRef:
+        name: bootstrap
+      params:
+        - name: email
+          value: $(params.pusher_email)
+      workspaces:
+        - name: shared-workspace

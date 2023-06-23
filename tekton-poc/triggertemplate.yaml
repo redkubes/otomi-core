@@ -1,0 +1,28 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: git-push-template
+spec:
+  params:
+    - name: clone_url
+    - name: pusher_email
+    - name: commit_id
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: push-pipeline-run-
+      spec:
+        pipelineRef:
+          name: push-pipeline
+        params:
+          - name: clone_url
+            value: $(tt.params.clone_url)
+          - name: pusher_email
+            value: $(tt.params.pusher_email)
+          - name: commit_id
+            value: $(tt.params.commit_id)
+        workspaces:
+          - name: shared-workspace
+            persistentVolumeClaim:
+              claimName: tekton-workspace

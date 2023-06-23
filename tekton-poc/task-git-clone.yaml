@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+spec:
+  params:
+    - name: url
+      type: string
+  steps:
+    - name: git-clone
+      image: alpine
+      script: |
+        #!/bin/sh
+        apk add git
+        cd repo
+        rm -rf *
+        git -c http.sslVerify=false clone https://username:password@gitea_fqdn/otomi/values.git
+  workspaces:
+    - name: shared-workspace
+      mountPath: /repo

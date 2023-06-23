@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: values-repo-listener
+spec:
+  serviceAccountName: tekton-robot
+  triggers:
+    - name: push-trigger
+      bindings:
+        - ref: push-binding
+      template:
+        ref: git-push-template
