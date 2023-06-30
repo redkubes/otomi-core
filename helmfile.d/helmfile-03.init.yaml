@@ -79,6 +79,8 @@ releases:
     installed: {{ $a | get "tekton.enabled" }}
     namespace: tekton-pipeline
     chart: ../charts/tekton-pipeline
+    values:
+      - ../values/tekton-pipeline/tekton-pipeline.gotmpl
     labels:
       pkg: tekton-pipeline
     <<: *default

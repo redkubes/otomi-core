@@ -120,6 +120,7 @@ spec:
           name: profiling
         - containerPort: 8080
           name: probes
+        resources: {{- toYaml .Values.controller.resources | nindent 10 }}
         readinessProbe:
           httpGet:
             path: /readiness
