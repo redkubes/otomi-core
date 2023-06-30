@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: git-resolver-config
+data:
+  helmTemplateRemoveMe: |
+    {{- tpl (toYaml .Values.gitResolverConfig | nindent 2) . }}

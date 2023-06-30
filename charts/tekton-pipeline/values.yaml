@@ -12,7 +12,7 @@ serviceaccount:
   annotations: {}
 controller:
   deployment:
-    image: "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.36.1@sha256:d6471f85a865b794a2ef01db28664274cf3039834fe5aed0072bea449c57727e"
+    image: "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.42.0@sha256:1fa50403c071b768984e23e26d0e68d2f7e470284ef2eb73581ec556bacdad95"
     labels: {}
   pod:
     labels: {}
@@ -81,6 +81,39 @@ configDefaults:
     # but that a TaskRun does not explicitly provide.
     # default-task-run-workspace-binding: |
     #   emptyDir: {}
+
+    # default-max-matrix-combinations-count contains the default maximum number
+    # of combinations from a Matrix, if none is specified.
+    default-max-matrix-combinations-count: "256"
+# Settings to increase deployment resources for tekton-pipelines-remote-resolvers-deployment
+remoteResolversPod:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1000Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+gitResolverConfig:
+  # The maximum amount of time a single anonymous cloning resolution may take.
+  fetch-timeout: "1m"
+  # The git url to fetch the remote resource from when using anonymous cloning.
+  default-url: "https://github.com/tektoncd/catalog.git"
+  # The git revision to fetch the remote resource from with either anonymous cloning or the authenticated API.
+  default-revision: "main"
+  # The SCM type to use with the authenticated API. Can be github, gitlab, gitea, bitbucketserver, bitbucketcloud
+  scm-type: "github"
+  # The SCM server URL to use with the authenticated API. Not needed when using github.com, gitlab.com, or BitBucket Cloud
+  server-url: ""
+  # The Kubernetes secret containing the API token for the SCM provider. Required when using the authenticated API.
+  api-token-secret-name: ""
+  # The key in the API token secret containing the actual token. Required when using the authenticated API.
+  api-token-secret-key: ""
+  # The namespace containing the API token secret. Defaults to "default".
+  api-token-secret-namespace: "default"
+  # The default organization to look for repositories under when using the authenticated API,
+  # if not specified in the resolver parameters. Optional.
+  default-org: ""
 # feature flags to put in feature-flags ConfigMap
 featureFlags:
   # Setting this flag to "true" will prevent Tekton to create an
@@ -106,6 +139,14 @@ featureFlags:
   # See https://github.com/tektoncd/pipeline/issues/2791 for more
   # info.
   disable-creds-init: "false"
+  # Setting this flag to "false" will stop Tekton from waiting for a
+  # TaskRun's sidecar containers to be running before starting the first
+  # step. This will allow Tasks to be run in environments that don't
+  # support the DownwardAPI volume type, but may lead to unintended
+  # behaviour if sidecars are used.
+  #
+  # See https://github.com/tektoncd/pipeline/issues/4937 for more info.
+  await-sidecar-readiness: "true"
   # This option should be set to false when Pipelines is running in a
   # cluster that does not use injected sidecars such as Istio. Setting
   # it to false should decrease the time it takes for a TaskRun to start
@@ -130,8 +171,17 @@ featureFlags:
   # an alpha feature.
   enable-custom-tasks: "false"
   # Setting this flag will determine which gated features are enabled.
-  # Acceptable values are "stable" or "alpha".
+  # Acceptable values are "stable", "beta", or "alpha".
   enable-api-fields: "stable"
   # Setting this flag to "true" enables CloudEvents for Runs, as long as a
   # CloudEvents sink is configured in the config-defaults config map
   send-cloudevents-for-runs: "false"
+  # Setting this flag to "enforce" will enforce verification of tasks/pipeline. Failing to verify
+  # will fail the taskrun/pipelinerun. "warn" will only log the err message and "skip"
+  # will skip the whole verification
+  resource-verification-mode: "skip"
+  # Setting this flag to "true" enables populating the "provenance" field in TaskRun
+  # and PipelineRun status. This field contains metadata about resources used
+  # in the TaskRun/PipelineRun such as the source from where a remote Task/Pipeline
+  # definition was fetched.
+  enable-provenance-in-status: "false"

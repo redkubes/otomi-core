@@ -9,7 +9,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: tekton-pipelines-webhook
-    namespace: tekton-pipelines
+    namespace: '{{ .Release.Namespace }}'
 roleRef:
   kind: ClusterRole
   name: tekton-pipelines-webhook-cluster-access

@@ -6,16 +6,14 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/name: webhook
     app.kubernetes.io/part-of: tekton-pipelines
-    app.kubernetes.io/version: v0.36.1
+    app.kubernetes.io/version: v0.42.0
       {{- with .Values.webhook.deployment.labels }}
         {{- toYaml . | nindent 4 }}
       {{- end}}
-    pipeline.tekton.dev/release: v0.36.1
-    version: v0.36.1
+    pipeline.tekton.dev/release: v0.42.0
+    version: v0.42.0
   name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/component: webhook
@@ -30,12 +28,12 @@ spec:
         app.kubernetes.io/instance: default
         app.kubernetes.io/name: webhook
         app.kubernetes.io/part-of: tekton-pipelines
-        app.kubernetes.io/version: v0.36.1
+        app.kubernetes.io/version: v0.42.0
           {{- with .Values.webhook.pod.labels }}
             {{- toYaml . | nindent 8 }}
           {{- end}}
-        pipeline.tekton.dev/release: v0.36.1
-        version: v0.36.1
+        pipeline.tekton.dev/release: v0.42.0
+        version: v0.42.0
     spec:
       affinity:
         nodeAffinity:
@@ -71,6 +69,8 @@ spec:
           value: config-leader-election
         - name: CONFIG_FEATURE_FLAGS_NAME
           value: feature-flags
+        - name: WEBHOOK_PORT
+          value: "8443"
         - name: WEBHOOK_SERVICE_NAME
           value: tekton-pipelines-webhook
         - name: WEBHOOK_SECRET_NAME
@@ -81,7 +81,7 @@ spec:
         - secretRef:
             name: '{{ .Values.webhook.envFromSecret }}'
             optional: true
-        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.36.1@sha256:9cc9394e79e93ac31e6bd206b39398a3b4d9579b009c08a317870891282cb1e1
+        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.42.0@sha256:90989eeb6e0ba9c481b1faba3b01bcc70725baa58484c8f6ce9d22cc601e63dc
         livenessProbe:
           httpGet:
             path: /health
@@ -119,7 +119,10 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           runAsGroup: 65532
+          runAsNonRoot: true
           runAsUser: 65532
+          seccompProfile:
+            type: RuntimeDefault
       serviceAccountName: tekton-pipelines-webhook

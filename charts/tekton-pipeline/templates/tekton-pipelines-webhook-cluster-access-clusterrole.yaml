@@ -20,7 +20,8 @@ rules:
       - clustertasks.tekton.dev
       - taskruns.tekton.dev
       - pipelineresources.tekton.dev
-      - conditions.tekton.dev
+      - resolutionrequests.resolution.tekton.dev
+      - customruns.tekton.dev
   # knative.dev/pkg needs list/watch permissions to set up informers for the webhook.
   - apiGroups: ["apiextensions.k8s.io"]
     resources: ["customresourcedefinitions"]
@@ -47,10 +48,6 @@ rules:
     # When there are changes to the configs or secrets, knative updates the validatingwebhook config
     # with the updated certificates or the refreshed set of rules.
     verbs: ["get", "update", "delete"]
-  - apiGroups: ["policy"]
-    resources: ["podsecuritypolicies"]
-    resourceNames: ["tekton-pipelines"]
-    verbs: ["use"]
   - apiGroups: [""]
     resources: ["namespaces"]
     verbs: ["get"]

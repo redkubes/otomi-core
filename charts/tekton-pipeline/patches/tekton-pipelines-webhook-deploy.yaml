@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
   labels:
     helmTemplateRemoveMe: |
       {{- with .Values.webhook.deployment.labels }}

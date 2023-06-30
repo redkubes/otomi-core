@@ -16,17 +16,16 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
   labels:
     app.kubernetes.io/name: webhook
     app.kubernetes.io/component: webhook
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "v0.36.1"
+    app.kubernetes.io/version: "v0.42.0"
     app.kubernetes.io/part-of: tekton-pipelines
     # tekton.dev/release value replaced with inputs.params.versionTag in pipeline/tekton/publish.yaml
-    pipeline.tekton.dev/release: "v0.36.1"
+    pipeline.tekton.dev/release: "v0.42.0"
     # labels below are related to istio and should not be used for resource lookup
-    version: "v0.36.1"
+    version: "v0.42.0"
 spec:
   minReplicas: 1
   maxReplicas: 5
@@ -35,9 +34,9 @@ spec:
     kind: Deployment
     name: tekton-pipelines-webhook
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 100
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 100

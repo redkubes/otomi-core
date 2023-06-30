@@ -6,14 +6,13 @@ metadata:
     app.kubernetes.io/instance: default
     app.kubernetes.io/name: controller
     app.kubernetes.io/part-of: tekton-pipelines
-    app.kubernetes.io/version: v0.36.1
+    app.kubernetes.io/version: v0.42.0
       {{- with .Values.controller.deployment.labels }}
         {{- toYaml . | nindent 4 }}
       {{- end}}
-    pipeline.tekton.dev/release: v0.36.1
-    version: v0.36.1
+    pipeline.tekton.dev/release: v0.42.0
+    version: v0.42.0
   name: tekton-pipelines-controller
-  namespace: tekton-pipelines
 spec:
   replicas: 1
   selector:
@@ -35,12 +34,12 @@ spec:
         app.kubernetes.io/instance: default
         app.kubernetes.io/name: controller
         app.kubernetes.io/part-of: tekton-pipelines
-        app.kubernetes.io/version: v0.36.1
+        app.kubernetes.io/version: v0.42.0
           {{- with .Values.controller.pod.labels }}
             {{- toYaml . | nindent 8 }}
           {{- end}}
-        pipeline.tekton.dev/release: v0.36.1
-        version: v0.36.1
+        pipeline.tekton.dev/release: v0.42.0
+        version: v0.42.0
     spec:
       affinity:
         nodeAffinity:
@@ -54,23 +53,23 @@ spec:
       containers:
       - args:
         - -kubeconfig-writer-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.36.1@sha256:176508ea95429bf362ef1d96046f0a3b745da44eab98de607997cdd92f95df59
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.42.0@sha256:672df16c97c15d20102749c6e86195683d037bd6c8787560c9c07ade8b610071
         - -git-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.36.1@sha256:9b96b21eb031d08c1badd54c2627009939eb6ad1c5aef6a0c8a9191a294bc614
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.42.0@sha256:211b0822659b2030a9e12b1cdb47faab2187a63a24ed9d21044520f967674138
         - -entrypoint-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.36.1@sha256:7f43f0114d364edc448756d018a5917782cba2d62c04cece4be3f38316c06789
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.42.0@sha256:77e43d0fc9f7e7bdfa31dc16082b08dace05ce81c91a06c00dfa2f547212ce72
         - -nop-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/nop:v0.36.1@sha256:c7270e396180a8cf1230ae70eaa4ced6fd9bafb598af366c9eba113937cdb04d
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/nop:v0.42.0@sha256:bd1fcc45d40a8ef1621789856caa2f54d7a884f19af921105feafae0131648c5
         - -imagedigest-exporter-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.36.1@sha256:70d2a418c2d7c0d1aa3574fa96ec5c021892447d07331a1b33394dafebc7516a
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.42.0@sha256:370d5a0e39577f784f1376fac0822230b9a44950c01fe2190692a0a5a810adc6
         - -pr-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.36.1@sha256:e374bf3e57982698ce12efc2dee066dafa1a3763459e08092c191810432cef42
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.42.0@sha256:e00d578d40d57a5124bee5107cb3358763874588a7fe2522ebc7bb979280d06e
         - -workingdirinit-image
-        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/workingdirinit:v0.36.1@sha256:834f06ba9530690d891f9836a3dc3ad0116f945826029730ba568ff3bc4b13db
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/workingdirinit:v0.42.0@sha256:60a39c629448ac2845c4781513ef44c2f2fbcb6eb321d70a016002b5fa7b2379
         - -gsutil-image
         - gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:27b2c22bf259d9bc1a291e99c63791ba0c27a04d2db0a43241ba0f1f20f4067f
         - -shell-image
-        - ghcr.io/distroless/busybox@sha256:19f02276bf8dbdd62f069b922f10c65262cc34b710eea26ff928129a736be791
+        - cgr.dev/chainguard/busybox@sha256:19f02276bf8dbdd62f069b922f10c65262cc34b710eea26ff928129a736be791
         - -shell-image-win
         - mcr.microsoft.com/powershell:nanoserver@sha256:b6d5ff841b78bdf2dfed7550000fd4f3437385b8fa686ec0f010be24777654d6
         env:
@@ -92,6 +91,8 @@ spec:
           value: feature-flags
         - name: CONFIG_LEADERELECTION_NAME
           value: config-leader-election
+        - name: CONFIG_TRUSTED_RESOURCES_NAME
+          value: config-trusted-resources
         - name: SSL_CERT_FILE
           value: /etc/config-registry-cert/cert
         - name: SSL_CERT_DIR
@@ -102,6 +103,7 @@ spec:
         - secretRef:
             name: '{{ .Values.controller.envFromSecret }}'
             optional: true
+        image: null
         livenessProbe:
           httpGet:
             path: /health
@@ -118,10 +120,6 @@ spec:
           name: profiling
         - containerPort: 8080
           name: probes
-        resources:
-          limits:
-            cpu: 1
-            memory: 1G
         readinessProbe:
           httpGet:
             path: /readiness
@@ -134,14 +132,20 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-            - all
+            - ALL
           runAsGroup: 65532
+          runAsNonRoot: true
           runAsUser: 65532
+          seccompProfile:
+            type: RuntimeDefault
         volumeMounts:
         - mountPath: /etc/config-logging
           name: config-logging
         - mountPath: /etc/config-registry-cert
           name: config-registry-cert
+        - mountPath: /etc/verification-secrets
+          name: verification-secrets
+          readOnly: true
         image: {{ .Values.controller.deployment.image }}
       serviceAccountName: tekton-pipelines-controller
       volumes:
@@ -151,3 +155,7 @@ spec:
       - configMap:
           name: config-registry-cert
         name: config-registry-cert
+      - name: verification-secrets
+        secret:
+          optional: true
+          secretName: verification-secrets

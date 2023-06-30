@@ -1,4 +1,4 @@
-# Copyright 2019 The Tekton Authors
+# Copyright 2020 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: conditions.tekton.dev
+  name: customruns.tekton.dev
   labels:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-pipelines
-    pipeline.tekton.dev/release: "v0.36.1"
-    version: "v0.36.1"
+    pipeline.tekton.dev/release: "v0.42.0"
+    version: "v0.42.0"
 spec:
   group: tekton.dev
+  preserveUnknownFields: false
   versions:
-    - name: v1alpha1
+    - name: v1beta1
       served: true
       storage: true
       schema:
@@ -38,14 +39,27 @@ spec:
           # See https://kubernetes.io/blog/2019/06/20/crd-structural-schema/
           # See issue: https://github.com/knative/serving/issues/912
           x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: Succeeded
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Succeeded\")].status"
+        - name: Reason
+          type: string
+          jsonPath: ".status.conditions[?(@.type==\"Succeeded\")].reason"
+        - name: StartTime
+          type: date
+          jsonPath: .status.startTime
+        - name: CompletionTime
+          type: date
+          jsonPath: .status.completionTime
       # Opt into the status subresource so metadata.generation
       # starts to increment
       subresources:
         status: {}
   names:
-    kind: Condition
-    plural: conditions
-    singular: condition
+    kind: CustomRun
+    plural: customruns
+    singular: customrun
     categories:
       - tekton
       - tekton-pipelines
