@@ -1,17 +1,16 @@
 {{- $v := .Values }}
 {{- if $v.apps.tekton.enabled }}
-{{- range $v.builds }}
-{{- if eq .mode.type "docker" }}
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: docker-build-{{ .name }}
+  name: docker-build
   annotations:
     sidecar.istio.io/inject: "false"
 spec:
   workspaces:
   - name: shared-data
+  - name: harbor-pullsecret
   tasks:
   - name: fetch-source
     taskRef:
@@ -21,9 +20,9 @@ spec:
       workspace: shared-data
     params:
     - name: url
-      value: {{ .mode.docker.repoUrl }}
+      value: $(params.repo-url)
     - name: revision
-      value: {{ .mode.docker.revision }}
+      value: $(params.repo-revision)
   - name: build-push
     runAfter: 
     - fetch-source
@@ -32,22 +31,25 @@ spec:
     workspaces:
     - name: source
       workspace: shared-data
+    - name: dockerconfig
+      workspace: harbor-pushsecret
     params:
     - name: DOCKERFILE
-      value: {{ .mode.docker.path }}
+      value: $(params.dockerfile-path)
     - name: IMAGE
-      value: harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ .name }}:{{ .tag }}
+      value: $(params.image-reference)
 ---
+{{- range $v.builds }}
+{{- if eq .mode.type "docker" }}
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: docker-build-{{ .name }}-{{ regexReplaceAll "[|._]{1}" .tag "-" }}
+  generateName: docker-build-{{ .name }}-
   annotations:
     sidecar.istio.io/inject: "false"
 spec:
-  serviceAccountName: sa-team-{{ $v.teamId }}
   pipelineRef:
-    name: docker-build-{{ .name }}
+    name: docker-build
   podTemplate:
     securityContext:
       fsGroup: 65532
@@ -60,6 +62,16 @@ spec:
         resources:
           requests:
             storage: 1Gi
+  - name: harbor-pushsecret
+    secret:
+      secretName: harbor-pushsecret
+  params:
+  - name: repo-url
+    value: {{ .mode.docker.repoUrl }}
+  - name: dockerfile-path
+    value: {{ .mode.docker.path }}    
+  - name: image-reference
+    value: harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ .name }}:{{ .tag }}
 {{- end }}
 {{- end }}
 {{- end }}
