@@ -1,5 +1,7 @@
+import { writeFileSync } from 'fs-extra'
 import { prepareEnvironment } from 'src/common/cli'
 import { terminal } from 'src/common/debug'
+import { env } from 'src/common/envalid'
 import { hfValues } from 'src/common/hf'
 import { getFilename } from 'src/common/utils'
 import { BasicArguments, getParsedArgs, setParsedArgs } from 'src/common/yargs'
@@ -19,7 +21,8 @@ const values = async (): Promise<void> => {
   const argv: Arguments = getParsedArgs()
   const hfVal = await hfValues({ filesOnly: argv.filesOnly, excludeSecrets: argv.excludeSecrets })
   d.info('Print values')
-  console.log(stringify(hfVal))
+  writeFileSync(`${env.ENV_DIR}/rendered-values.yaml`, stringify(hfVal))
+  // console.log(stringify(hfVal))
 }
 
 export const module = {
@@ -35,6 +38,9 @@ export const module = {
       excludeSecrets: {
         boolean: true,
         default: false,
+      },
+      outputFile: {
+        default: undefined,
       },
     }),
 

@@ -67,13 +67,7 @@ In Otomi, all Helmfile specs are defined in the `helmfile.d/` directory and exec
 ```go-template
 #helmfiled./999-helmfile.yaml
 bases:
-  - snippets/defaults.yaml
----
-bases:
-  - snippets/env.gotmpl
----
-bases:
-  - snippets/derived.gotmpl
+  - {{ env "ENV_DIR" | default "../env" }}/rendered-values.yaml
 {{ readFile "snippets/templates.gotmpl" }}
 
 releases:

@@ -1,11 +1,5 @@
 bases:
-  - snippets/defaults.yaml
----
-bases:
-  - snippets/env.gotmpl
----
-bases:
-  - snippets/derived.gotmpl
+  - {{ env "ENV_DIR" | default "../env" }}/rendered-values.yaml
 ---
 {{- $v := .Values }}
 {{- $a := $v.apps }}
