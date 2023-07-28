@@ -1,9 +1,13 @@
 teamConfig:
     demo:
         workloads:
-            - name: wd1
+            - name: wl1
+              path: ./
+              revision: HEAD
+              selectedChart: custom
               url: https://myrepo.local/mychart.git
-              path: /
-            - name: wd2
+            - name: wl2
+              path: ./
+              revision: HEAD
+              selectedChart: custom
               url: https://myrepo.local/mychart.git
-              path: /

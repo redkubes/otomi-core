@@ -83,11 +83,13 @@ teamConfig:
     workloads:
       - name: nodejs-helloworld
         url: https://github.com/redkubes/nodejs-helloworld.git
-        path: /
+        path: ./
         revision: HEAD
+        selectedChart: custom
       - name: httpbin
         path: charts/httpbin
         revision: HEAD
+        selectedChart: custom
         url: https://github.com/redkubes/otomi-core.git
       - name: nginx-deployment
         path: deployment
