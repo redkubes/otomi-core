@@ -2,7 +2,7 @@ name: Scheduled - minimal with DNS, KMS and Letsencrypt, without admin password
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '00 11 * * *'
 
 jobs:
   start-integration-test-minimal-dns:
