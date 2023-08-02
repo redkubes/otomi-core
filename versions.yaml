@@ -1,4 +1,4 @@
-api: main
+api: otomi-usage-metrics
 console: main
 tasks: main
 tools: 1.4.25
