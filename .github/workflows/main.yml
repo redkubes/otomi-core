@@ -95,7 +95,7 @@ jobs:
           docker tag $REPO:$TAG $REPO:$release_tag
           docker push $REPO:$release_tag
           docker login -u $GIT_USER -p '${{ secrets.NPM_TOKEN }}' ghcr.io
-          docker tag $REPO:$TAG $CACHE_REGISTRY/$CACHE_REPO:$TAG
+          docker tag $REPO:$TAG $CACHE_REGISTRY/$CACHE_REPO:$release_tag
           docker push $CACHE_REGISTRY/$CACHE_REPO:$TAG
           echo "machine github.com login $GIT_USER password ${{ secrets.GIT_PASSWORD }}" > ~/.netrc
           git tag -am "$COMMIT_MSG" $release_tag && git push --follow-tags
