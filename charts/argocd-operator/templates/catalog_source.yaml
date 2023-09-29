@@ -5,6 +5,6 @@ metadata:
   namespace: olm
 spec:
   sourceType: grpc
-  image: quay.io/argoprojlabs/argocd-operator-registry:v0.5.0
+  image: quay.io/argoprojlabs/argocd-operator-registry:v0.7.0
   displayName: Argo CD Operators
   publisher: Argo CD Community
