@@ -1,2 +1,3 @@
 apps:
-    gitea: {}
+    gitea:
+        enabled: true
