@@ -50,6 +50,7 @@ on:
         options:
           - scaleway
           - digitalocean
+        default: 'scaleway'
       kubernetes_versions:
         description: 'Kubernetes version'
         type: choice
@@ -124,6 +125,7 @@ env:
   GIT_USER: redkubesbot
   SCALEWAY_NODE_TYPE: PRO2-M
   SCALEWAY_NODE_POOL_MIN_SIZE: 3
+  SCALEWAY_VPC_ID: e1019b0c-7c7d-49ef-86e4-b02f55b2e0d3
   DIGITALOCEAN_NODE_SIZE: s-8vcpu-16gb
   DIGITALOCEAN_NODE_POOL_MIN_SIZE: 3
   CHECK_CONTEXT: continuous-integration/integration-test
@@ -220,6 +222,9 @@ jobs:
       - name: Determine exact k8s version
         run: |
           echo SCALEWAY_K8s_VERSION=$(scw k8s version list -o json | jq -re 'map(select(.name | startswith("${{ matrix.kubernetes_versions }}"))) | .[].name') >> $GITHUB_ENV
+      - name: Create private network
+        run: |
+          echo SCALEWAY_PRIVATE_NETWORK_ID=$(scw vpc private-network create project-id=${{ secrets.SCW_DEFAULT_PROJECT_ID }} name=$SCALEWAY_CLUSTER_NAME-pn region=nl-ams -ojson | jq -r .id) >> $GITHUB_ENV
       - name: Create k8s cluster at Scaleway ${{env.SCALEWAY_CLUSTER_NAME}}
         run: |
           out=$(scw k8s cluster create name=${{env.SCALEWAY_CLUSTER_NAME}} \

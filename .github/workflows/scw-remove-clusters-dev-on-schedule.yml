@@ -28,6 +28,8 @@ jobs:
         run: |
           for cluster_id in ${{ env.SCALEWAY_CLUSTER_IDS }}
           do
-            scw k8s cluster delete ${{ env.SCALEWAY_CLUSTER_IDS }} with-additional-resources=true region=nl-ams
+            PRIVATE_NETWORK_ID=$(scw k8s cluster get $cluster_id -ojson |jq .private_network_id)
+            scw k8s cluster delete ${{ env.SCALEWAY_CLUSTER_IDS }} with-additional-resources=true region=nl-ams --wait
             echo "Deleted cluster ID: $cluster_id"
+            scw vpc private-network delete $PRIVATE_NETWORK_ID
           done
