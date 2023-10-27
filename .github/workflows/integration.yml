@@ -7,9 +7,9 @@ on:
         type: string
         default: scaleway
       kubernetes_versions:
-        description: "Kubernetes versions (JSON formatted list e.g.: ['1.24'])"
+        description: "Kubernetes versions (JSON formatted list e.g.: ['1.27'])"
         type: string
-        default: "['1.25']"
+        default: "['1.27']"
       install_profile:
         description: Otomi installation profile
         default: full
@@ -58,7 +58,8 @@ on:
           - "['1.24']"
           - "['1.25']"
           - "['1.26']"
-        default: "['1.25']"
+          - "['1.27']"
+        default: "['1.27']"
       install_profile:
         description: Otomi installation profile
         default: minimal-with-team
@@ -66,6 +67,7 @@ on:
         options:
           - minimal
           - minimal-with-team
+          - monitoring-with-team
           - full
           - upgrade
       cluster_persistence:
@@ -210,7 +212,7 @@ jobs:
         with:
           save-config: true
           export-config: true
-          version: v2.13.0
+          version: v2.23.0
           access-key: ${{ secrets.SCW_ACCESS_KEY }}
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
@@ -229,6 +231,7 @@ jobs:
         run: |
           out=$(scw k8s cluster create name=${{env.SCALEWAY_CLUSTER_NAME}} \
               project-id=${{ env.SCW_DEFAULT_PROJECT_ID }} \
+              private-network-id=${{ env.SCALEWAY_PRIVATE_NETWORK_ID }} \
               auto-upgrade.enable=false \
               cni=calico \
               pools.0.node-type=${{ env.SCALEWAY_NODE_TYPE }} \
