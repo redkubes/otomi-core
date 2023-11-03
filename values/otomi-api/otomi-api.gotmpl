@@ -6,6 +6,7 @@
 {{- $d := $v.apps.drone }}
 {{- $sops := $v | get "kms.sops" dict }}
 {{- $giteaValuesUrl := printf "gitea.%s/otomi/values" $v.cluster.domainSuffix }}
+{{- $helmChartCatalog := printf "https://gitea.%s/otomi/charts.git" $v.cluster.domainSuffix }}
 {{- $sopsEnv := tpl (readFile "../../helmfile.d/snippets/sops-env.gotmpl") $sops }}
 
 replicaCount: 1
@@ -32,6 +33,7 @@ secrets:
   {{- $sopsEnv | nindent 2 }}
   
 env:
+  HELM_CHART_CATALOG: {{ $helmChartCatalog }}
   DEBUG: 'otomi:*,-otomi:authz,-otomi:repo'
   VERBOSITY: '1'
   GIT_REPO_URL: {{ $o | get "git.repoUrl" $giteaValuesUrl }}

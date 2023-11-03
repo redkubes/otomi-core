@@ -2,14 +2,9 @@ apps:
     drone:
         adminUser: somesecretvalue
         debug: false
-        githubAdmins:
-            org: redkubes
-            team: admins
-            token: somesecretvalue
         orgsFilter: redkubes
         repoFilter: redkubes
         sourceControl:
-            github:
-                clientID: somesecretvalue
-                server: https://github.com
-            provider: github
+            gitea:
+                server: 'https://gitea.demo.eks.otomi.cloud'
+            provider: gitea

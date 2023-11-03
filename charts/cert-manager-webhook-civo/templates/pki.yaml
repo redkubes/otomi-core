@@ -1,0 +1,64 @@
+---
+# Create a selfsigned Issuer, in order to create a root CA certificate for
+# signing webhook serving certificates
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "civo-acme.selfSignedIssuer" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+  {{- include "civo-acme.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+
+---
+
+# Generate a CA Certificate used to sign certificates for the webhook
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "civo-acme.rootCACertificate" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+  {{- include "civo-acme.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "civo-acme.rootCACertificate" . }}
+  duration: 43800h # 5y
+  issuerRef:
+    name: {{ include "civo-acme.selfSignedIssuer" . }}
+  commonName: "ca.civo-acme.cert-manager"
+  isCA: true
+
+---
+
+# Create an Issuer that uses the above generated CA certificate to issue certs
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "civo-acme.rootCAIssuer" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+  {{- include "civo-acme.labels" . | nindent 4 }}
+spec:
+  ca:
+    secretName: {{ include "civo-acme.rootCACertificate" . }}
+
+---
+
+# Generate a serving certificate for the webhook to use
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "civo-acme.servingCertificate" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+  {{- include "civo-acme.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "civo-acme.servingCertificate" . }}
+  duration: 8760h # 1y
+  issuerRef:
+    name: {{ include "civo-acme.rootCAIssuer" . }}
+  dnsNames:
+  - {{ include "civo-acme.fullname" . }}
+  - {{ include "civo-acme.fullname" . }}.{{ .Release.Namespace }}
+  - {{ include "civo-acme.fullname" . }}.{{ .Release.Namespace }}.svc

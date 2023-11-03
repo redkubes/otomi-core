@@ -191,6 +191,9 @@ schedules:
       - gitea
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.keycloak.enabled }} 
   keycloak:
@@ -203,6 +206,9 @@ schedules:
       - keycloak
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.drone.enabled }} 
   drone:
@@ -215,6 +221,9 @@ schedules:
       - drone
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.harbor.enabled }} 
   harbor:
@@ -227,6 +236,9 @@ schedules:
       - harbor
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.vault.enabled }}
   vault:
@@ -239,6 +251,9 @@ schedules:
       - vault
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.argo.enabled }}
   argocd:
@@ -251,6 +266,9 @@ schedules:
       - argocd
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.kubeapps.enabled }}
   kubeapps:
@@ -263,9 +281,12 @@ schedules:
       - kubeapps
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}
 {{- if $b.minio.enabled }}
-  kubeapps:
+  minio:
     disabled: false
     schedule: {{ $b.minio.schedule }}
     useOwnerReferencesInBackup: false
@@ -275,4 +296,7 @@ schedules:
       - minio
       includedResources:
       - pv
+      - pvc
+      includeClusterResources: true
+      storageLocation: otomi
 {{- end }}

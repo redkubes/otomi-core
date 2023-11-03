@@ -1,6 +1,0 @@
-apiVersion: v2
-name: host-mods
-description: A Helm chart to modify worker nodes. Used primarily to install a custom CA to be used by docker/containerd.
-type: application
-version: 0.1.0
-appVersion: 0.1.0

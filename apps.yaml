@@ -221,16 +221,6 @@ appsInfo:
     license: Apache 2.0
     about: Kubeapps is an in-cluster web-based application that enables users with a one-time installation to deploy, manage, and upgrade applications on a Kubernetes cluster.
     integration: Kubeapps can be activated to deploy applications from multiple registries. Teams can login to Kubeapps using the generated token that is provided when downloading the KUBECFG.
-  kubeclarity:
-    title: KubeClarity
-    appVersion: 2.3.0
-    repo: https://github.com/openclarity/kubeclarity
-    maintainers: OpenClarity
-    relatedLinks:
-      - https://otomi.io/docs/apps/kubeclarity
-    license: Apache 2.0
-    about: KubeClarity is a tool for detection and management of Software Bill Of Materials (SBOM) and vulnerabilities of container images and filesystems. It scans both runtime K8s clusters and CI/CD pipelines for enhanced software supply chain security.
-    integration: KubeClarity can be activated to scan running containers and filesystems for vulnerabilities.
   kured:
     title: Kured
     appVersion: 1.9.2

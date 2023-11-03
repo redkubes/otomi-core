@@ -7,7 +7,6 @@ folders:
   - gatekeeper
   - gatekeeper-teams
   - istio-admin
-  - istio-teams
   - k8s-admin
   - k8s-teams
   - minio

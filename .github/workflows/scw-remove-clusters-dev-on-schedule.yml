@@ -21,13 +21,12 @@ jobs:
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
           default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
-      - name: List clusters in dev
+      - name: Delete Clusters and Private Networks in DEV
         run: |
-          echo SCALEWAY_CLUSTER_IDS=$(scw k8s cluster list region=nl-ams -o json | jq -r '.[] | select(.project_id == "${{ secrets.SCW_DEFAULT_PROJECT_ID }}") | .id') >> $GITHUB_ENV
-      - name: Delete clusters in dev
-        run: |
-          for cluster_id in ${{ env.SCALEWAY_CLUSTER_IDS }}
-          do
-            scw k8s cluster delete ${{ env.SCALEWAY_CLUSTER_IDS }} with-additional-resources=true region=nl-ams
-            echo "Deleted cluster ID: $cluster_id"
-          done
+          SCALEWAY_CLUSTER_IDS=$(scw k8s cluster list region=nl-ams -o json | jq -r '.[] | select(.project_id == "${{ secrets.SCW_DEFAULT_PROJECT_ID }}") | .id')
+          echo Deleting Cluster\(s\) with ID\(s\): $SCALEWAY_CLUSTER_IDS
+          scw k8s cluster delete $SCALEWAY_CLUSTER_IDS with-additional-resources=true region=nl-ams --wait
+
+          PRIVATE_NETWORK_IDS=$(scw vpc private-network list region=nl-ams -o json | jq -r '.[] | select(.project_id == "${{ secrets.SCW_DEFAULT_PROJECT_ID }}") | .id')
+          echo Deleting Private Network\(s\) with ID\(s\):
+          scw vpc private-network delete region=nl-ams $PRIVATE_NETWORK_IDS

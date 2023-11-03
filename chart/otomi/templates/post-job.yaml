@@ -21,12 +21,22 @@ spec:
       restartPolicy: Never
       serviceAccountName: {{ include "otomi.fullname" . }}
       securityContext:
+        runAsNonRoot: true
         runAsUser: 999
         runAsGroup: 999
+        fsGroup: 3000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: destroy
           image: otomi/core:{{ $version }}
           imagePullPolicy: {{ ternary "IfNotPresent" "Always" (regexMatch "^v\\d" $version) }} 
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
           resources:
             limits:
               memory: 2Gi

@@ -302,6 +302,9 @@ spec:
             {{- end }}
           {{- end }}
           env:
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             {{- if eq .Values.provider "akamai" }}
             # Akamai environment variables
             {{- if .Values.akamai.host }}
@@ -367,6 +370,13 @@ spec:
                   optional: true
             - name: CF_API_EMAIL
               value: {{ .Values.cloudflare.email | quote }}
+            {{- end }}
+            {{- if eq .Values.provider "civo" }}
+            - name: CIVO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "external-dns.secretName" . }}
+                  key: apiToken
             {{- end }}
             {{- if eq .Values.provider "coredns" }}
             # CoreDNS environment variables

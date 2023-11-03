@@ -1,8 +1,0 @@
-Thank you for installing {{ .Chart.Name | upper }}.
-
-Your release is named {{ .Release.Name }}.
-
-Here is how to access the KubeClarity UI:
-
-    $ kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "kubeclarity.name" . }} 9999:8080
-    $ Open KubeClarity UI in the browser: http://localhost:9999/

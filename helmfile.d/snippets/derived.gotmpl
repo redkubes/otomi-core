@@ -97,8 +97,6 @@ environments:
           gitea:
             enabled: {{ and (eq $droneProvider "gitea") (eq ($a | get "drone.sourceControl.gitea.server" $giteaUrl) $giteaUrl) }}
             adminPassword: {{ $a | get "gitea.adminPassword" $v.otomi.adminPassword }}
-          host-mods:
-            enabled: {{ $a | get "host-mods.enabled" $untrustedCA }}
           ingress-azure:
             enabled: {{ and (eq $provider "azure") $v.otomi.hasCloudLB (not $v.azure.appgw.isManaged) }}
           keycloak:
@@ -112,8 +110,6 @@ environments:
           snapshot-controller:
             # TODO: upgrade snapshot-controller from piraeus-charts/snapshot-controller and toggle below:
             enabled: false # {{ $a | get "snapshot-controller.enabled" (and (eq $provider "aws") (gt ($v.cluster.k8sVersion | float64) 1.22)) }}
-          tigera-operator:
-            enabled: {{ $a | get "tigera-operator.enabled" (eq $provider "aws") }}
           {{- if $v.otomi.hasCloudLB }}
           istio: 
             meshConfig:

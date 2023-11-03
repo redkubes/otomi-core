@@ -1,2 +1,0 @@
-You should be able to access Trivy server installation within
-the cluster at http://{{ include "trivy.fullname" . }}.{{ .Release.Namespace }}:{{ .Values.service.port }}

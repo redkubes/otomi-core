@@ -22,17 +22,19 @@ spec:
       annotations:
         argocd-image-updater.argoproj.io/team-{{ $v.teamId }}-{{ .name }}.force-update: 'true'
         argocd-image-updater.argoproj.io/team-{{ $v.teamId }}-{{ .name }}.pull-secret: 'pullsecret:argocd/copy-team-{{ $v.teamId }}-harbor-pullsecret'
-        argocd-image-updater.argoproj.io/team-{{ $v.teamId }}-{{ .name }}.update-strategy: '{{ $a.type }}'
         argocd-image-updater.argoproj.io/git-branch: '{{ .revision }}'
         argocd-image-updater.argoproj.io/write-back-method: 'git:secret:argocd/team-{{ $v.teamId }}-gitea-repo-creds'
-        {{- if eq $a.type "semver" }}
-        argocd-image-updater.argoproj.io/image-list: 'team-{{ $v.teamId }}-{{ .name }}=harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ $a.build }}:~{{ $a.semver.versionConstraint }}'
+        {{- if eq $a.strategy.type "semver" }}
+        argocd-image-updater.argoproj.io/image-list: 'team-{{ $v.teamId }}-{{ .name }}=harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ $a.build }}:~{{ $a.strategy.semver.versionConstraint }}'
+        argocd-image-updater.argoproj.io/team-{{ $v.teamId }}-{{ .name }}.update-strategy: 'semver'
         {{- end }}
-        {{- if eq $a.type "digest" }}
-        argocd-image-updater.argoproj.io/image-list: 'team-{{ $v.teamId }}-{{ .name }}=harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ $a.build }}:{{ $a.digest.tag }}'
+        {{- if eq $a.strategy.type "digest" }}
+        argocd-image-updater.argoproj.io/image-list: 'team-{{ $v.teamId }}-{{ .name }}=harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ $a.build }}:{{ $a.strategy.digest.tag }}'
+        argocd-image-updater.argoproj.io/team-{{ $v.teamId }}-{{ .name }}.update-strategy: 'digest'
         {{- end }}
-        {{- if eq $a.type "latest" }}
+        {{- if eq $a.strategy.type "latest" }}
         argocd-image-updater.argoproj.io/image-list: 'team-{{ $v.teamId }}-{{ .name }}=harbor.{{ $v.cluster.domainSuffix }}/team-{{ $v.teamId }}/{{ $a.build }}'
+        argocd-image-updater.argoproj.io/team-{{ $v.teamId }}-{{ .name }}.update-strategy: 'latest'
         {{- end }}
       {{- end }}
     spec:

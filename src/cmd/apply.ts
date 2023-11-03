@@ -12,7 +12,7 @@ import { HelmArguments, getParsedArgs, helmOptions, setParsedArgs } from 'src/co
 import { ProcessOutputTrimmed } from 'src/common/zx-enhance'
 import { Argv, CommandModule } from 'yargs'
 import { $, nothrow } from 'zx'
-import { commit, printWelcomeMessage } from './commit'
+import { cloneOtomiChartsInGitea, commit, printWelcomeMessage } from './commit'
 import { upgrade } from './upgrade'
 
 const cmdName = getFilename(__filename)
@@ -85,6 +85,7 @@ const applyAll = async () => {
 
   const intitalInstall = isEmpty(prevState.version)
   await upgrade({ when: 'post' })
+  await cloneOtomiChartsInGitea()
   if (!(env.isDev && env.DISABLE_SYNC)) {
     await commit()
     if (intitalInstall) {

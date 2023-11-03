@@ -64,9 +64,6 @@ k8s:
     - name: kured
       app: kured
       disableIstioInjection: true
-    - name: kubeclarity
-      app: kubeclarity
-      disableIstioInjection: true
     - name: tekton-pipelines
       app: tekton
       disableIstioInjection: true
@@ -109,9 +106,6 @@ k8s:
       app: prometheus
       disableIstioInjection: true
     - name: team-admin
-    - name: tigera-operator
-      disableIstioInjection: true
-      disablePolicyChecks: true
     - name: trivy-operator
       app: trivy
       disableIstioInjection: true
@@ -183,7 +177,6 @@ adminApps:
   - name: falco
     tags: [security]
     deps: [prometheus]
-    isShared: true
     ownHost: true
     ingress:
       - namespace: falco
@@ -258,7 +251,6 @@ adminApps:
   - name: jaeger
     tags: [ingress, telemetry, observability]
     deps: [istio]
-    isShared: true
     ingress:
       - svc: jaeger-operator-jaeger-query
         port: 16686
@@ -305,16 +297,6 @@ adminApps:
         namespace: kubeapps
         type: public
         # auth: true
-  - name: kubeclarity
-    tags: [security]
-    ownHost: true
-    isShared: true
-    ingress:
-      - svc: kubeclarity
-        namespace: kubeclarity
-        port: 8080
-        type: public
-        auth: true
   - name: kured
     tags: [security]
   - name: tekton

@@ -1,14 +1,14 @@
 import { config } from 'dotenv'
 import {
-  bool,
-  CleanedEnvAccessors,
-  cleanEnv as clean,
   CleanOptions,
+  CleanedEnvAccessors,
+  ValidatorSpec,
+  bool,
+  cleanEnv as clean,
   json,
   makeValidator,
   num,
   str,
-  ValidatorSpec,
 } from 'envalid'
 import { existsSync } from 'fs'
 
@@ -28,6 +28,10 @@ export const cliEnvSpec = {
   KUBE_VERSION_OVERRIDE: str({ default: undefined }),
   NODE_TLS_REJECT_UNAUTHORIZED: bool({ default: true }),
   OTOMI_DEV: bool({ default: false }),
+  OTOMI_CHARTS_URL: str({
+    default: 'https://github.com/redkubes/otomi-charts.git',
+    desc: 'The otomi-charts repository url to clone into Gitea',
+  }),
   OTOMI_IN_TERMINAL: bool({ default: true }),
   STATIC_COLORS: bool({ default: false }),
   TRACE: bool({ default: false }),

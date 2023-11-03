@@ -24,13 +24,6 @@ releases:
     installed: {{ $a | get "metrics-server.enabled" }}
     namespace: kube-system
     <<: *default
-  - name: tigera-operator
-    installed: {{ $a | get "tigera-operator.enabled" }}
-    namespace: tigera-operator
-    labels:
-      init: true
-      pkg: calico
-    <<: *default
   - name: aws-ebs-csi-driver
     installed: {{ $a | get "aws-ebs-csi-driver.enabled" }}
     namespace: kube-system

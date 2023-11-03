@@ -10,8 +10,18 @@ bases:
 {{ readFile "snippets/templates.gotmpl" }}
 {{- $v := .Values }}
 {{- $a := $v.apps }}
+{{- $dns := $v | get "dns" dict }}
+{{- $p := $dns | get "provider" dict }}
 
 releases:
+  - name: cert-manager-webhook-civo
+    installed: {{ hasKey $p "civo" }}
+    namespace: cert-manager
+    labels:
+      pkg: cert-manager
+    chart: ../charts/cert-manager-webhook-civo
+    values:
+      - ../values/cert-manager-webhook-civo/cert-manager-webhook-civo.gotmpl
   - name: cert-manager-artifacts
     installed: true
     namespace: cert-manager

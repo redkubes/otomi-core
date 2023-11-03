@@ -38,7 +38,7 @@
         "dashes": false,
         "datasource": {
           "type": "prometheus",
-          "uid": "P686CB814F81609FC"
+          "uid": "$datasource"
         },
         "description": "",
         "fieldConfig": {
@@ -87,7 +87,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "P686CB814F81609FC"
+              "uid": "$datasource"
             },
             "editorMode": "builder",
             "expr": "rate(falco_events{k8s_ns_name=\"$namespace\"}[5m])",
@@ -131,7 +131,7 @@
         "columns": [],
         "datasource": {
           "type": "prometheus",
-          "uid": "P686CB814F81609FC"
+          "uid": "$datasource"
         },
         "fontSize": "100%",
         "gridPos": {
@@ -230,7 +230,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "P686CB814F81609FC"
+              "uid": "$datasource"
             },
             "editorMode": "builder",
             "expr": "falco_events{k8s_ns_name=\"$namespace\"}",

@@ -1,0 +1,13 @@
+{{- $v := . }}
+{{- $teams := keys $v.teamConfig }}
+apps:
+  argocd:
+    enabled: {{ $v.apps.argocd.enabled }}
+cluster:
+  domainSuffix: {{ $v.cluster.domainSuffix }}
+teamConfig:
+  {{- range $teamId, $team := $v.teamConfig }}
+    {{ $teamId }}:
+      selfService:
+        apps: {{ $team | get "selfService.apps" list}}
+  {{- end }}

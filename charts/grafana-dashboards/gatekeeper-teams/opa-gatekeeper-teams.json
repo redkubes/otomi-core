@@ -58,7 +58,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "P686CB814F81609FC"
+        "uid": "$datasource"
       },
       "description": "Description: The number of requests that are routed to mutation webhook",
       "fieldConfig": {
@@ -137,7 +137,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P686CB814F81609FC"
+            "uid": "$datasource"
           },
           "editorMode": "builder",
           "exemplar": false,
@@ -154,7 +154,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "P686CB814F81609FC"
+        "uid": "$datasource"
       },
       "fieldConfig": {
         "defaults": {
@@ -205,7 +205,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P686CB814F81609FC"
+            "uid": "$datasource"
           },
           "editorMode": "builder",
           "exemplar": true,
@@ -220,7 +220,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P686CB814F81609FC"
+            "uid": "$datasource"
           },
           "exemplar": true,
           "expr": "sum by (violating_name) (opa_scorecard_constraint_violations{violating_namespace=~\"$namespace\"})",
@@ -265,7 +265,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "P686CB814F81609FC"
+        "uid": "$datasource"
       },
       "fieldConfig": {
         "defaults": {
@@ -409,7 +409,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P686CB814F81609FC"
+            "uid": "$datasource"
           },
           "exemplar": false,
           "expr": "sum  by (time, violating_kind, violating_namespace, violating_name, kind, violation_enforcement, violation_msg) rate(opa_scorecard_constraint_violations{violating_namespace=~\"$namespace\"}[5m]))",
@@ -423,7 +423,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P686CB814F81609FC"
+            "uid": "$datasource"
           },
           "exemplar": false,
           "expr": "group(opa_scorecard_constraint_violations{violating_namespace=~\"$namespace\"}) by (time, violating_kind, violating_namespace, violating_name, kind, violation_enforcement, violation_msg)",
@@ -479,7 +479,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "P686CB814F81609FC"
+        "uid": "$datasource"
       },
       "fieldConfig": {
         "defaults": {
@@ -525,7 +525,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P686CB814F81609FC"
+            "uid": "$datasource"
           },
           "exemplar": true,
           "expr": "count by (violating_name) (opa_scorecard_constraint_violations{violating_namespace=~\"$namespace\"})",

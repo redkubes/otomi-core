@@ -1,8 +1,7 @@
 {{- $v := .Values }}
 {{- $c := $v.apps }}
 {{- $g := $c.gitea }}
-{{- $otomiValues := pick $v "cluster" "otomi" "teamConfig" "apps" }}
-
+{{- $otomiValues := tpl (readFile "../../helmfile.d/snippets/values-gitea-prepare.gotmpl") $v | fromYaml | toJson }}
 type: Job
 name: gitea-prepare
 runPolicy: OnSpecChange
@@ -13,7 +12,7 @@ env:
   DRONE_NAMESPACE: drone
 nativeSecrets:
   GITEA_PASSWORD: {{ $g.adminPassword }}
-  OTOMI_VALUES: '{{ $otomiValues | toJson }}'
+  OTOMI_VALUES: '{{ $otomiValues }}'
 annotations:
   {{- if $v | get "policies.banned-image-tags.tags" | has $v.otomi.version }}
   policy.otomi.io/ignore: "banned-image-tags"

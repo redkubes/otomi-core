@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/redkubes/otomi-core/compare/v1.0.0...v1.1.0) (2023-10-17)
+
+
+### Features
+
+* add civo provider ([#1311](https://github.com/redkubes/otomi-core/issues/1311)) ([0ab2617](https://github.com/redkubes/otomi-core/commit/0ab26179be7fb25025fb2167bbf4ddd3a43779fb))
+* enhnace Otomi job security context ([#1322](https://github.com/redkubes/otomi-core/issues/1322)) ([0669e98](https://github.com/redkubes/otomi-core/commit/0669e985701afbf50e36b61d45cbd757aacb7b43))
+* optimise generating gitea job configuration ([#1327](https://github.com/redkubes/otomi-core/issues/1327)) ([3342ac5](https://github.com/redkubes/otomi-core/commit/3342ac513a774416006a0adc33819ad8bb0d7c80))
+* set otomi chart verion 1.0 ([1840df7](https://github.com/redkubes/otomi-core/commit/1840df7a3c5beb5d8d7738af6c0dfc95bcb683c5))
+* workload improvements ([#1310](https://github.com/redkubes/otomi-core/issues/1310)) ([5606a25](https://github.com/redkubes/otomi-core/commit/5606a25cd601aa823b94e7c8a2482e79ddb64c84))
+
+
+### Bug Fixes
+
+* auto image annotations and fixtures ([#1317](https://github.com/redkubes/otomi-core/issues/1317)) ([96c390b](https://github.com/redkubes/otomi-core/commit/96c390b917bd385029a874daa0c544023eaf748f))
+* dockerfile otomi tools script ([#1319](https://github.com/redkubes/otomi-core/issues/1319)) ([829e404](https://github.com/redkubes/otomi-core/commit/829e4040d52770f7e151736f313b057311740139))
+* falco, jaeger and kubeclarity not shared ([#1306](https://github.com/redkubes/otomi-core/issues/1306)) ([047ab76](https://github.com/redkubes/otomi-core/commit/047ab762aba77fb817f747973709788d936137d8))
+* incorrect defaults in backup schedule ([#1318](https://github.com/redkubes/otomi-core/issues/1318)) ([99d9e2f](https://github.com/redkubes/otomi-core/commit/99d9e2f72fa123cee6450838c3232f98aae85629))
+* keycloak theme ([#1326](https://github.com/redkubes/otomi-core/issues/1326)) ([df2bed9](https://github.com/redkubes/otomi-core/commit/df2bed969f3460b64315c97c85ab935adc28f341))
+* readme [ci skip] ([dc4979a](https://github.com/redkubes/otomi-core/commit/dc4979a3b6398cc49c31c3fbab5518bf406d39ea))
+* readme [ci skip] ([8499f08](https://github.com/redkubes/otomi-core/commit/8499f0880ad8e43c1f572787a099578462184caf))
+* readme for 1.0.0 ([#1312](https://github.com/redkubes/otomi-core/issues/1312)) ([20f7b83](https://github.com/redkubes/otomi-core/commit/20f7b835842d221b27a2608b10275a2e5d4e710e))
+* remove tempo link and tempo team app ([#1304](https://github.com/redkubes/otomi-core/issues/1304)) ([42fcc8a](https://github.com/redkubes/otomi-core/commit/42fcc8ac8e4d3948138a126d99d66aef91bde3e5))
+* set versions to main ([71d9430](https://github.com/redkubes/otomi-core/commit/71d9430716922e70da585795d4fc6d7bd4859f0e))
+* use kc theme jar ([#1323](https://github.com/redkubes/otomi-core/issues/1323)) ([9b67d1b](https://github.com/redkubes/otomi-core/commit/9b67d1b2a3f8214eae3a4f26d4784d30ea61f18e))
+
+
+### Tests
+
+* use relative path ([#1315](https://github.com/redkubes/otomi-core/issues/1315)) ([21584e5](https://github.com/redkubes/otomi-core/commit/21584e598fd1034754d2c5dbcaaee61208e9ebf1))
+
+
+### Others
+
+* versions ([#1332](https://github.com/redkubes/otomi-core/issues/1332)) ([f7e406d](https://github.com/redkubes/otomi-core/commit/f7e406dd584aa7363402d6959c48d904cfcc384d))
+
 ## [1.0.0](https://github.com/redkubes/otomi-core/compare/v0.26.0...v1.0.0) (2023-10-05)
 
 

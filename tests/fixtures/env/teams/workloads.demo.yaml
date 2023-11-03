@@ -3,28 +3,38 @@ teamConfig:
         workloads:
             - name: wd1
               url: https://myrepo.local/mychart.git
-              path: /
+              path: ./
               revision: main
               autoUpdate:
-                  digest:
-                      tag: latest
-                  type: digest
+                  strategy:
+                      digest:
+                          tag: latest
+                      type: digest
                   enabled: true
                   build: hello
-                  strategy: semver
             - name: wd2
               url: https://myrepo.local/mychart.git
-              path: /
+              path: ./
+              revision: main
               autoUpdate:
-                  semver:
-                      versionConstraint: '1.12'
-                  type: semver
+                  strategy:
+                      type: semver
+                      semver:
+                          versionConstraint: '1.12'
                   enabled: true
                   build: hello
             - name: wd3
               url: https://myrepo.local/mychart.git
-              path: /
+              path: ./
+              revision: main
               autoUpdate:
-                  type: latest
+                  strategy:
+                      type: latest
                   enabled: true
                   build: hello
+            - name: wd
+              url: https://myrepo.local/mychart.git
+              path: ./
+              revision: main
+              autoUpdate:
+                  enabled: false

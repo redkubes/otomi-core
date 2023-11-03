@@ -35,8 +35,6 @@ environments:
                 memory: 512Mi
           cluster-overprovisioner:
             enabled: false
-          demo-tlspass:
-            enabled: false
           drone:
             enabled: true
             debug: false
@@ -205,8 +203,6 @@ environments:
                 limits:
                   cpu: 400m
                   memory: 512Mi
-          hello:
-            enabled: false
           httpbin:
             enabled: false
           ingress-nginx:
@@ -257,14 +253,14 @@ environments:
                       cpu: 200m
                       memory: 512Mi
                   limits:
-                      cpu: 400m
+                      cpu: 2000m
                       memory: 1Gi
               operator:
                   requests:
                       cpu: 100m
                       memory: 128Mi
                   limits:
-                      cpu: 400m
+                      cpu: 1000m
                       memory: 512Mi
             idp:
               alias: otomi-idp
@@ -303,52 +299,6 @@ environments:
               kubeops:
                 minReplicas: 1
                 maxReplicas: 10
-          kubeclarity:
-            enabled: false
-            logLevel: warning
-            resources:
-              kubeclarity:
-                requests:
-                  memory: 200Mi
-                  cpu: 100m
-                limits:
-                  memory: 1Gi
-                  cpu: '1'
-              cdbScanner:
-                requests:
-                  memory: 50Mi
-                  cpu: 50m
-                limits:
-                  memory: 1Gi
-                  cpu: '1'
-              vulnerabilityScanner:
-                requests:
-                  memory: 256Mi
-                  cpu: 100m
-                limits:
-                  memory: 2Gi
-                  cpu: '1'
-              trivyServer:
-                requests:
-                  cpu: 200m
-                  memory: 200Mi
-                limits:
-                  cpu: '1'
-                  memory: 1Gi
-              sbomDb:
-                requests:
-                  memory: 20Mi
-                  cpu: 10m
-                limits:
-                  memory: 100Mi
-                  cpu: 100m
-              postgresql:              
-                requests:
-                  memory: 256Mi
-                  cpu: 250m
-                limits:
-                  memory: 1Gi
-                  cpu: '1'
           kube-descheduler:
             enabled: false
           kured:

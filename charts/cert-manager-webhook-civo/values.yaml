@@ -1,0 +1,71 @@
+# -- groupName for the webhook, issuers and clusterIssuers must match this
+groupName: civo.webhook.okteto.com
+
+# -- region on CIVO
+region: NYC1
+
+image:
+  # -- Image repository
+  repository: otomi/civo-webhook
+  tag: 0.5.0 
+
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+
+# -- Number of webhook replicas
+replicaCount: 1
+
+# -- Override the name of the created resources
+nameOverride: ""
+
+# -- Override the full name of the created resources
+fullnameOverride: ""
+
+serviceAccount:
+  # -- If true, create a new service account
+  create: true
+
+  # -- Service account to be used. If not set and serviceAccount.create is true, a name is generated using the fullname template
+  name:
+
+certManager:
+  # -- cert-manager's namespace
+  namespace: cert-manager
+
+  # -- cert-manager's serviceAccountName
+  serviceAccountName: cert-manager
+
+service:
+  # -- service type for the webhook API server
+  type: ClusterIP
+  # -- port for the webhook API server
+  port: 443
+
+# -- Optional pod context. The yaml block should adhere to the [PodSecurityContext spec](https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#securitycontext-v1-core)
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 2000
+  fsGroup: 3000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  runAsNonRoot: true
+
+# -- CPU/memory resource requests/limits
+resources: {}
+
+# -- Node labels for pod assignment
+nodeSelector: {}
+
+# -- Node tolerations for pod assignment
+tolerations: []
+
+# -- Node affinity for pod assignment
+affinity: {}

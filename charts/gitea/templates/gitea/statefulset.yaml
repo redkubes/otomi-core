@@ -48,6 +48,8 @@ spec:
       initContainers:
         - name: init-directories
           image: "{{ include "gitea.image" . }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           command: ["/usr/sbin/init_directory_structure.sh"]
           env:
             - name: GITEA_APP_INI
@@ -78,6 +80,8 @@ spec:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
         - name: init-app-ini
           image: "{{ include "gitea.image" . }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           command: ["/usr/sbin/config_environment.sh"]
           env:
             - name: GITEA_APP_INI
@@ -114,6 +118,8 @@ spec:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
         - name: configure-gitea
           image: "{{ include "gitea.image" . }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           command: ["/usr/sbin/configure_gitea.sh"]
           securityContext:
             {{- /* By default this container runs as user 1000 unless otherwise stated */ -}}

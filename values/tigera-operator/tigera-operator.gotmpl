@@ -1,8 +1,0 @@
-
-{{- $v := .Values }}
-{{- $t := $v | get "apps.tigera-operator" }}
-
-{{- with $v.otomi | get "globalPullSecret" nil }}
-imagePullSecrets:
-  - otomi-pullsecret-global
-{{- end }}

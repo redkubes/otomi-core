@@ -13,7 +13,7 @@ cluster: {}
   # name: 'dev'
 
   ## Set provider
-  ## Can be one of aws|azure|google|digitalocean|ovh|vultr|scaleway|custom
+  ## Can be one of aws|azure|google|digitalocean|ovh|vultr|scaleway|civo|custom
   ## Choose 'custom' for Minikube and any other K8s cluster.
   ##
   # provider: 'custom'
@@ -62,7 +62,7 @@ otomi: {}
 #   domainFilters: []
 #   zoneIdFilters: []
 #   provider:
-#     # choose your DNS provider: aws|azure|google|digitalocean|cloudflare|other
+#     # choose your DNS provider: aws|azure|google|digitalocean|civo|cloudflare|other
 #     aws:
 #       # credentials are optional for explicit access with an iam role
 #       # (if no metadata exists with implicit role access to manage dns)
