@@ -1,4 +1,4 @@
-api: main
-console: main
+api: workload-improvement
+console: workload-improvement
 tasks: main
 tools: 1.6.0
