@@ -73,15 +73,25 @@ const applyAll = async () => {
     { streams: { stdout: d.stream.log, stderr: d.stream.error } },
   )
   await prepareDomainSuffix()
-  d.info('Deploying charts containing label stage!=prep')
+
   await hf(
     {
-      labelOpts: [...(argv.label || []), 'stage!=prep'],
+      // 'fileOpts' limits the hf scope and avoids parse errors (we only have basic values in this statege):
+      labelOpts: [...(argv.label || []), 'stage=init'],
       logLevel: logLevelString(),
       args: ['apply'],
     },
     { streams: { stdout: d.stream.log, stderr: d.stream.error } },
   )
+  d.info('Deploying charts containing label stage!=prep')
+  // await hf(
+  //   {
+  //     labelOpts: [...(argv.label || []), 'stage!=prep'],
+  //     logLevel: logLevelString(),
+  //     args: ['apply'],
+  //   },
+  //   { streams: { stdout: d.stream.log, stderr: d.stream.error } },
+  // )
 
   const intitalInstall = isEmpty(prevState.version)
   await upgrade({ when: 'post' })

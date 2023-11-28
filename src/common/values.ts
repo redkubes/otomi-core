@@ -86,10 +86,10 @@ export const getRepo = (values: Record<string, any>): Repo => {
     username = 'otomi-admin'
     password = values?.apps?.gitea?.adminPassword ?? values?.otomi?.adminPassword
     email = `otomi-admin@${clusterDomain}`
-    const giteaUrl = `gitea.${clusterDomain}`
+    const giteaUrl = `gitea-http.gitea.svc.cluster.local:3000`
     const giteaOrg = 'otomi'
     const giteaRepo = 'values'
-    remote = `https://${username}:${encodeURIComponent(password)}@${giteaUrl}/${giteaOrg}/${giteaRepo}.git`
+    remote = `http://${username}:${encodeURIComponent(password)}@${giteaUrl}/${giteaOrg}/${giteaRepo}.git`
   }
   return { remote, branch, email, username, password }
 }

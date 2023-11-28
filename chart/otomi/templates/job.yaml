@@ -45,7 +45,7 @@ spec:
           args:
             - |
               kubectl create ns otomi &> /dev/null
-              binzx/otomi validate-cluster && binzx/otomi bootstrap && binzx/otomi apply
+              binzx/otomi validate-cluster && binzx/otomi bootstrap && binzx/otomi apply -l stage=prep
           env:
             - name: VERBOSITY
               value: '1'

@@ -54,9 +54,12 @@ releases:
     installed: true
     namespace: tekton-pipelines
     labels:
-      pkg: tekton-triggers
+      pkg: tekton-pipelines
+      stage: init
     <<: *default
   - name: otomi-pipelines
     installed: true
     namespace: otomi-pipelines
+    labels:
+      stage: init
     <<: *default

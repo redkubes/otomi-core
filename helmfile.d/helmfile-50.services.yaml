@@ -21,6 +21,7 @@ releases:
     namespace: gitea
     labels:
       pkg: gitea
+      stage: init
     <<: *default
   - name: velero
     installed: {{ $a | get "velero.enabled" }}

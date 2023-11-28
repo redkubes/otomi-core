@@ -17,4 +17,5 @@ releases:
     labels:
       pkg: gitea
       group: jobs
+      stage: init
     <<: *jobs

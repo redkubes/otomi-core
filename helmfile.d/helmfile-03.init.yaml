@@ -36,6 +36,7 @@ releases:
     namespace: gitea
     labels:
       pkg: gitea
+      stage: init
     <<: *raw
   - name: kiali-operator-artifacts
     installed: {{ $a | get "kiali.enabled" }}
@@ -86,6 +87,7 @@ releases:
     namespace: tekton-pipelines
     labels:
       pkg: tekton-pipelines
+      stage: init
     <<: *default
   - name: tekton-dashboard
     installed: true
