@@ -61,9 +61,4 @@ releases:
     labels:
       olm: true
     <<: *default
-  - name: cloudnative-pg
-    installed: true
-    namespace: cnpg-system
-    labels:
-      pkg: cloudnative-pg
-    <<: *default
+

@@ -31,13 +31,6 @@ releases:
       pkg: external-secrets
       group: secrets
     <<: *default
-  - name: gitea-artifacts
-    installed: {{ $a | get "gitea.enabled" }}
-    namespace: gitea
-    labels:
-      pkg: gitea
-      stage: init
-    <<: *raw
   - name: kiali-operator-artifacts
     installed: {{ $a | get "kiali.enabled" }}
     namespace: kiali
@@ -82,13 +75,7 @@ releases:
       - ../values/vault-operator/vault-operator.gotmpl
       - {{- $v.apps.vault | get "_rawValues" dict | toYaml | nindent 8 }}
     <<: *upgrade
-  - name: tekton-pipelines
-    installed: true
-    namespace: tekton-pipelines
-    labels:
-      pkg: tekton-pipelines
-      stage: init
-    <<: *default
+
   - name: tekton-dashboard
     installed: true
     namespace: tekton-pipelines

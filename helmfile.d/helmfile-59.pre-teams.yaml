@@ -11,11 +11,4 @@ bases:
 {{- $v := .Values }}
 {{- $a := $v.apps }}
 
-releases:
-  - name: job-gitea-prepare
-    installed: {{ $a | get "gitea.enabled" }}
-    labels:
-      pkg: gitea
-      group: jobs
-      stage: init
-    <<: *jobs
+releases: []

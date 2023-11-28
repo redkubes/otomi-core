@@ -1,6 +1,7 @@
 import { CommandModule } from 'yargs'
 import { module as applyModule } from './apply'
 import { module as applyE2eModule } from './apply-e2e'
+import { module as applyGitopsModule } from './apply-gitops'
 import { module as bashModule } from './bash'
 import { module as bootstrapModule } from './bootstrap'
 import { module as checkPoliciesModule } from './check-policies'
@@ -31,6 +32,7 @@ import { module as xModule } from './x'
 
 export { module as apply } from './apply'
 export { module as applyE2e } from './apply-e2e'
+export { module as applyGitops } from './apply-gitops'
 export { module as bash } from './bash'
 export { module as bootstrap } from './bootstrap'
 export { module as checkPolicies } from './check-policies'
@@ -59,6 +61,7 @@ export { module as x } from './x'
 
 export const commands: CommandModule[] = [
   applyModule,
+  applyGitopsModule,
   applyE2eModule,
   bashModule,
   bootstrapModule,

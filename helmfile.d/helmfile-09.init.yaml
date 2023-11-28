@@ -50,13 +50,6 @@ releases:
     labels:
       pkg: harbor
     <<: *raw
-  - name: tekton-triggers
-    installed: true
-    namespace: tekton-pipelines
-    labels:
-      pkg: tekton-pipelines
-      stage: init
-    <<: *default
   - name: otomi-pipelines
     installed: true
     namespace: otomi-pipelines

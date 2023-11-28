@@ -16,13 +16,6 @@ releases:
     installed: {{ $a | get "httpbin.enabled" }}
     namespace: httpbin
     <<: *default
-  - name: gitea
-    installed: {{ $a | get "gitea.enabled" }}
-    namespace: gitea
-    labels:
-      pkg: gitea
-      stage: init
-    <<: *default
   - name: velero
     installed: {{ $a | get "velero.enabled" }}
     namespace: velero

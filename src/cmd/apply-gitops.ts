@@ -1,17 +1,14 @@
 import { mkdirSync, rmdirSync, writeFileSync } from 'fs'
+import { prepareDomainSuffix } from 'src/common/bootstrap'
 import { cleanupHandler, prepareEnvironment } from 'src/common/cli'
 import { logLevelString, terminal } from 'src/common/debug'
-import { env } from 'src/common/envalid'
 import { hf } from 'src/common/hf'
-import { getDeploymentState, getHelmReleases, setDeploymentState } from 'src/common/k8s'
 import { getFilename } from 'src/common/utils'
-import { getCurrentVersion, getImageTag, writeValuesToFile } from 'src/common/values'
 import { HelmArguments, getParsedArgs, helmOptions, setParsedArgs } from 'src/common/yargs'
 import { ProcessOutputTrimmed } from 'src/common/zx-enhance'
 import { Argv, CommandModule } from 'yargs'
 import { $ } from 'zx'
-import { cloneOtomiChartsInGitea, commit } from './commit'
-import { upgrade } from './upgrade'
+import { commit, printWelcomeMessage } from './commit'
 
 const cmdName = getFilename(__filename)
 const dir = '/tmp/otomi/'
@@ -28,21 +25,10 @@ const setup = (): void => {
   mkdirSync(dir, { recursive: true })
 }
 
-const applyAll = async () => {
-  const d = terminal(`cmd:${cmdName}:applyAll`)
+const applyGitops = async (): Promise<void> => {
+  const d = terminal(`cmd:${cmdName}:applyGitops`)
   const argv: HelmArguments = getParsedArgs()
-  const prevState = await getDeploymentState()
-
-  await upgrade({ when: 'pre' })
-  d.info('Start apply all')
-  d.debug(`Deployment state: ${JSON.stringify(prevState)}`)
-  const tag = await getImageTag()
-  const version = await getCurrentVersion()
-  await setDeploymentState({ status: 'deploying', deployingTag: tag, deployingVersion: version })
-
-  const state = await getDeploymentState()
-  const releases = await getHelmReleases()
-  await writeValuesToFile(`${env.ENV_DIR}/env/status.yaml`, { status: { otomi: state, helm: releases } }, true)
+  d.info('Start apply init')
 
   const output: ProcessOutputTrimmed = await hf(
     { fileOpts: 'helmfile.tpl/helmfile-init.yaml', args: 'template' },
@@ -56,42 +42,19 @@ const applyAll = async () => {
   const templateOutput = output.stdout
   writeFileSync(templateFile, templateOutput)
   await $`kubectl apply -f ${templateFile}`
-
+  d.info('Deploying apps that are essential for gitops')
   await hf(
     {
-      // 'fileOpts' limits the hf scope and avoids parse errors (we only have basic values in this statege):
-      labelOpts: [...(argv.label || []), 'stage!=init'],
+      fileOpts: 'helmfile.d/helmfile-00.init.yaml',
       logLevel: logLevelString(),
       args: ['apply'],
     },
     { streams: { stdout: d.stream.log, stderr: d.stream.error } },
   )
-
-  await upgrade({ when: 'post' })
-  await cloneOtomiChartsInGitea()
+  await prepareDomainSuffix()
   await commit()
-  await setDeploymentState({ status: 'deployed', version })
-  d.info('Deployment completed')
-}
-
-const apply = async (): Promise<void> => {
-  const d = terminal(`cmd:${cmdName}:apply`)
-  const argv: HelmArguments = getParsedArgs()
-  if (!argv.label && !argv.file) {
-    await applyAll()
-    return
-  }
-  d.info('Start apply')
-  const skipCleanup = argv.skipCleanup ? '--skip-cleanup' : ''
-  await hf(
-    {
-      fileOpts: argv.file,
-      labelOpts: argv.label,
-      logLevel: logLevelString(),
-      args: ['apply', '--include-needs', skipCleanup],
-    },
-    { streams: { stdout: d.stream.log, stderr: d.stream.error } },
-  )
+  await printWelcomeMessage()
+  d.info('Otomi bootstrapped. From here Tekton pipeline is listening to changes in the otomi/values repo in gitea')
 }
 
 export const module: CommandModule = {
@@ -103,6 +66,6 @@ export const module: CommandModule = {
     setParsedArgs(argv)
     setup()
     await prepareEnvironment()
-    await apply()
+    await applyGitops()
   },
 }

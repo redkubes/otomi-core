@@ -1,0 +1,70 @@
+bases:
+  - snippets/defaults.yaml
+---
+bases:
+  - snippets/env.gotmpl
+---
+bases:
+  - snippets/derived.gotmpl
+---
+{{ readFile "snippets/templates.gotmpl" }}
+{{- $v := .Values }}
+{{- $a := $v.apps }}
+
+releases:
+  - name: cloudnative-pg
+    installed: true
+    namespace: cnpg-system
+    labels:
+      pkg: cloudnative-pg
+    <<: *default
+  - name: gitea
+    installed: true
+    namespace: gitea
+    labels:
+      pkg: gitea
+      stage: init
+    <<: *default
+  - name: gitea-artifacts
+    installed: true
+    namespace: gitea
+    labels:
+      pkg: gitea
+      stage: init
+    <<: *raw
+  - name: job-gitea-prepare
+    needs: [gitea/gitea]
+    installed: true
+    labels:
+      pkg: gitea
+      group: jobs
+      stage: init
+    <<: *jobs
+  - name: tekton-pipelines
+    installed: true
+    namespace: tekton-pipelines
+    labels:
+      pkg: tekton-pipelines
+      stage: init
+    <<: *default
+  - name: tekton-triggers
+    needs: [gitea/gitea]
+    installed: true
+    namespace: tekton-pipelines
+    labels:
+      pkg: tekton-pipelines
+      stage: init
+    <<: *default
+  - name: ingress-nginx-platform
+    installed: true
+    namespace: ingress
+    labels:
+      tag: ingress
+      stage: prep
+      class: platform
+      index: 0
+    chart: ../charts/ingress-nginx
+    values:
+      - ../values/ingress-nginx/ingress-nginx.gotmpl
+      - ./snippets/common.gotmpl
+
