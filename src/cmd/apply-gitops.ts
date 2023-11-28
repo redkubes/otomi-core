@@ -45,6 +45,7 @@ const applyGitops = async (): Promise<void> => {
   d.info('Deploying apps that are essential for gitops')
   await hf(
     {
+      labelOpts: [...(argv.label || []), 'stage=prep'],
       fileOpts: 'helmfile.d/helmfile-00.init.yaml',
       logLevel: logLevelString(),
       args: ['apply'],
@@ -52,6 +53,15 @@ const applyGitops = async (): Promise<void> => {
     { streams: { stdout: d.stream.log, stderr: d.stream.error } },
   )
   await prepareDomainSuffix()
+  await hf(
+    {
+      fileOpts: 'helmfile.d/helmfile-00.init.yaml',
+      logLevel: logLevelString(),
+      args: ['apply'],
+    },
+    { streams: { stdout: d.stream.log, stderr: d.stream.error } },
+  )
+
   await commit()
   await printWelcomeMessage()
   d.info('Otomi bootstrapped. From here Tekton pipeline is listening to changes in the otomi/values repo in gitea')
@@ -65,7 +75,7 @@ export const module: CommandModule = {
   handler: async (argv: HelmArguments): Promise<void> => {
     setParsedArgs(argv)
     setup()
-    await prepareEnvironment()
+    await prepareEnvironment({ skipKubeContextCheck: true })
     await applyGitops()
   },
 }

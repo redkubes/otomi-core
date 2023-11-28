@@ -4,8 +4,8 @@ description: A Helm chart for installing otomi in Kubernetes
 home: https://otomi.io/
 icon: https://otomi.io/img/otomi-logo.svg
 type: application
-version: CHART_VERSION_PLACEHOLDER
-appVersion: APP_VERSION_PLACEHOLDER
+version: 1.0.0
+appVersion: 1.0.0
 keywords:
   - otomi
   - otomi.io
