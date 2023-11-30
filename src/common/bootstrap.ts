@@ -85,7 +85,7 @@ export const bootstrapGit = async (inValues?: Record<string, any>): Promise<void
     // finally write back the new values without overwriting existing values
     await writeValues(newValues)
   } catch (e) {
-    d.debug(e)
+    d.warn(e)
     d.info('Remote does not exist yet. Expecting first commit to come later.')
   }
   if (isCli) await copyFile(`${rootDir}/bin/hooks/pre-commit`, `${env.ENV_DIR}/.git/hooks/pre-commit`)

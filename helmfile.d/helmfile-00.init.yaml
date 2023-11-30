@@ -55,6 +55,13 @@ releases:
       pkg: tekton-pipelines
       stage: init
     <<: *default
+  - name: otomi-pipelines
+    needs: [tekton-pipelines/tekton-triggers, tekton-pipelines/tekton-pipelines]
+    installed: true
+    namespace: otomi-pipelines
+    labels:
+      stage: init
+    <<: *default
   - name: ingress-nginx-platform
     installed: true
     namespace: ingress

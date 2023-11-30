@@ -114,17 +114,17 @@ gitea:
       enabled: true
       additionalLabels:
         prometheus: system
-  oauth:
-    - name: {{ $k.idp.alias }}
-      provider: openidConnect
-      key: {{ $k.idp.clientID  }}
-      secret: {{ $k.idp.clientSecret }}
-      autoDiscoverUrl: {{ $v._derived.oidcWellKnownUrl }}
-      # autoDiscoverUrlBackchannel: {{ $v._derived.oidcWellKnownUrlBackchannel }}
-      autoDiscoverUrlBackchannel: {{ $v._derived.oidcWellKnownUrl }}
-      adminGroup: team-admin
-      groupClaimName: groups
-      groupTeamMap: {{ toJson $teamData | quote }}
+  # oauth:
+  #   - name: {{ $k.idp.alias }}
+  #     provider: openidConnect
+  #     key: {{ $k.idp.clientID  }}
+  #     secret: {{ $k.idp.clientSecret }}
+  #     autoDiscoverUrl: {{ $v._derived.oidcWellKnownUrl }}
+  #     # autoDiscoverUrlBackchannel: {{ $v._derived.oidcWellKnownUrlBackchannel }}
+  #     autoDiscoverUrlBackchannel: {{ $v._derived.oidcWellKnownUrl }}
+  #     adminGroup: team-admin
+  #     groupClaimName: groups
+  #     groupTeamMap: {{ toJson $teamData | quote }}
 
 init:
   resources:

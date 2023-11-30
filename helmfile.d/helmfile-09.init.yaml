@@ -50,9 +50,3 @@ releases:
     labels:
       pkg: harbor
     <<: *raw
-  - name: otomi-pipelines
-    installed: true
-    namespace: otomi-pipelines
-    labels:
-      stage: init
-    <<: *default

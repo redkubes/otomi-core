@@ -29,6 +29,8 @@ const applyGitops = async (): Promise<void> => {
   const d = terminal(`cmd:${cmdName}:applyGitops`)
   const argv: HelmArguments = getParsedArgs()
   d.info('Start apply init')
+  await $`kubectl apply -f charts/kube-prometheus-stack/crds --server-side`
+  await $`kubectl apply -f charts/tekton-triggers/crds/crds.yaml --server-side`
 
   const output: ProcessOutputTrimmed = await hf(
     { fileOpts: 'helmfile.tpl/helmfile-init.yaml', args: 'template' },

@@ -4,7 +4,6 @@ import { encrypt } from 'src/common/crypt'
 import { terminal } from 'src/common/debug'
 import { env, isCi } from 'src/common/envalid'
 import { hfValues } from 'src/common/hf'
-import { waitTillAvailable } from 'src/common/k8s'
 import { getFilename } from 'src/common/utils'
 import { getRepo } from 'src/common/values'
 import { HelmArguments, getParsedArgs, setParsedArgs } from 'src/common/yargs'
@@ -26,10 +25,12 @@ const commitAndPush = async (values: Record<string, any>, branch: string): Promi
   const argv = getParsedArgs()
   const message = isCi ? 'updated values [ci skip]' : argv.message || 'otomi commit'
   cd(env.ENV_DIR)
+  $`find .`
   try {
     await $`git add -A`
     await $`git commit -m ${message} --no-verify`
   } catch (e) {
+    d.info(e)
     d.log('Could not commit. Did you make any changes?')
     return
   }
@@ -49,14 +50,14 @@ export const commit = async (): Promise<void> => {
   await bootstrapGit(values)
   const { username, password, remote, branch } = getRepo(values)
   // lets wait until the remote is ready
-  if (values?.apps!.gitea!.enabled ?? true) {
-    await waitTillAvailable(remote, {
-      status: 200,
-      skipSsl: values._derived?.untrustedCA,
-      username,
-      password,
-    })
-  }
+  // if (values?.apps!.gitea!.enabled ?? true) {
+  //   await waitTillAvailable(remote, {
+  //     status: 200,
+  //     skipSsl: values._derived?.untrustedCA,
+  //     username,
+  //     password,
+  //   })
+  // }
   // continue
   await genDrone()
   await encrypt()
