@@ -1,4 +1,4 @@
-api: main
-console: main
+api: yaml-comments
+console: yaml-comments
 tasks: 2.0.0
 tools: 1.6.0
