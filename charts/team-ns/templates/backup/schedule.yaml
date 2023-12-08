@@ -6,7 +6,7 @@
 apiVersion: velero.io/v1
 kind: Schedule
 metadata:
-  name: team-{{ $v.teamId }}-backup-{{ .name }}
+  name: {{ .name }}-{{ $v.teamId }}-{{ $v.cluster.apiName }}
   namespace: velero
 spec:
   schedule: {{ .schedule }}
