@@ -1,4 +1,4 @@
-api: main
-console: main
+api: status-mvp1
+console: status-mvp1
 tasks: 2.0.0
 tools: 1.6.0
