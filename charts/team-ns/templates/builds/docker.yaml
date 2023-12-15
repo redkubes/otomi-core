@@ -61,6 +61,7 @@ spec:
           {{- include "team-ns.chart-labels" $ | nindent 10 }}
         annotations:
           sidecar.istio.io/inject: "false"
+          argocd.argoproj.io/skip-reconcile: "true"
       spec:
         pipelineRef:
           name: docker-build-{{ .name }}
