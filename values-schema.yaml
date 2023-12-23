@@ -1249,6 +1249,8 @@ definitions:
             type: boolean
             default: false
           alertmanager:
+            type: boolean
+            default: false
       networkPolicy:
         ingressPrivate:
           title: Enable filtering of ingress traffic inside the cluster
