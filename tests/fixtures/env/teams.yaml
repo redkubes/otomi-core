@@ -10,8 +10,10 @@ teamConfig:
                 channel: aaaaa
                 channelCrit: aaaaa
                 url: https://slack.con
-        monitoringStack:
-            enabled: true
+        managedMonitoring:
+            grafana: true
+            prometheus: false
+            alertmanager: false
         billingAlertQuotas:
             teamCpuMonthQuotaReached:
                 quota: 150

@@ -332,6 +332,8 @@ grafana:
     server:
       root_url: https://{{ $grafanaDomain }}
       # serve_from_sub_path: true
+    security:
+      allow_embedding: true
 
 kube-state-metrics:
   prometheus:

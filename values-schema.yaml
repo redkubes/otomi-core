@@ -1238,11 +1238,17 @@ definitions:
         items:
           $ref: '#/definitions/service'
         type: array
-      monitoringStack:
+      managedMonitoring:
+        title: Managed monitoring
+        description: Activate managed Grafana, Prometheus or Alertmanager instances
         properties:
-          enabled:
+          grafana:
+            type: boolean
+            default: true
+          prometheus:
             type: boolean
             default: false
+          alertmanager:
       networkPolicy:
         ingressPrivate:
           title: Enable filtering of ingress traffic inside the cluster
