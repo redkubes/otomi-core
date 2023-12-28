@@ -15,6 +15,8 @@ spec:
       description: Otomi version as in values/env/settings.yaml
     - name: TRIGGER_TEAMS_PIPELINE
       description: Determine if the otomi-task-teams is about to run
+    - name: TRIGGER_PLATFORM_PIPELINE
+      description: Determine if the otomi-task is about to run
   workspaces:
     - name: source
       mountPath: /home/app/stack/env/
@@ -66,6 +68,11 @@ spec:
         # Check if team files has been changed
         if git diff --name-only  HEAD~1 | grep  -e "env/.*.teams" -e "env/teams"; then
           echo -n "1" > $(results.TRIGGER_TEAMS_PIPELINE.path) 
+        fi
+
+        # Check if there is any other change than in teams/ dir
+        if git diff --name-only HEAD~1 | grep -v "env/teams/"; then
+          echo -n "1" > $(results.TRIGGER_PLATFORM_PIPELINE.path)
         fi
       args:
         - '$(params["commitMessage"])'

@@ -50,6 +50,9 @@ spec:
         - input: $(tasks.otomi-git-clone.results.CI)
           operator: in
           values: ['1']
+        - input: $(tasks.otomi-git-clone.results.TRIGGER_PLATFORM_PIPELINE)
+          operator: in
+          values: ['1']
     - name: otomi-task-teams
       params:
         - name: repoUrl
