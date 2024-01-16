@@ -13,3 +13,6 @@ resources:
     data:
       password: {{ .Values.otomi.adminPassword | b64enc }}
       username: {{ .Values.apps.keycloak.adminUsername | b64enc }}
+walStorage:
+  storageClass: "default"
+  size: 5Gi

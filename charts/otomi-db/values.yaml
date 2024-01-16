@@ -8,7 +8,7 @@ storage:
   storageClass: ""
   size: 5Gi
 walStorage:
-  storageClass: ""
+  storageClass: "default"
   size: 5Gi
 
 monitoring: true
