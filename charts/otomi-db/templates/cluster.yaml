@@ -23,7 +23,9 @@ spec:
     storageClass: {{ . }}
     {{- end }}
     size: {{ .Values.walStorage.size }}
-
+  postgresql:
+    parameters:
+      archive_mode: "off"
   {{- with .Values.monitoring }}
   monitoring:
     enablePodMonitor: {{ . }}
