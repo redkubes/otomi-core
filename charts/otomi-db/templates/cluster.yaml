@@ -25,7 +25,7 @@ spec:
     size: {{ .Values.walStorage.size }}
   postgresql:
     parameters:
-      archive_mode: "off"
+      archive_timeout: "360m"
   {{- with .Values.monitoring }}
   monitoring:
     enablePodMonitor: {{ . }}
