@@ -12,47 +12,17 @@ bases:
 {{- $a := $v.apps }}
 
 releases:
+  - name: kyverno
+    installed: {{ $a | get "kyverno.enabled" }}
+    namespace: kyverno
+    <<: *default
+  - name: kyverno-artifacts
+    installed: {{ $a | get "kyverno.enabled" }}
+    namespace: kyverno
+    labels:
+      pkg: kyverno
+    <<: *raw
   - name: sealed-secrets
     installed: {{ $a | get "sealed-secrets.enabled" }}
     namespace: sealed-secrets
     <<: *default
-  - name: gatekeeper
-    installed: {{ $a | get "gatekeeper.enabled" }}
-    namespace: gatekeeper-system
-    chart: ../charts/gatekeeper
-    labels:
-      pkg: gatekeeper
-    values:
-      - ../values/gatekeeper/gatekeeper.gotmpl
-      - snippets/common.gotmpl
-    <<: *upgrade
-  - name: gatekeeper-artifacts
-    installed: {{ $a | get "gatekeeper.enabled" }}
-    needs: [gatekeeper]
-    namespace: gatekeeper-system
-    chart: ../charts/gatekeeper-artifacts
-    # we have to disable validation as helmfile has a bug (it aggregates all manifests for all deps)
-    # https://github.com/helmfile/helmfile/issues/208 (TODO: check for updates)
-    disableValidationOnInstall: true
-    labels:
-      pkg: gatekeeper
-    hooks:
-      - events: [prepare]
-        showlogs: true
-        command: ../bin/build-gatekeeper-artifacts.sh
-        args: [true]
-    values:
-      - ../values/gatekeeper/gatekeeper-artifacts.gotmpl
-      - snippets/common.gotmpl
-  - name: gatekeeper-constraints
-    installed: {{ $a | get "gatekeeper.enabled" }}
-    needs: [gatekeeper-artifacts]
-    namespace: gatekeeper-system
-    chart: ../charts/gatekeeper-constraints
-    # same here:
-    disableValidationOnInstall: true
-    labels:
-      pkg: gatekeeper
-    values:
-      - ../values/gatekeeper/gatekeeper-constraints.gotmpl
-      - snippets/common.gotmpl

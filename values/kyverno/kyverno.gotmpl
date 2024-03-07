@@ -1,0 +1,77 @@
+{{- $v := .Values -}}
+{{- $kv := $v.apps.kyverno -}}
+
+cleanupJobs:
+  admissionReports:
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+  clusterAdmissionReports:
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+
+admissionController:
+  {{- if eq $kv.mode "DevTest" }}
+  replicas: 1
+  {{- end }}
+  {{- if eq $kv.mode "Prod" }}
+  replicas: 3
+  {{- end }}
+  initContainer:
+    resources:
+      limits:
+        cpu: 1
+  serviceMonitor:
+    enabled: true
+    additionalLabels:
+      prometheus: systen
+  container:
+    resources: {{- $kv.resources.admissionController | toYaml | nindent 6 }}
+
+cleanupController:
+  {{- if eq $kv.mode "DevTest" }}
+  replicas: 1
+  {{- end }}
+  {{- if eq $kv.mode "Prod" }}
+  replicas: 3
+  {{- end }}
+  resources: {{- $kv.resources.cleanupController | toYaml | nindent 4 }}
+
+backgroundController:
+  {{- if eq $kv.mode "DevTest" }}
+  replicas: 1
+  {{- end }}
+  {{- if eq $kv.mode "Prod" }}
+  replicas: 2
+  {{- end }}
+  resources: {{- $kv.resources.backgroundController | toYaml | nindent 4 }}
+  serviceMonitor:
+    enabled: true
+    additionalLabels:
+      prometheus: systen
+
+reportsController:
+  {{- if eq $kv.mode "DevTest" }}
+  replicas: 1
+  {{- end }}
+  {{- if eq $kv.mode "Prod" }}
+  replicas: 2
+  {{- end }}
+  resources: {{- $kv.resources.reportsController | toYaml | nindent 4 }}
+
+features:
+  logging:
+    # -- Logging format
+    format: text
+    # -- Logging verbosity
+    # kyverno generates a lot of logs. Set to a higher value when required
+    verbosity: 1
+
+config:
+  # -- Exclude Kyverno namespace
+  # Determines if default Kyverno namespace exclusion is enabled for webhooks and resourceFilters
+  # required for nodeAffinity (alse force kyverno to disired nodes)
+  excludeKyvernoNamespace: true

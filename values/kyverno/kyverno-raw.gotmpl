@@ -1,0 +1,80 @@
+{{- $v := .Values -}}
+{{- with $v.otomi | get "nodeSelector" nil }}
+resources:
+  - apiVersion: kyverno.io/v1
+    kind: ClusterPolicy
+    metadata:
+      name: require-otomi-node-selector
+    spec:
+      background: false
+      rules:
+      - name: otomi-all-node-selector
+        match:
+          any:
+          - resources:
+              kinds:
+              - Pod
+              namespaces:
+              - otomi
+              - harbor
+              - keycloak
+              - tempo
+              - otel
+              - jaeger
+              - grafana
+              - istio-system
+              - istio-operator
+              - knative-serving
+              - gitea
+              - gitea-operator
+              - cert-manager
+              - tekton-pipelines
+              - tekton-triggers
+              - tekton-pipelines-resolvers
+              - otomi-pipelines
+              - otomi-operator
+              - maintenance
+              - external-secrets
+              - external-dns
+              - ingress
+              - cnpg-system
+              - kyverno
+              - minio
+              - vault
+              - trivy-operator
+          - resources:
+              kinds:
+              - Pod
+              namespaces:
+              - monitoring
+              names:
+              - "prometheus-po-prometheus-*"
+              - "po-operator-*"
+              - "prometheus-blackbox-exporter-*"
+              - "prometheus-operator-kube-state-metrics-*"
+              - "loki-*"
+        mutate:
+          patchStrategicMerge:
+            spec:
+              nodeSelector:
+                {{- range $key, $val := . }}
+                {{ $key }}: {{ $val }}
+                {{- end }}
+      - name: otomi-taskrun-node-selector
+        match:
+          any:
+          - resources:
+              kinds:
+              - TaskRun
+              namespaces:
+              - otomi-pipelines
+        mutate:
+          patchStrategicMerge:
+            spec:
+              podTemplate:
+                nodeSelector:
+                  {{- range $key, $val := . }}
+                  {{ $key }}: {{ $val }}
+                  {{- end }}
+{{- end }}
+app.kubernetes.io/instance: loki

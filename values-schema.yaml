@@ -1273,6 +1273,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/project'
+      policies:
+        type: array
+        items:
+          $ref: '#/definitions/policies'
       builds:
         type: array
         items:
@@ -1350,6 +1354,32 @@ definitions:
       name:
         description: Name of the project
         $ref: '#/definitions/wordCharacterPattern'
+    required:
+      - name
+  policies:
+    type: object
+    properties:
+      name:
+        description: Name of policy
+        $ref: '#/definitions/wordCharacterPattern'
+      profile:
+        description: Profile that contains this policy
+        $ref: '#/definitions/wordCharacterPattern'
+      action:
+        type: string
+        enum: ['Audit', 'Enforce']
+        default: Audit
+      description:
+        description: Description of the policy
+        type: string
+      enabled:
+        type: boolean
+      severity:
+        type: string
+        enum: ['low', 'medium', 'high']
+        default: medium
+      customValues:
+        type: array
     required:
       - name
   build:
@@ -1976,65 +2006,6 @@ properties:
                 $ref: '#/definitions/resources'
               falcoExporter:
                 $ref: '#/definitions/resources'
-      gatekeeper:
-        additionalProperties: false
-        properties:
-          _rawValues:
-            $ref: '#/definitions/rawValues'
-          enabled:
-            type: boolean
-            default: false
-          auditInterval:
-            type: integer
-            default: 60
-          auditFromCache:
-            type: boolean
-            default: false
-          constraintViolationsLimit:
-            type: integer
-            default: 20
-          dataSync:
-            type: array
-            items:
-              type: object
-              properties:
-                group:
-                  description: A k8s resource api group.
-                  type: string
-                kind:
-                  description: A k8s resource kind.
-                  type: string
-                version:
-                  description: A k8s resource version.
-                  type: string
-              required: [kind, version]
-          disableValidatingWebhook:
-            type: boolean
-            default: true
-          excludedNamespaces:
-            type: array
-            items:
-              type: string
-          emitAuditEvents:
-            type: boolean
-            default: false
-          emitAdmissionEvents:
-            type: boolean
-            default: false
-          logLevel:
-            type: string
-            default: 'INFO'
-          replicas:
-            type: integer
-          image:
-            $ref: '#/definitions/imageSimple'
-          resources:
-            additionalProperties: false
-            properties:
-              audit:
-                $ref: '#/definitions/resources'
-              controller:
-                $ref: '#/definitions/resources'
       gitea:
         properties:
           _rawValues:
@@ -2417,6 +2388,30 @@ properties:
                 $ref: '#/definitions/resources'
               operator:
                 $ref: '#/definitions/resources'
+      kyverno:
+        additionalProperties: false
+        properties:
+          enabled:
+            type: boolean
+            default: false
+          _rawValues:
+            $ref: '#/definitions/rawValues'
+          mode:
+            type: string
+            enum: ['DevTest', 'Prod']
+            default: DevTest
+          resources:
+            additionalProperties: false
+            properties:
+              admissionController:
+                $ref: '#/definitions/resources'
+              cleanupController:
+                $ref: '#/definitions/resources'
+              backgroundController:
+                $ref: '#/definitions/resources'
+              reportsController:
+                $ref: '#/definitions/resources'
+
       kiali:
         additionalProperties: false
         properties:
@@ -2670,14 +2665,6 @@ properties:
                 x-secret: '{{ randAlphaNum 32 | b64enc }}'
       oauth2-proxy-redis:
         $ref: '#/definitions/redisChart'
-      opa-exporter:
-        description: Expose OPA/Gatekeeper Constraint Violations metrics.
-        properties:
-          _rawValues:
-            $ref: '#/definitions/rawValues'
-          enabled:
-            type: boolean
-            default: false
       opencost:
         additionalProperties: false
         properties:
@@ -3763,205 +3750,6 @@ properties:
         default: latest
         description: 'Best pin this to a valid release version found in the repo.'
         pattern: '(v[0-9]+.[0-9]+.[0-9]+|[a-zA-Z]+[a-zA-Z0-9-])'
-  policies:
-    type: object
-    description: |
-      List of policy objects used by Open Policy Agent tools (Conftest, Gatekeeper) to run policy based validation against both in-cluster Kubernetes contexts and plain Yaml resources
-    additionalProperties: false
-    properties:
-      banned-image-tags:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          tags:
-            type: array
-            items:
-              $ref: '#/definitions/wordCharacterPattern'
-          enabled:
-            type: boolean
-            default: false
-      container-limits:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          cpu:
-            '$ref': '#/definitions/cpuQuantity'
-          memory:
-            '$ref': '#/definitions/memoryQuantity'
-          enabled:
-            type: boolean
-            default: false
-      psp-allowed-repos:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          repos:
-            type: array
-            items:
-              $ref: '#/definitions/wordCharacterPattern'
-          enabled:
-            type: boolean
-            default: false
-      psp-host-filesystem:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          allowedHostPaths:
-            type: array
-            items:
-              type: object
-              required: [pathPrefix, readOnly]
-              properties:
-                pathPrefix:
-                  type: string
-                readOnly:
-                  type: boolean
-              additionalProperties: false
-          enabled:
-            type: boolean
-            default: false
-      psp-allowed-users:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          runAsUser:
-            type: object
-            additionalProperties: false
-            required: [rule]
-            properties:
-              rule:
-                type: string
-                enum: [RunAsAny, MustRunAsNonRoot, MustRunAs]
-              ranges:
-                type: array
-                items:
-                  $ref: '#/definitions/unixOwnerIdRange'
-          runAsGroup:
-            type: object
-            properties:
-              rule:
-                type: string
-                enum: [RunAsAny, MayRunAs, MustRunAs]
-              ranges:
-                type: array
-                items:
-                  $ref: '#/definitions/unixOwnerIdRange'
-          supplementalGroups:
-            type: object
-            properties:
-              rule:
-                type: string
-                enum: [RunAsAny, MayRunAs, MustRunAs]
-              ranges:
-                type: array
-                items:
-                  $ref: '#/definitions/unixOwnerIdRange'
-          fsGroup:
-            type: object
-            properties:
-              rule:
-                type: string
-                enum: [RunAsAny, MayRunAs, MustRunAs]
-              ranges:
-                type: array
-                items:
-                  $ref: '#/definitions/unixOwnerIdRange'
-          enabled:
-            type: boolean
-            default: false
-      psp-host-security:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-      psp-host-networking-ports:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-      psp-privileged:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-      psp-capabilities:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-          allowedCapabilities:
-            type: array
-            items:
-              type: string
-          requiredDropCapabilities:
-            type: array
-            items:
-              type: string
-      psp-forbidden-sysctls:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-          forbiddenSysctls:
-            type: array
-            items:
-              type: string
-      psp-apparmor:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-          allowedProfiles:
-            type: array
-            items:
-              type: string
-      psp-seccomp:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-          allowedProfiles:
-            type: array
-            items:
-              type: string
-      psp-selinux:
-        additionalProperties: false
-        required: [enabled]
-        properties:
-          enabled:
-            type: boolean
-            default: false
-          seLinuxContext:
-            type: string
-            enum: [MustRunAs, RunAsAny]
-          allowedSELinuxOptions:
-            type: array
-            items:
-              type: object
-              additionalProperties: false
-              properties:
-                level:
-                  $ref: '#/definitions/wordCharacterPattern'
-                role:
-                  $ref: '#/definitions/wordCharacterPattern'
-                type:
-                  $ref: '#/definitions/wordCharacterPattern'
-                user:
-                  $ref: '#/definitions/wordCharacterPattern'
   ingress:
     properties:
       platformClass:

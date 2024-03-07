@@ -25,9 +25,6 @@ k8s:
       disablePolicyChecks: true
     - name: harbor
       app: harbor
-    - name: gatekeeper-system
-      app: gatekeeper
-      disableIstioInjection: true
     - name: gitea
     - name: gitea-operator
       disableIstioInjection: true
@@ -62,6 +59,9 @@ k8s:
     - name: kured
       app: kured
       disableIstioInjection: true
+    - name: kyverno
+      app: kyverno
+      disableIstioInjection: true
     - name: tekton-pipelines
       app: tekton
       disableIstioInjection: true
@@ -85,9 +85,6 @@ k8s:
     - name: monitoring
       disableIstioInjection: true
     - name: olm
-      disableIstioInjection: true
-      disablePolicyChecks: true
-    - name: opa-exporter
       disableIstioInjection: true
       disablePolicyChecks: true
     - name: operators
@@ -186,8 +183,6 @@ adminApps:
   - name: falco
     tags: [security]
     deps: [prometheus, grafana]
-  - name: gatekeeper
-    tags: [security, policies, observability]
   - name: gitea
     tags: [git]
     isShared: true
@@ -314,9 +309,6 @@ adminApps:
       - title: OWASP violations
         description: All OWASP rule violations
         path: /explore?orgId=1&left=%5B"now-1h","now","Loki",%7B"expr":"%7Bnamespace%3D%5C"ingress%5C"%7D%20%7C%3D%5C"ModSecurity:%20%5C""%7D%5D
-      - title: Gatekeeper violations
-        description: Kube API violations logged by OPA gatekepeer
-        path: /explore?orgId=1&left=%5B"now-1h","now","Loki",%7B"expr":"%7Bnamespace%3D%5C"gatekeeper-system%5C"%7D%20%7C%3D%5C"Policy:%20%5C""%7D%5D
   - name: minio
     tags: [storage, backup]
     ownHost: true
@@ -405,6 +397,8 @@ adminApps:
         auth: true
   - name: velero
     tags: [backup]
+  - name: kyverno
+    tags: [security]
   - name: rabbitmq
     tags: [messaging]
 

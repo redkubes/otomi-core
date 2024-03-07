@@ -219,9 +219,6 @@ releases:
         team: {{ $teamId }}
         folders:
           - k8s-teams
-          {{- if $v.apps.gatekeeper.enabled }}
-          - gatekeeper-teams
-          {{- end }}
           {{- if $v.apps.falco.enabled }}
           - falco-teams
           {{- end }}

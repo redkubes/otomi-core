@@ -1,0 +1,190 @@
+policies:
+  - name: require-requests
+    description: 'As application workloads share cluster resources, it is important to limit resources requested and consumed by each Pod. It is recommended to require resource requests per Pod, especially for memory and CPU. If a Namespace level request is specified, defaults will automatically be applied to each Pod based on the LimitRange configuration. This policy validates that all containers have memory and CPU requests specified.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-limits
+    description: 'As application workloads share cluster resources, it is important to limit resources requested and consumed by each Pod. It is recommended to require resource limits per Pod, especially for memory and CPU. If a Namespace level limit is specified, defaults will automatically be applied to each Pod based on the LimitRange configuration. This policy validates that all containers have memory and CPU limits specified.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: allowed-image-repositories
+    description: 'In addition to restricting the image registry from which images are pulled, in some cases and environments it may be required to also restrict which image repositories are used, for example in some restricted Namespaces. This policy ensures that the only allowed image repositories present in a given Pod, across any container type, come from the designated list.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+    customValues:
+      - harbor.bla.com
+  - name: disallow-latest-tag
+    description: 'The `latest` tag is mutable and can lead to unexpected errors if the image changes. A best practice is to use an immutable tag that maps to a specific version of an application Pod. This policy validates that the image specifies a tag and that it is not called `latest`.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-liveness-probe
+    description: 'Liveness probes need to be configured to correctly manage a Pod`s lifecycle during deployments, restarts, and upgrades. For each Pod, a periodic `livenessProbe` is performed by the kubelet to determine if the Pod`s containers are running or need to be restarted. This policy validates that all containers have a livenessProbe defined.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-startup-probe
+    description: 'Startup probes need to be configured to correctly manage a Pod`s lifecycle during deployments, restarts, and upgrades. Sometimes, applications are temporarily unable to serve traffic. For example, an application might need to load large data or configuration files during startup, or depend on external services after startup. In such cases, you don`t want to kill the application, but you don`t want to send it requests either. Kubernetes provides readiness probes to detect and mitigate these situations. A pod with containers reporting that they are not ready does not receive traffic through Kubernetes Services. This policy validates that all containers have a livenessProbe defined.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-readiness-probe
+    description: 'Readiness probes need to be configured to correctly manage a Pod`s lifecycle during deployments, restarts, and upgrades. A `readinessProbe` is used by Service and Deployments to determine if the Pod is ready to receive network traffic. This policy validates that all containers have a readinessProbe defined.'
+    profile: best-practice
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: required-otomi-label
+    description: 'Define and use labels that identify your application or Deployment. This policy validates that the `otomi.io/app` label is specified with some value. The `otomi.io/app` is required for using network policies in Otomi.'
+    profile: otomi
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: allowed-repo
+    description: 'In addition to restricting the image registry from which images are pulled, in some cases and environments it may be required to also restrict which image repositories are used, for example in some restricted Namespaces. This policy ensures that the only allowed image repositories present in a given Pod, across any container type, come from the designated list.'
+    profile: otomi
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-capabilities
+    description: 'Container capabilities beyond those listed in the policy must be disallowed.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+    customValues:
+      - AUDIT_WRITE
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - FSETID
+      - KILL
+      - MKNOD
+      - NET_BIND_SERVICE
+      - SETFCAP
+      - SETGID
+      - SETPCAP
+      - SETUID
+      - SYS_CHROOT
+  - name: disallow-host-namespaces
+    description: 'Host namespaces (Process ID namespace, Inter-Process Communication namespace, and network namespace) allow access to shared information and can be used to elevate privileges. Pods should not be allowed access to host namespaces. This policy ensures fields which make use of these host namespaces are unset or set to `false`.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-host-path
+    description: 'HostPath volumes let Pods use host directories and volumes in containers. Using host resources can be used to access shared data or escalate privilegesand should not be allowed. This policy ensures no hostPath volumes are in use.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-host-ports
+    description: 'Access to host ports allows potential snooping of network traffic and should not be allowed, or at minimum restricted to a known list. This policy ensures the `hostPort` field is unset or set to `0`.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-proc-mount
+    description: 'The default /proc masks are set up to reduce attack surface and should be required. This policy ensures nothing but the default procMount can be specified. Note that in order for users to deviate from the `Default` procMount requires setting a feature gate at the API server.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-privileged-containers
+    description: 'Privileged mode disables most security mechanisms and must not be allowed. This policy ensures Pods do not call for privileged mode.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-selinux
+    description: 'SELinux options can be used to escalate privileges and should not be allowed. This policy ensures that the `seLinuxOptions` field is undefined.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: restrict-apparmor-profiles
+    description: 'On supported hosts, the `runtime/default` AppArmor profile is applied by default. The default policy should prevent overriding or disabling the policy, or restrict overrides to an allowed set of profiles. This policy ensures Pods do not specify any other AppArmor profiles than `runtime/default` or `localhost/*`.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: restrict-sysctls
+    description: 'Sysctls can disable security mechanisms or affect all containers on a host, and should be disallowed except for an allowed "safe" subset. A sysctl is considered safe if it is namespaced in the container or the Pod, and it is isolated from other Pods or processes on the same Node. This policy ensures that only those "safe" subsets can be specified in a Pod.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: restrict-seccomp
+    description: 'The seccomp profile must not be explicitly set to Unconfined. This policy, requiring Kubernetes v1.19 or later, ensures that seccomp is unset or set to `RuntimeDefault` or `Localhost`.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-non-root-groups
+    description: 'Containers should be forbidden from running with a root primary or supplementary GID. This policy ensures the `runAsGroup`, `supplementalGroups`, and `fsGroup` fields are set to a number greater than zero (i.e., non root). A known issue prevents a policy such as this using `anyPattern` from being persisted properly in Kubernetes 1.23.0-1.23.2.'
+    profile: other
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-capabilities-strict
+    description: 'Adding capabilities other than `NET_BIND_SERVICE` is disallowed. In addition, all containers must explicitly drop `ALL` capabilities.'
+    profile: restricted
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: disallow-privilege-escalation
+    description: 'Privilege escalation, such as via set-user-ID or set-group-ID file mode, should not be allowed. This policy ensures the `allowPrivilegeEscalation` field is set to `false`.'
+    profile: restricted
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-run-as-non-root-user
+    description: 'Containers must be required to run as non-root users. This policy ensures `runAsUser` is either unset or set to a number greater than zero.'
+    profile: restricted
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: require-run-as-nonroot
+    description: 'Containers must be required to run as non-root users. This policy ensures `runAsNonRoot` is set to `true`. A known issue prevents a policy such as this using `anyPattern` from being persisted properly in Kubernetes 1.23.0-1.23.2.'
+    profile: restricted
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: restrict-seccomp-strict
+    description: 'The seccomp profile in the Restricted group must not be explicitly set to Unconfined but additionally must also not allow an unset value. This policy, requiring Kubernetes v1.19 or later, ensures that seccomp is set to `RuntimeDefault` or `Localhost`. A known issue prevents a policy such as this using `anyPattern` from being persisted properly in Kubernetes 1.23.0-1.23.2.'
+    profile: restricted
+    enabled: true
+    action: Audit
+    severity: medium
+  - name: restrict-volume-types
+    description: 'In addition to restricting HostPath volumes, the restricted pod security profile limits usage of non-core volume types to those defined through PersistentVolumes. This policy blocks any other type of volume other than those in the allow list.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium
+    customValues:
+      - name
+      - configMap
+      - csi
+      - downwardAPI
+      - emptyDir
+      - ephemeral
+      - persistentVolumeClaim
+      - projected
+      - secret
+      - ''
+  - name: disallow-host-process
+    description: 'Windows pods offer the ability to run HostProcess containers which enables privileged access to the Windows node. Privileged access to the host is disallowed in the baseline policy. HostProcess pods are an alpha feature as of Kubernetes v1.22. This policy ensures the `hostProcess` field, if present, is set to `false`.'
+    profile: baseline
+    enabled: true
+    action: Audit
+    severity: medium

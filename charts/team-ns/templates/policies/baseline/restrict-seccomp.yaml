@@ -1,0 +1,59 @@
+{{- $v := .Values }}
+{{- range $p := $v.policies }}
+{{- if and (eq $p.name "restrict-seccomp") ($p.enabled) }}
+---
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: restrict-seccomp
+  annotations:
+    policies.kyverno.io/title: Restrict Seccomp
+    policies.kyverno.io/category: Pod Security Standards (Baseline)
+    policies.kyverno.io/severity: {{ .severity }}
+    policies.kyverno.io/subject: Pod
+    kyverno.io/kyverno-version: 1.6.0
+    kyverno.io/kubernetes-version: "1.22-1.23"
+    policies.kyverno.io/description: >-
+      The seccomp profile must not be explicitly set to Unconfined. This policy,
+      requiring Kubernetes v1.19 or later, ensures that seccomp is unset or
+      set to `RuntimeDefault` or `Localhost`.
+  labels: {{- include "team-ns.chart-labels" $ | nindent 4 }}
+spec:
+  validationFailureAction: {{ .action }}
+  background: true
+  failurePolicy: Fail
+  rules:
+    - name: check-seccomp
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      skipBackgroundRequests: true
+      validate:
+        message: >-
+          Use of custom Seccomp profiles is disallowed. The fields
+          spec.securityContext.seccompProfile.type,
+          spec.containers[*].securityContext.seccompProfile.type,
+          spec.initContainers[*].securityContext.seccompProfile.type, and
+          spec.ephemeralContainers[*].securityContext.seccompProfile.type
+          must be unset or set to `RuntimeDefault` or `Localhost`.
+        pattern:
+          spec:
+            =(securityContext):
+              =(seccompProfile):
+                =(type): "RuntimeDefault | Localhost"
+            =(ephemeralContainers):
+            - =(securityContext):
+                =(seccompProfile):
+                  =(type): "RuntimeDefault | Localhost"
+            =(initContainers):
+            - =(securityContext):
+                =(seccompProfile):
+                  =(type): "RuntimeDefault | Localhost"
+            containers:
+            - =(securityContext):
+                =(seccompProfile):
+                  =(type): "RuntimeDefault | Localhost"
+{{- end }}
+{{- end }}

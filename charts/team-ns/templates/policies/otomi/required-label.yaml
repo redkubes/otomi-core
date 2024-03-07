@@ -1,0 +1,36 @@
+{{- $v := .Values }}
+{{- range $p := $v.policies }}
+{{- if and (eq $p.name "required-otomi-label") ($p.enabled) }}
+---
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: required-otomi-label
+  annotations:
+    policies.kyverno.io/title: Required Otomi Label
+    policies.kyverno.io/category: otomi
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod, Label
+    policies.kyverno.io/description: >-
+      Define and use labels that identify your application or Deployment. This policy validates that the `otomi.io/app` label is specified with some value. The `otomi.io/app` is required for using network policies in Otomi.
+  labels: {{- include "team-ns.chart-labels" $ | nindent 4 }}       
+spec:
+  validationFailureAction: {{ .action }}
+  background: true
+  failurePolicy: Fail
+  rules:
+  - name: check-for-label
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    skipBackgroundRequests: true
+    validate:
+      message: "The label `otomi.io/app` is required."
+      pattern:
+        metadata:
+          labels:
+            otomi.io/app: "?*"
+{{- end }}
+{{- end }}

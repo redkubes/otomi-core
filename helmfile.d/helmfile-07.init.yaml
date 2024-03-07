@@ -38,9 +38,3 @@ releases:
     labels:
       pkg: minio
     <<: *raw
-  - name: opa-exporter-artifacts
-    installed: {{ $a | get "gatekeeper.enabled" }}
-    namespace: gatekeeper-system
-    labels:
-      pkg: opa-exporter
-    <<: *raw

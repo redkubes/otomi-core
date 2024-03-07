@@ -1,0 +1,60 @@
+{{- $v := .Values }}
+{{- range $p := $v.policies }}
+{{- if and (eq $p.name "require-run-as-nonroot") ($p.enabled) }}
+---
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: require-run-as-nonroot
+  annotations:
+    policies.kyverno.io/title: Require runAsNonRoot
+    policies.kyverno.io/category: Pod Security Standards (Restricted)
+    policies.kyverno.io/severity: {{ .severity }}
+    policies.kyverno.io/subject: Pod
+    kyverno.io/kyverno-version: 1.6.0
+    policies.kyverno.io/description: >-
+      Containers must be required to run as non-root users. This policy ensures
+      `runAsNonRoot` is set to `true`. A known issue prevents a policy such as this
+      using `anyPattern` from being persisted properly in Kubernetes 1.23.0-1.23.2.
+  labels: {{- include "team-ns.chart-labels" $ | nindent 4 }}
+spec:
+  validationFailureAction: {{ .action }}
+  rules:
+    - name: run-as-non-root
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      skipBackgroundRequests: true
+      validate:
+        message: >-
+          Running as root is not allowed. Either the field spec.securityContext.runAsNonRoot
+          must be set to `true`, or the fields spec.containers[*].securityContext.runAsNonRoot,
+          spec.initContainers[*].securityContext.runAsNonRoot, and spec.ephemeralContainers[*].securityContext.runAsNonRoot
+          must be set to `true`.
+        anyPattern:
+        - spec:
+            securityContext:
+              runAsNonRoot: true
+            =(ephemeralContainers):
+            - =(securityContext):
+                =(runAsNonRoot): true
+            =(initContainers):
+            - =(securityContext):
+                =(runAsNonRoot): true
+            containers:
+            - =(securityContext):
+                =(runAsNonRoot): true
+        - spec:
+            =(ephemeralContainers):
+            - securityContext:
+                runAsNonRoot: true
+            =(initContainers):
+            - securityContext:
+                runAsNonRoot: true
+            containers:
+            - securityContext:
+                runAsNonRoot: true
+{{- end }}
+{{- end }}

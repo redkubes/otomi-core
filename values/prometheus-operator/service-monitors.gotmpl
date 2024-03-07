@@ -73,16 +73,3 @@ additionalServiceMonitors:
     endpoints:
       - port: prometheus
   {{- end }}
-  {{- if .apps | get "gatekeeper.enabled" }}
-  - name: gatekeeper-metrics
-    namespace: gatekeeper-system
-    endpoints:
-      - port: metrics
-    selector:
-      matchLabels:
-        app.kubernetes.io/instance: gatekeeper-metrics
-        app.kubernetes.io/name: gatekeeper-metrics
-    namespaceSelector:
-      matchNames:
-        - gatekeeper-system
-  {{- end }}

@@ -58,16 +58,6 @@ spec:
     insecure: true # nginx terminates tls
     autoscale:
       enabled: {{ $a.autoscaling.enabled }} 
-    {{- with $a.autoscaling }}
-      hpa:
-        maxReplicas: {{ .maxReplicas }}
-        minReplicas: {{ .minReplicas }}
-        scaleTargetRef:
-          apiVersion: extensions/v1
-          kind: Deployment
-          name: otomi-argocd
-        targetCPUUtilizationPercentage: 70
-    {{- end }}
     resources:
       {{- with $a | get "resources.server" nil }}
         {{- toYaml .| nindent 4 }}

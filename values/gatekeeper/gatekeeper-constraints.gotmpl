@@ -1,9 +1,0 @@
-{{- $v := .Values }}
-{{- tpl (readFile "../../helmfile.d/snippets/version-tags.gotmpl") $v.versions }}
-
-otomi: {{- toYaml $v.otomi | nindent 2 }}
-
-{{- with $v.otomi | get "globalPullSecret" nil }}
-imagePullSecrets:
-  - name: otomi-pullsecret-global
-{{- end }}

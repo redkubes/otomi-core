@@ -1,0 +1,64 @@
+{{- $v := .Values }}
+{{- range $p := $v.policies }}
+{{- if and (eq $p.name "disallow-capabilities-strict") ($p.enabled) }}
+---
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: disallow-capabilities-strict
+  annotations:
+    policies.kyverno.io/title: Disallow Capabilities (Strict)
+    policies.kyverno.io/category: Pod Security Standards (Restricted)
+    policies.kyverno.io/severity: {{ .severity }}
+    policies.kyverno.io/minversion: 1.6.0
+    kyverno.io/kyverno-version: 1.6.0
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Adding capabilities other than `NET_BIND_SERVICE` is disallowed. In addition,
+      all containers must explicitly drop `ALL` capabilities.
+  labels: {{- include "team-ns.chart-labels" $ | nindent 4 }}
+spec:
+  validationFailureAction: {{ .action }}
+  background: true
+  failurePolicy: Fail
+  rules:
+    - name: require-drop-all
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      skipBackgroundRequests: true
+      validate:
+        message: >-
+          Containers must drop `ALL` capabilities.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                - key: ALL
+                  operator: AnyNotIn
+                  value: "{{`{{`}} element.securityContext.capabilities.drop[] || `[]` {{`}}`}}"
+    - name: adding-capabilities-strict
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      skipBackgroundRequests: true
+      validate:
+        message: >-
+          Any capabilities added other than NET_BIND_SERVICE are disallowed.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                - key: "{{`{{`}} element.securityContext.capabilities.add[] || `[]` {{`}}`}}"
+                  operator: AnyNotIn
+                  value:
+                  - NET_BIND_SERVICE
+                  - ''
+{{- end }}
+{{- end }}

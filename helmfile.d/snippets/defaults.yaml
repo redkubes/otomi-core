@@ -59,7 +59,6 @@ environments:
                   - macro: k8s_containers
                     condition: (
                         container.image.repository in (
-                          docker.io/openpolicyagent/gatekeeper,
                           docker.io/velero/velero,
                           docker.io/weaveworks/kured,
                           k8s.gcr.io/kube-state-metrics/kube-state-metrics,
@@ -183,16 +182,6 @@ environments:
                 limits:
                   cpu: 50m
                   memory: 32Mi
-          gatekeeper:
-            enabled: false
-            auditFromCache: false
-            auditInterval: 60
-            constraintViolationsLimit: 20
-            disableValidatingWebhook: true
-            emitAdmissionEvents: false
-            emitAuditEvents: false
-            logLevel: INFO
-            replicas: 2
           gitea:
             enabled: true
             adminUsername: otomi-admin
@@ -324,6 +313,38 @@ environments:
                 limits:
                   cpu: 50m
                   memory: 32Mi
+          kyverno:
+            enabled: false
+            mode: DevTest
+            resources:
+              admissionController:
+                requests:
+                  cpu: 200m
+                  memory: 128Mi
+                limits:
+                  cpu: 1
+                  memory: 512Mi
+              cleanupController:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 1
+                  memory: 512Mi
+              backgroundController:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 1
+                  memory: 512Mi
+              reportsController:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 1
+                  memory: 512Mi
           tekton:
             resources:
               dashboard:
@@ -613,19 +634,19 @@ environments:
             enabled: false
             resources:
               clusterOperator:
-                  requests:
-                      cpu: 100m
-                      memory: 128Mi
-                  limits:
-                      cpu: 900m
-                      memory: 512Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 900m
+                  memory: 512Mi
               msgTopologyOperator:
-                  requests:
-                      cpu: 100m
-                      memory: 128Mi
-                  limits:
-                      cpu: 900m
-                      memory: 512Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 900m
+                  memory: 512Mi
           thanos:
             enabled: false
             query:

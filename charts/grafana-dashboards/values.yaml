@@ -4,8 +4,6 @@ folders:
   - cloudnative-pg
   - falco
   - falco-teams
-  - gatekeeper
-  - gatekeeper-teams
   - istio-admin
   - k8s-admin
   - k8s-teams

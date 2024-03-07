@@ -1,4 +1,4 @@
-api: 2.6.0
-console: 2.5.0
+api: kyverno
+console: kyverno
 tasks: 2.4.0
 tools: 1.6.0

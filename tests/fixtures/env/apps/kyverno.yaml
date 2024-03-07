@@ -1,0 +1,3 @@
+apps:
+    kyverno:
+        enabled: true

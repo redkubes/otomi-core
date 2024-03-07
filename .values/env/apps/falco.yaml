@@ -7,7 +7,6 @@ apps:
                     - macro: k8s_containers
                       condition: (
                           container.image.repository in (
-                            docker.io/openpolicyagent/gatekeeper,
                             docker.io/velero/velero,
                             docker.io/weaveworks/kured,
                             k8s.gcr.io/kube-state-metrics/kube-state-metrics,

@@ -64,7 +64,3 @@ releases:
     installed: {{ $a | get "thanos.enabled" }}
     namespace: monitoring
     <<: *default
-  - name: opa-exporter
-    installed: {{ $a | get "gatekeeper.enabled" }}
-    namespace: opa-exporter
-    <<: *default

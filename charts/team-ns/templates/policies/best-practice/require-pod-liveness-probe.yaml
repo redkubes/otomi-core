@@ -1,0 +1,51 @@
+{{- $v := .Values }}
+{{- range $p := $v.policies }}
+{{- if and (eq $p.name "require-pod-liveness-probe") ($p.enabled) }}
+---
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: require-pod-liveness-probe
+  annotations:
+    pod-policies.kyverno.io/autogen-controllers: DaemonSet,Deployment,StatefulSet
+    policies.kyverno.io/title: Require Pod Liveness Probe
+    policies.kyverno.io/category: best-practice
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Liveness probes need to be configured to correctly manage a Pod's
+      lifecycle during deployments, restarts, and upgrades. For each Pod, a periodic
+      `livenessProbe` is performed by the kubelet to determine if the Pod's containers
+      are running or need to be restarted. This policy validates that all containers have a livenessProbe defined.
+  labels: {{- include "team-ns.chart-labels" $ | nindent 4 }}  
+spec:
+  validationFailureAction: {{ .action }}
+  background: true
+  failurePolicy: Fail
+  rules:
+  - name: validate-liveness-probe
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    preconditions:
+      all:
+      - key: "{{`{{request.operation || 'BACKGROUND'}}`}}"
+        operator: AnyIn
+        value:
+        - CREATE
+        - UPDATE
+    skipBackgroundRequests: true
+    validate:
+      message: "Liveness probe is required for all containers."
+      foreach:
+      - list: request.object.spec.containers[]
+        deny:
+          conditions:
+            all:
+            - key: livenessProbe
+              operator: AllNotIn
+              value: "{{`{{ element.keys(@)[] }}`}}"
+{{- end }}
+{{- end }}

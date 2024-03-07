@@ -1,8 +1,0 @@
-apiVersion: v1
-description: A Helm chart for Gatekeeper Artifacts as OPA policies
-name: gatekeeper-artifacts
-keywords:
-  - open policy agent
-  - policy enforcement
-  - rego rules 
-version: 0.1.0
