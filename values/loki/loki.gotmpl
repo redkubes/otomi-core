@@ -179,6 +179,12 @@ loki:
         container_name: {{ $st.azure.containerName }}
       {{- end }}
 
+{{- if and (eq $st.type "gcs") $st.gcs.serviceAccount }}
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: {{ $st.gcs.serviceAccount }}
+{{- end }}
+
 ingester:
   resources: {{- $l.resources.ingester | toYaml | nindent 4 }}
   podAnnotations:
