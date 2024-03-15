@@ -128,13 +128,15 @@ loki:
           prefix: index_
           period: 24h
     storage_config:
-      {{- if ne $st.type "gcs" }}
       boltdb_shipper:
         {{- if eq $st.type "minioLocal" }}
         shared_store: s3
         {{- end }}
         {{- if eq $st.type "s3" }}
         shared_store: s3
+        {{- end }}
+        {{- if eq $st.type "gcs" }}
+        shared_store: gcs
         {{- end }}
         {{- if eq $st.type "azure" }}
         shared_store: azure
@@ -145,7 +147,7 @@ loki:
         active_index_directory: /var/loki/index
         cache_location: /var/loki/cache
         cache_ttl: 168h
-      {{- else }}
+      {{- if eq $st.type "gcs" }}
       gcs:
         bucket_name: {{ $st.gcs.bucket }}   
       {{- end }}
