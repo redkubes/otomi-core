@@ -21,6 +21,13 @@ spec:
       port: 3100
       targetPort: http
       protocol: TCP
+    - name: grpc
+      port: 9095
+      targetPort: grpc
+      protocol: TCP
+      {{- if .Values.compactor.appProtocol.grpc }}
+      appProtocol: {{ .Values.compactor.appProtocol.grpc }}
+      {{- end }}
   selector:
     {{- include "loki.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: compactor

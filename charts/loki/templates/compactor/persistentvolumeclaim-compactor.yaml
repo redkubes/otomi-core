@@ -1,4 +1,5 @@
 {{- if and .Values.compactor.enabled .Values.compactor.persistence.enabled }}
+{{- if eq .Values.compactor.kind "Deployment"}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -19,4 +20,5 @@ spec:
   resources:
     requests:
       storage: "{{ .Values.compactor.persistence.size }}"
+{{- end }}
 {{- end }}

@@ -45,6 +45,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.memcachedIndexWrites.hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- include "loki.memcachedIndexWritesPriorityClassName" . | nindent 6 }}
       securityContext:
         {{- toYaml .Values.memcached.podSecurityContext | nindent 8 }}

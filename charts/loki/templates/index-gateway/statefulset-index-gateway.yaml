@@ -16,6 +16,15 @@ spec:
       partition: 0
   serviceName: {{ include "loki.indexGatewayFullname" . }}-headless
   revisionHistoryLimit: {{ .Values.loki.revisionHistoryLimit }}
+  {{- if and (semverCompare ">= 1.23-0" .Capabilities.KubeVersion.Version) (.Values.indexGateway.persistence.enableStatefulSetAutoDeletePVC)  }}
+  {{/*
+    Data on the read nodes is easy to replace, so we want to always delete PVCs to make
+    operation easier, and will rely on re-fetching data when needed.
+  */}}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .Values.indexGateway.persistence.whenDeleted }}
+    whenScaled: {{ .Values.indexGateway.persistence.whenScaled }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "loki.indexGatewaySelectorLabels" . | nindent 6 }}
@@ -37,10 +46,17 @@ spec:
         {{- with .Values.indexGateway.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- if .Values.indexGateway.joinMemberlist }}
+        app.kubernetes.io/part-of: memberlist
+        {{- end }}
     spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.indexGateway.hostAliases }}
+      hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "loki.indexGatewayPriorityClassName" . | nindent 6 }}
@@ -68,6 +84,11 @@ spec:
             - name: grpc
               containerPort: 9095
               protocol: TCP
+            {{- if .Values.indexGateway.joinMemberlist }}
+            - name: http-memberlist
+              containerPort: 7946
+              protocol: TCP
+            {{- end }}
           {{- with .Values.indexGateway.extraEnv }}
           env:
             {{- toYaml . | nindent 12 }}
@@ -114,6 +135,9 @@ spec:
           {{- if .Values.loki.existingSecretForConfig }}
           secret:
             secretName: {{ .Values.loki.existingSecretForConfig }}
+          {{- else if .Values.loki.configAsSecret }}
+          secret:
+            secretName: {{ include "loki.fullname" . }}-config
           {{- else }}
           configMap:
             name: {{ include "loki.fullname" . }}

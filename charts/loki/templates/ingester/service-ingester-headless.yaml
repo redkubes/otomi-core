@@ -6,6 +6,10 @@ metadata:
   labels:
     {{- include "loki.ingesterSelectorLabels" . | nindent 4 }}
     prometheus.io/service-monitor: "false"
+  {{- with .Values.loki.serviceAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: ClusterIP
   clusterIP: None

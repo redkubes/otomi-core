@@ -22,10 +22,6 @@ spec:
       port: 3100
       targetPort: http
       protocol: TCP
-    - name: auth
-      port: 3101
-      targetPort: http
-      protocol: TCP
     - name: grpc
       port: 9095
       targetPort: grpc

@@ -1,5 +1,5 @@
 {{- if and .Values.ruler.enabled (gt (int .Values.ruler.replicas) 1) }}
-{{- if not .Values.ruler.maxUnavailable }}
+{{- if kindIs "invalid" .Values.ruler.maxUnavailable }}
 {{- fail "`.Values.ruler.maxUnavailable` must be set when `.Values.ruler.replicas` is greater than 1." }}
 {{- else }}
 apiVersion: {{ include "loki.pdb.apiVersion" . }}

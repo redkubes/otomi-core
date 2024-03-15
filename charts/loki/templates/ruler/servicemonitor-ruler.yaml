@@ -25,6 +25,10 @@ spec:
   selector:
     matchLabels:
       {{- include "loki.rulerSelectorLabels" $ | nindent 6 }}
+    {{- with .matchExpressions }}
+    matchExpressions:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   endpoints:
     - port: http
       {{- with .interval }}

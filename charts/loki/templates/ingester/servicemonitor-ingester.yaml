@@ -24,11 +24,10 @@ spec:
   selector:
     matchLabels:
       {{- include "loki.ingesterSelectorLabels" $ | nindent 6 }}
+    {{- with .matchExpressions }}
     matchExpressions:
-      - key: prometheus.io/service-monitor
-        operator: NotIn
-        values:
-          - "false"
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   endpoints:
     - port: http
       {{- with .interval }}

@@ -1,5 +1,5 @@
 {{- if and .Values.gateway.enabled (gt (int .Values.gateway.replicas) 1) }}
-{{- if not .Values.gateway.maxUnavailable }}
+{{- if kindIs "invalid" .Values.gateway.maxUnavailable }}
 {{- fail "`.Values.gateway.maxUnavailable` must be set when `.Values.gateway.replicas` is greater than 1." }}
 {{- else }}
 apiVersion: {{ include "loki.pdb.apiVersion" . }}

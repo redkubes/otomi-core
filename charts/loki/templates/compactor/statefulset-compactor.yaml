@@ -1,22 +1,33 @@
-{{- if and (eq .Values.ruler.kind "StatefulSet") .Values.ruler.enabled }}
+{{- if .Values.compactor.enabled }}
+{{- if eq .Values.compactor.kind "StatefulSet"}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "loki.rulerFullname" . }}
+  name: {{ include "loki.compactorFullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "loki.rulerLabels" . | nindent 4 }}
+    {{- include "loki.compactorLabels" . | nindent 4 }}
     app.kubernetes.io/part-of: memberlist
   {{- with .Values.loki.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.ruler.replicas }}
+  replicas: {{ .Values.compactor.replicas }}
+  podManagementPolicy: Parallel
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+  serviceName: {{ include "loki.compactorFullname" . }}-headless
   revisionHistoryLimit: {{ .Values.loki.revisionHistoryLimit }}
-  serviceName: {{ include "loki.rulerFullname" . }}
+  {{- if and (semverCompare ">= 1.23-0" .Capabilities.KubeVersion.Version) (.Values.compactor.persistence.enableStatefulSetAutoDeletePVC)  }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .Values.compactor.persistence.whenDeleted }}
+    whenScaled: {{ .Values.compactor.persistence.whenScaled }}
+  {{- end }}
   selector:
     matchLabels:
-      {{- include "loki.rulerSelectorLabels" . | nindent 6 }}
+      {{- include "loki.compactorSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -24,44 +35,54 @@ spec:
         {{- with .Values.loki.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- with .Values.ruler.podAnnotations }}
+        {{- with .Values.compactor.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "loki.rulerSelectorLabels" . | nindent 8 }}
+        {{- include "loki.compactorSelectorLabels" . | nindent 8 }}
         app.kubernetes.io/part-of: memberlist
         {{- with .Values.loki.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- with .Values.ruler.podLabels }}
+        {{- with .Values.compactor.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
+      {{- with .Values.compactor.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- tpl . $ | nindent 8 }}
+      {{- end }}
+      {{- end }}
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.ruler.hostAliases }}
+      {{- with .Values.compactor.hostAliases }}
       hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- include "loki.rulerPriorityClassName" . | nindent 6 }}
+      {{- include "loki.compactorPriorityClassName" . | nindent 6 }}
       securityContext:
         {{- toYaml .Values.loki.podSecurityContext | nindent 8 }}
-      terminationGracePeriodSeconds: {{ .Values.ruler.terminationGracePeriodSeconds }}
-      {{- with .Values.ruler.initContainers }}
+      terminationGracePeriodSeconds: {{ .Values.compactor.terminationGracePeriodSeconds }}
+      {{- with .Values.compactor.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: ruler
-          image: {{ include "loki.rulerImage" . }}
+        - name: compactor
+          image: {{ include "loki.compactorImage" . }}
           imagePullPolicy: {{ .Values.loki.image.pullPolicy }}
+          {{- if or .Values.loki.command .Values.compactor.command }}
+          command:
+            - {{ coalesce .Values.compactor.command .Values.loki.command | quote }}
+          {{- end }}
           args:
             - -config.file=/etc/loki/config/config.yaml
-            - -target=ruler
-            {{- with .Values.ruler.extraArgs }}
+            - -target=compactor
+            {{- with .Values.compactor.extraArgs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
@@ -74,58 +95,56 @@ spec:
             - name: http-memberlist
               containerPort: 7946
               protocol: TCP
-          {{- with .Values.ruler.extraEnv }}
+          {{- with .Values.compactor.extraEnv }}
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.ruler.extraEnvFrom }}
+          {{- with .Values.compactor.extraEnvFrom }}
           envFrom:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           securityContext:
             {{- toYaml .Values.loki.containerSecurityContext | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.loki.readinessProbe | nindent 12 }}
-          livenessProbe:
-            {{- toYaml .Values.loki.livenessProbe | nindent 12 }}
+          {{- include "loki.compactor.readinessProbe" . | nindent 10 }}
+          {{- include "loki.compactor.livenessProbe" . | nindent 10 }}
           volumeMounts:
+            - name: temp
+              mountPath: /tmp
             - name: config
               mountPath: /etc/loki/config
             - name: runtime-config
               mountPath: /var/{{ include "loki.name" . }}-runtime
             - name: data
               mountPath: /var/loki
-            - name: tmp
-              mountPath: /tmp/loki
-            {{- range $dir, $_ := .Values.ruler.directories }}
-            - name: {{ include "loki.rulerRulesDirName" $dir }}
-              mountPath: /etc/loki/rules/{{ $dir }}
-            {{- end }}
-            {{- with .Values.ruler.extraVolumeMounts }}
+            {{- with .Values.compactor.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- with .Values.compactor.resources }}
           resources:
-            {{- toYaml .Values.ruler.resources | nindent 12 }}
-        {{- with .Values.ruler.extraContainers }}
-        {{- toYaml . | nindent 8}}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.compactor.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- if .Values.compactor.extraContainers }}
+        {{- toYaml .Values.compactor.extraContainers | nindent 8}}
         {{- end }}
-      {{- with .Values.ruler.affinity }}
+      {{- with .Values.compactor.affinity }}
       affinity:
         {{- tpl . $ | nindent 8 }}
       {{- end }}
-      {{- with .Values.ruler.nodeSelector }}
+      {{- with .Values.compactor.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.ruler.tolerations }}
+      {{- with .Values.compactor.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.ruler.dnsConfig }}
-      dnsConfig:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       volumes:
+        - name: temp
+          emptyDir: {}
         - name: config
           {{- if .Values.loki.existingSecretForConfig }}
           secret:
@@ -140,35 +159,32 @@ spec:
         - name: runtime-config
           configMap:
             name: {{ template "loki.fullname" . }}-runtime
-        {{- range $dir, $_ := .Values.ruler.directories }}
-        - name: {{ include "loki.rulerRulesDirName" $dir }}
-          configMap:
-            name: {{ include "loki.rulerFullname" $ }}-{{ include "loki.rulerRulesDirName" $dir }}
-        {{- end }}
-        - name: tmp
-          emptyDir: {}
-        {{- with .Values.ruler.extraVolumes }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-  {{- if not .Values.ruler.persistence.enabled }}
+        {{- if not .Values.compactor.persistence.enabled }}
         - name: data
           emptyDir: {}
-  {{- else }}
+        {{- end }}
+        {{- with .Values.compactor.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+  {{- if .Values.compactor.persistence.enabled }}
   volumeClaimTemplates:
+  {{- range .Values.compactor.persistence.claims }}
     - metadata:
-        name: data
-        {{- with .Values.ruler.persistence.annotations }}
+        name: {{ .name }}
+        {{- with .annotations }}
         annotations:
           {{- . | toYaml | nindent 10 }}
         {{- end }}
       spec:
         accessModes:
           - ReadWriteOnce
-        {{- with .Values.ruler.persistence.storageClass }}
+        {{- with .storageClass }}
         storageClassName: {{ if (eq "-" .) }}""{{ else }}{{ . }}{{ end }}
         {{- end }}
         resources:
           requests:
-            storage: {{ .Values.ruler.persistence.size | quote }}
+            storage: {{ .size | quote }}
   {{- end }}
+  {{- end }}
+{{- end }}
 {{- end }}

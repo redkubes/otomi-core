@@ -45,6 +45,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.ruler.hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- include "loki.rulerPriorityClassName" . | nindent 6 }}
       securityContext:
         {{- toYaml .Values.loki.podSecurityContext | nindent 8 }}
@@ -133,6 +137,9 @@ spec:
           {{- if .Values.loki.existingSecretForConfig }}
           secret:
             secretName: {{ .Values.loki.existingSecretForConfig }}
+          {{- else if .Values.loki.configAsSecret }}
+          secret:
+            secretName: {{ include "loki.fullname" . }}-config
           {{- else }}
           configMap:
             name: {{ include "loki.fullname" . }}

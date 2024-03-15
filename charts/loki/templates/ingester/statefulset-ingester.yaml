@@ -21,6 +21,15 @@ spec:
       partition: 0
   serviceName: {{ include "loki.ingesterFullname" . }}-headless
   revisionHistoryLimit: {{ .Values.loki.revisionHistoryLimit }}
+  {{- if and (semverCompare ">= 1.23-0" .Capabilities.KubeVersion.Version) (.Values.ingester.persistence.enableStatefulSetAutoDeletePVC)  }}
+  {{/*
+    Data on the read nodes is easy to replace, so we want to always delete PVCs to make
+    operation easier, and will rely on re-fetching data when needed.
+  */}}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .Values.ingester.persistence.whenDeleted }}
+    whenScaled: {{ .Values.ingester.persistence.whenScaled }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "loki.ingesterSelectorLabels" . | nindent 6 }}
@@ -53,6 +62,10 @@ spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ingester.hostAliases }}
+      hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "loki.ingesterPriorityClassName" . | nindent 6 }}
@@ -113,6 +126,10 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.ingester.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         {{- if .Values.ingester.extraContainers }}
         {{- toYaml .Values.ingester.extraContainers | nindent 8}}
         {{- end }}
@@ -133,6 +150,9 @@ spec:
           {{- if .Values.loki.existingSecretForConfig }}
           secret:
             secretName: {{ .Values.loki.existingSecretForConfig }}
+          {{- else if .Values.loki.configAsSecret }}
+          secret:
+            secretName: {{ include "loki.fullname" . }}-config
           {{- else }}
           configMap:
             name: {{ include "loki.fullname" . }}

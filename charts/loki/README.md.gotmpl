@@ -22,6 +22,18 @@ helm repo add grafana https://grafana.github.io/helm-charts
 
 Major version upgrades listed here indicate that there is an incompatible breaking change needing manual actions.
 
+### From 0.74.x to 0.75.0
+The Index Gateway and Query Scheduler now expose the memberlist port 7946. In order to join the
+member list, you need to specify this in the `structuredConfig`:
+```yaml
+loki:
+  structuredConfig:
+    index_gateway:
+      mode: ring
+    query_scheduler:
+      use_scheduler_ring: true
+```
+
 ### From 0.68.x to 0.69.0
 The in-memory `fifocache` has been renamed to more general `embedded_cache`, which currently doesn't have a `max_size_items` attribute.
 ```yaml

@@ -39,4 +39,16 @@ spec:
         targetAverageUtilization: {{ . }}
         {{- end }}
   {{- end }}
+  {{- with .Values.ingester.autoscaling.customMetrics }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .Values.ingester.autoscaling.behavior.enabled }}
+  behavior:
+    {{- with .Values.ingester.autoscaling.behavior.scaleDown }}
+    scaleDown: {{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.ingester.autoscaling.behavior.scaleUp }}
+    scaleUp: {{ toYaml . | nindent 6 }}
+    {{- end }}
+  {{- end }}
 {{- end }}

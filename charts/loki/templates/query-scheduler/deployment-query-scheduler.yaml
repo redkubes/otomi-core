@@ -38,10 +38,15 @@ spec:
         {{- with .Values.queryScheduler.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        app.kubernetes.io/part-of: memberlist
     spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.queryScheduler.hostAliases }}
+      hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "loki.querySchedulerPriorityClassName" . | nindent 6 }}
@@ -64,6 +69,9 @@ spec:
               protocol: TCP
             - name: grpc
               containerPort: 9095
+              protocol: TCP
+            - name: http-memberlist
+              containerPort: 7946
               protocol: TCP
           {{- with .Values.queryScheduler.extraEnv }}
           env:
@@ -111,6 +119,9 @@ spec:
           {{- if .Values.loki.existingSecretForConfig }}
           secret:
             secretName: {{ .Values.loki.existingSecretForConfig }}
+          {{- else if .Values.loki.configAsSecret }}
+          secret:
+            secretName: {{ include "loki.fullname" . }}-config
           {{- else }}
           configMap:
             name: {{ include "loki.fullname" . }}

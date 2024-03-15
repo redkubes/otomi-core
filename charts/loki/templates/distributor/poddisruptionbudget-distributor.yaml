@@ -1,5 +1,5 @@
 {{- if gt (int .Values.distributor.replicas) 1 }}
-{{- if not .Values.distributor.maxUnavailable }}
+{{- if kindIs "invalid" .Values.distributor.maxUnavailable }}
 {{- fail "`.Values.distributor.maxUnavailable` must be set when `.Values.distributor.replicas` is greater than 1." }}
 {{- else }}
 apiVersion: {{ include "loki.pdb.apiVersion" . }}

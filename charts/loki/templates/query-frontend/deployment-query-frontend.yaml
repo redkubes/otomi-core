@@ -33,6 +33,7 @@ spec:
         {{- end }}
       labels:
         {{- include "loki.queryFrontendSelectorLabels" . | nindent 8 }}
+        app.kubernetes.io/part-of: memberlist
         {{- with .Values.loki.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -43,6 +44,10 @@ spec:
       serviceAccountName: {{ include "loki.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.queryFrontend.hostAliases }}
+      hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "loki.queryFrontendPriorityClassName" . | nindent 6 }}
@@ -69,6 +74,9 @@ spec:
               protocol: TCP
             - name: grpc
               containerPort: 9095
+              protocol: TCP
+            - name: http-memberlist
+              containerPort: 7946
               protocol: TCP
           {{- with .Values.queryFrontend.extraEnv }}
           env:
@@ -114,6 +122,9 @@ spec:
           {{- if .Values.loki.existingSecretForConfig }}
           secret:
             secretName: {{ .Values.loki.existingSecretForConfig }}
+          {{- else if .Values.loki.configAsSecret }}
+          secret:
+            secretName: {{ include "loki.fullname" . }}-config
           {{- else }}
           configMap:
             name: {{ include "loki.fullname" . }}

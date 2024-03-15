@@ -24,6 +24,9 @@ spec:
       port: 9095
       targetPort: grpc
       protocol: TCP
+      {{- with .Values.ruler.appProtocol.grpc }}
+      appProtocol: {{ . }}
+      {{- end }}
   selector:
     {{- include "loki.rulerSelectorLabels" . | nindent 4 }}
 {{- end }}

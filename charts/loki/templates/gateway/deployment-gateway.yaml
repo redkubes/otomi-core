@@ -45,6 +45,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.gateway.hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- include "loki.gatewayPriorityClassName" . | nindent 6 }}
       securityContext:
         {{- toYaml .Values.gateway.podSecurityContext | nindent 8 }}

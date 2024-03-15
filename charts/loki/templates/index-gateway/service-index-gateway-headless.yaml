@@ -18,6 +18,9 @@ spec:
       port: 9095
       targetPort: grpc
       protocol: TCP
+      {{- with .Values.indexGateway.appProtocol.grpc }}
+      appProtocol: {{ . }}
+      {{- end }}
   selector:
     {{- include "loki.indexGatewaySelectorLabels" . | nindent 4 }}
 {{- end }}

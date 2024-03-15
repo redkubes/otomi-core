@@ -45,6 +45,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.memcachedChunks.hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- include "loki.memcachedChunksPriorityClassName" . | nindent 6 }}
       securityContext:
         {{- toYaml .Values.memcached.podSecurityContext | nindent 8 }}
@@ -91,10 +95,15 @@ spec:
             {{- toYaml .Values.memcached.readinessProbe | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.memcached.livenessProbe | nindent 12 }}
-          {{- if .Values.memcachedChunks.persistence.enabled }}
+          {{- if or .Values.memcachedChunks.persistence.enabled .Values.memcachedChunks.extraVolumeMounts }}
           volumeMounts:
+          {{- if .Values.memcachedChunks.persistence.enabled }}
             - name: data
               mountPath: /cache-state
+          {{- end }}
+          {{- if .Values.memcachedChunks.extraVolumeMounts }}
+            {{- toYaml .Values.memcachedChunks.extraVolumeMounts | nindent 12 }}
+          {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.memcachedChunks.resources | nindent 12 }}
@@ -129,8 +138,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-  {{- if .Values.memcachedChunks.persistence.enabled }}
+  {{- if or .Values.memcachedChunks.persistence.enabled .Values.memcachedChunks.volumeClaimTemplates }}
   volumeClaimTemplates:
+  {{- if .Values.memcachedChunks.persistence.enabled }}
     - metadata:
         name: data
       spec:
@@ -143,4 +153,8 @@ spec:
           requests:
             storage: {{ .Values.memcachedChunks.persistence.size | quote }}
   {{- end }}
+  {{- with .Values.memcachedChunks.volumeClaimTemplates }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
 {{- end }}
