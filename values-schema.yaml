@@ -4074,9 +4074,6 @@ properties:
       keycloak:
         title: Keycloak
         properties:
-          useOtomiDB:
-            type: boolean
-            default: false
           size:
             type: string
           resources:
@@ -4084,9 +4081,6 @@ properties:
           replicas:
             type: integer
             default: 2
-          imported:
-            type: boolean
-            default: false
       harbor:
         title: Harbor
         properties:

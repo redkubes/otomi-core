@@ -751,8 +751,6 @@ environments:
                 memory: 512Mi
         databases:
           keycloak:
-            useOtomiDB: true
-            imported: false
             size: '5Gi'
             replicas: 2
             resources:
@@ -763,8 +761,6 @@ environments:
                 cpu: 50m
                 memory: 256Mi
           harbor:
-            useOtomiDB: true
-            imported: false
             size: '5Gi'
             replicas: 2
             resources:

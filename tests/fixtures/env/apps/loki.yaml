@@ -89,4 +89,4 @@ apps:
                 region: west-eu
                 useInstanceRole: true
             type: s3
-        v11StartDate: 2021-05-13
+        v11StartDate: 2021-05-13T00:00:00Z

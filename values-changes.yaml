@@ -135,3 +135,8 @@ changes:
       - 'apps.harbor.importHarborDb'
       - 'apps.harbor.name'
       - 'apps.harbor.resources.importHarborDb'
+      - 'databases.harbor.use'
+      - 'databases.harbor.useOtomiDB'
+      - 'databases.harbor.imported'
+      - 'databases.keycloak.useOtomiDB'
+      - 'databases.keycloak.imported'
