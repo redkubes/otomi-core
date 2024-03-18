@@ -107,7 +107,7 @@ loki:
       configs:
       - from: {{ $l | get "v11StartDate" "2023-01-01" }}
         {{- if eq $st.type "gcs" }}
-        store: gcs
+        store: bigtable
         {{- else }}
         store: boltdb-shipper
         {{- end }}
