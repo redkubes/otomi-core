@@ -214,13 +214,6 @@ environments:
             registry:
               credentials:
                 username: otomi-admin
-            database:
-              type: external
-              size: '5Gi'
-              name: harbor-otomi-db
-              user: harbor
-              coreDatabase: registry
-              importHarborDb: false
             resources:
               trivy:
                 requests:
@@ -758,6 +751,18 @@ environments:
                 memory: 512Mi
         databases:
           keycloak:
+            useOtomiDB: true
+            imported: false
+            size: '5Gi'
+            replicas: 2
+            resources:
+              limits:
+                cpu: 100m
+                memory: 512Mi
+              requests:
+                cpu: 50m
+                memory: 256Mi
+          harbor:
             useOtomiDB: true
             imported: false
             size: '5Gi'

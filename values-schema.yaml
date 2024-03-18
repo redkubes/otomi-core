@@ -2089,10 +2089,6 @@ properties:
           adminPassword:
             type: string
             x-secret: ''
-          databasePassword:
-            type: string
-            description: Once set and deployed it cannot be changed with manual intervention.
-            x-secret: '{{ randAlphaNum 20 }}'
           core:
             properties:
               secret:
@@ -2174,42 +2170,25 @@ properties:
                       - gcs
                       - filesystem
                     default: filesystem
-          registry:
-            properties:
-              secret:
-                type: string
-                x-secret: '{{ randAlpha 16 }}'
-              credentials:
-                properties:
-                  htpasswd:
-                    type: string
-                    x-secret: ''
-                  username:
-                    type: string
-                    $ref: '#/definitions/secretTemplates/definitions/otomiAdminUsername'
-                  password:
-                    type: string
-                    x-secret: '{{ randAlphaNum 32 }}'
-            required:
-              - secret
-              - credentials
-          database:
-            properties:
-              size:
-                type: string
-              type:
-                type: string
-                description: Internal is a database provided by the community chart. The external is database provided by the cloudnative-pg.
-                enum:
-                  - internal
-                  - external
-              name:
-                type: string
-              user:
-                type: string
-              importHarborDb:
-                description: Indicate if an existing database should be importend. (Once set to true you must not change it back)
-                type: boolean
+        registry:
+          properties:
+            secret:
+              type: string
+              x-secret: '{{ randAlpha 16 }}'
+            credentials:
+              properties:
+                htpasswd:
+                  type: string
+                  x-secret: ''
+                username:
+                  type: string
+                  $ref: '#/definitions/secretTemplates/definitions/otomiAdminUsername'
+                password:
+                  type: string
+                  x-secret: '{{ randAlphaNum 32 }}'
+          required:
+            - secret
+            - credentials
           image:
             $ref: '#/definitions/imageSimple'
           resources:
@@ -2218,8 +2197,6 @@ properties:
               chartmuseum:
                 $ref: '#/definitions/resources'
               core:
-                $ref: '#/definitions/resources'
-              database:
                 $ref: '#/definitions/resources'
               jobservice:
                 $ref: '#/definitions/resources'
@@ -2236,8 +2213,6 @@ properties:
           secretKey:
             type: string
             x-secret: '{{ randAlpha 16 }}'
-        required:
-          - databasePassword
       httpbin:
         description: The famous httpbin application.
         properties:
@@ -4102,6 +4077,19 @@ properties:
           useOtomiDB:
             type: boolean
             default: false
+          size:
+            type: string
+          resources:
+            $ref: '#/definitions/resources'
+          replicas:
+            type: integer
+            default: 2
+          imported:
+            type: boolean
+            default: false
+      harbor:
+        title: Harbor
+        properties:
           size:
             type: string
           resources:

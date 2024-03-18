@@ -124,3 +124,14 @@ changes:
       - 'apps.argocd.enabled'
   - version: 20
     networkPoliciesMigration: true
+  - version: 21
+    relocations:
+      - apps.harbor.resources.database: databases.harbor.resources
+      - apps.harbor.database.size: databases.harbor.size
+    deletions:
+      - 'apps.harbor.databasePassword'
+      - 'apps.harbor.type'
+      - 'apps.harbor.user'
+      - 'apps.harbor.importHarborDb'
+      - 'apps.harbor.name'
+      - 'apps.harbor.resources.importHarborDb'
