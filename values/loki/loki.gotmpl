@@ -106,11 +106,7 @@ loki:
     schema_config:
       configs:
       - from: {{ $l | get "v11StartDate" "2023-01-01" }}
-        {{- if eq $st.type "gcs" }}
-        store: bigtable
-        {{- else }}
         store: boltdb-shipper
-        {{- end }}
         {{- if eq $st.type "minioLocal" }}
         object_store: s3
         {{- end }}
