@@ -256,7 +256,7 @@ appsInfo:
     license: Apache 2.0
     dependencies: Harbor
     about: Tekton Pipelines provides Kubernetes custom resources for declaring CI/CD-style pipelines.
-    integration: Otomi uses Tekton to proivide pre-build pipelines using the git-clone, buildpacks and kaniko tasks to build images from source code and push the created images to Harbor.
+    integration: Otomi uses Tekton to provide pre-build pipelines using the git-clone, buildpacks and kaniko tasks to build images from source code and push the created images to Harbor.
   loki:
     title: Loki
     appVersion: 2.8.2
