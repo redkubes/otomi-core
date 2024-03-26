@@ -219,7 +219,7 @@ jobs:
           version: v2.26.0
           access-key: ${{ secrets.SCW_ACCESS_KEY }}
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
-          default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+          default-project-id: e41d0c87-e67c-45be-9b28-9ca10d8d035f
           default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
       - name: Set k8s cluster name
         run: |
