@@ -333,7 +333,7 @@ export const applyChanges = async (
 }
 
 export const unparsePaths = (path: string, values: Record<string, any>): Array<string> => {
-  if (path.includes('{team}')) {
+  if (typeof path === 'string' && path.includes('{team}')) {
     const paths: Array<string> = []
     const teams: Array<string> = Object.keys(values?.teamConfig as Record<string, any>)
     teams.forEach((teamName) => paths.push(path.replace('{team}', teamName)))
