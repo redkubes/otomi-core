@@ -84,7 +84,7 @@ configs:
       name: Otomi
       issuer: {{ $v._derived.oidcBaseUrl }}
       clientID: {{ $k.idp.clientID }}
-      clientSecret: '$oidc.clientSecret'
+      clientSecret: {{ $k.idp.clientSecret | b64enc }}
       requestedScopes:
         - openid
         - profile
