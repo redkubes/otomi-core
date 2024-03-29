@@ -9,15 +9,6 @@ resources:
     data:
       custom-ca-certificates.crt: {{ .Values._derived.caCert | b64enc }}
 {{- end }}
-  - apiVersion: v1
-    kind: Secret
-    metadata:
-      name: argocd-secret
-      labels:
-        app.kubernetes.io/name: argocd-secret
-        app.kubernetes.io/part-of: argocd
-    data:
-      oidc.clientSecret: {{ $k.idp.clientSecret | b64enc }}
   # START: image updater
   - apiVersion: v1
     kind: ServiceAccount
