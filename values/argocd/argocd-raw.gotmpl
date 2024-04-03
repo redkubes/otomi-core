@@ -1,5 +1,4 @@
 {{- $v := .Values }}
-{{- $k := $v.apps.keycloak }}
 resources:
 {{- if $v._derived.untrustedCA }}
   - apiVersion: v1

@@ -93,6 +93,14 @@ configs:
       rootCA: |
         {{- $v._derived.caCert | nindent 8 }}
       {{- end }}
+
+  {{- if $v._derived.untrustedCA }}
+  tls:
+    certificates:
+      gitea.{{ $v.cluster.domainSuffix }}: |
+        {{- $v._derived.caCert | nindent 8 }}
+  {{- end }}
+
   secret:
     extra:
       clientSecret: {{ $k.idp.clientSecret | b64enc }}
