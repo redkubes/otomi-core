@@ -1,5 +1,11 @@
 apps:
     metrics-server:
-        enabled: true
+        resources:
+            limits:
+                cpu: 300m
+                memory: 512Mi
+            requests:
+                cpu: 100m
+                memory: 64Mi
         extraArgs:
-            - --kubelet-insecure-tls=true
+            - --test-extra-arg=true

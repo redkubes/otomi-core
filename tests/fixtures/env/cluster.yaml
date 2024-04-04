@@ -5,5 +5,5 @@ cluster:
     k8sContext: otomi-eks-demo
     name: demo
     owner: redkubes
-    provider: google
+    provider: linode
     region: eu-central-1

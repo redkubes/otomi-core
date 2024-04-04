@@ -93,9 +93,6 @@ teamConfig:
           securityContext:
             runAsUser: 1002
         name: hello
-        networkPolicy:
-          ingressPrivate:
-            mode: AllowAll
         ownHost: true
         paths: []
         port: 80

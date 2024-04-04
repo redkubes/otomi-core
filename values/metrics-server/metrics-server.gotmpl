@@ -1,10 +1,14 @@
 {{- $v := .Values }}
+{{- $provider := $v.cluster.provider }}
 {{- $m := $v.apps | get "metrics-server" }}
 
 extraArgs:
   - --kubelet-preferred-address-types=InternalIP
-{{- with $m.extraArgs }}
-{{- toYaml . | nindent 2 }}
+{{- if eq $provider "linode" }}
+  - --kubelet-insecure-tls=true
+{{- end }}
+{{- if (hasKey $m "extraArgs") }}
+  {{- $m.extraArgs | toYaml | nindent 2 }}
 {{- end }}
 
 apiService:

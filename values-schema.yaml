@@ -2620,12 +2620,7 @@ properties:
           extraArgs:
             type: array
           resources:
-            additionalProperties: false
-            properties:
-              api:
-                $ref: '#/definitions/resources'
-              tools:
-                $ref: '#/definitions/resources'
+            $ref: '#/definitions/resources'
       minio:
         additionalProperties: false
         properties:

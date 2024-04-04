@@ -108,11 +108,6 @@ environments:
             adminPassword: {{ $a | get "keycloak.adminPassword" $v.otomi.adminPassword }}
           metrics-server:
             enabled: {{ $a | get "metrics-server.enabled" (has $provider (list "custom" "aws" "digitalocean" "linode")) }}
-            {{- if eq $provider "linode" }}
-            _rawValues:
-              extraArgs:
-                - --kubelet-insecure-tls=true
-            {{- end}}
           prometheus-msteams:
             enabled: {{ and ($a | get "alertmanager.enabled" false) (or (has "msteams" ($v | get "alerts.receivers" list)) (has "msteams" ($v | get "home.receivers" list))) }}
           snapshot-controller:
