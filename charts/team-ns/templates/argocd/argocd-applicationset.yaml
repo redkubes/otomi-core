@@ -1,5 +1,4 @@
 {{- $v := .Values }}
-{{- if $v.apps.argocd.enabled }}
 {{- range $v.workloads }}
 {{- $a := .imageUpdateStrategy }}
 ---
@@ -71,5 +70,4 @@ spec:
         namespace: 'team-{{ $v.teamId }}'
         {{- end }}
         # helm-specific config
-{{- end }}
 {{- end }}

@@ -3,6 +3,7 @@ folders:
   - k8s-admin
   - istio-admin
   - cloudnative-pg
+  - argo
   {{- if $v.apps.falco.enabled }}
   - falco
   {{- end }}
@@ -11,9 +12,6 @@ folders:
   {{- end }}
   {{- if and (eq $v.cluster.provider "azure") ($v | get "azure.monitor" nil) }}
   - azure
-  {{- end }}
-  {{- if $v.apps.argocd.enabled }}
-  - argo
   {{- end }}
   {{- if $v.apps.velero.enabled }}
   - velero

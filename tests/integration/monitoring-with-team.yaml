@@ -8,8 +8,6 @@ otomi:
 apps:
   alertmanager:
     enabled: true
-  argocd:
-    enabled: true
   cert-manager:
     issuer: custom-ca
   grafana:

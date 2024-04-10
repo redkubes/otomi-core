@@ -1,8 +1,5 @@
 {{- $v := . }}
 {{- $teams := keys $v.teamConfig }}
-apps:
-  argocd:
-    enabled: {{ $v.apps.argocd.enabled }}
 cluster:
   domainSuffix: {{ $v.cluster.domainSuffix }}
 teamConfig:

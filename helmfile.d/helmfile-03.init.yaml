@@ -13,7 +13,7 @@ bases:
 
 releases:
   - name: argocd
-    installed: {{ $a | get "argocd.enabled" }}
+    installed: true
     namespace: argocd
     <<: *default 
   - name: otomi-operator

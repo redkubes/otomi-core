@@ -6,8 +6,6 @@ otomi:
   version: 'OTOMI_VERSION_PLACEHOLDER'
   adminPassword: welcomeotomi
 apps:
-  argocd:
-    enabled: true
   knative:
     enabled: true
   harbor:

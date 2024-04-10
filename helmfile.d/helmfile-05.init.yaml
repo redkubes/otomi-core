@@ -13,7 +13,7 @@ bases:
 
 releases:
   - name: argocd-artifacts
-    installed: {{ $a | get "argocd.enabled" }}
+    installed: true
     namespace: argocd
     labels:
       pkg: argocd
