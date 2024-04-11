@@ -2,17 +2,6 @@
 
 set -eu
 
-if kubectl get crd | grep -q operators.coreos.com; then
-  kubectl delete apiservices.apiregistration.k8s.io v1.packages.operators.coreos.com
-  kubectl delete -f charts/operator-lifecycle-manager/crds
-  kubectl delete clusterrolebindings olm-operator-binding-olm
-  kubectl delete clusterrole aggregate-olm-view
-  kubectl delete namespaces olm
-  kubectl delete namespaces operators
-else
-  echo "No OLM operators found. Skipping."
-fi
-
 if [[ $(helm status -n argocd argocd-operator-cr 2>/dev/null) ]]; then
   helm uninstall argocd-operator-cr -n argocd
   helm uninstall argocd-operator-artifacts -n argocd
@@ -58,4 +47,15 @@ if [[ $(helm status -n argocd argocd-operator-cr 2>/dev/null) ]]; then
   kubectl annotate -n argocd statefulsets "argocd-application-controller" meta.helm.sh/release-name=argocd meta.helm.sh/release-namespace=argocd
 else
   echo "The argocd-operator-cr helm release not found. Skipping."
+fi
+
+if kubectl get crd | grep -q operators.coreos.com; then
+  kubectl delete apiservices.apiregistration.k8s.io v1.packages.operators.coreos.com
+  kubectl delete -f charts/operator-lifecycle-manager/crds
+  kubectl delete clusterrolebindings olm-operator-binding-olm
+  kubectl delete clusterrole aggregate-olm-view
+  kubectl delete namespaces olm
+  kubectl delete namespaces operators
+else
+  echo "No OLM operators found. Skipping."
 fi
