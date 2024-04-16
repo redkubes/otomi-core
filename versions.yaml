@@ -1,4 +1,4 @@
-api: fix-argocd-resource-values
-console: 2.7.0
+api: fc-fix-403-errors
+console: fc-fix-403-errors
 tasks: 2.4.0
 tools: 1.6.4
