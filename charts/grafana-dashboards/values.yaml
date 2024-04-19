@@ -11,6 +11,7 @@ folders:
   - k8s-teams
   - minio
   - opencost
+  - rabbitmq
   - thanos
   - trivy
   - trivy-teams
