@@ -147,3 +147,7 @@ changes:
     deletions:
       - 'apps.ingress-azure'
       - 'otomi.hasCloudLB'
+  - version: 23
+    deletions:
+      - 'apps.vault'
+      - 'platformBackups.persistentVolumes.vault'

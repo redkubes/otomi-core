@@ -74,17 +74,6 @@ releases:
     labels:
       pkg: loki
     <<: *raw
-  - name: vault-operator
-    installed: {{ $a | get "vault.enabled" }}
-    namespace: vault
-    chart: ../charts/vault-operator
-    labels:
-      pkg: vault
-      group: secrets
-    values:
-      - ../values/vault-operator/vault-operator.gotmpl
-      - {{- $v.apps.vault | get "_rawValues" dict | toYaml | nindent 8 }}
-    <<: *upgrade
   - name: rabbitmq
     installed: {{ $a | get "rabbitmq.enabled" }}
     namespace: rabbitmq

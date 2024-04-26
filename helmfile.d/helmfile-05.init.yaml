@@ -36,10 +36,4 @@ releases:
     labels:
       pkg: keycloak-operator
     <<: *default
-  - name: vault-operator-artifacts
-    installed: {{ $a | get "vault.enabled" }}
-    namespace: vault
-    labels:
-      pkg: vault
-      group: secrets
-    <<: *raw
+

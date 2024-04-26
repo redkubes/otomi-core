@@ -129,7 +129,6 @@ Otomi offers a set of integrated Kubernetes applications (using upstream open so
 - [Grafana](https://github.com/grafana/grafana): Visualize metrics, logs, and traces from multiple sources
 - [Grafana Loki](https://github.com/grafana/loki): Collecting container application logs
 - [Harbor](https://github.com/goharbor/harbor): Container image registry with role-based access control, image scanning, and image signing
-- [HashiCorp Vault](https://github.com/hashicorp/vault): Manage Secrets and Protect Sensitive Data
 - [OPA/Gatekeeper](https://github.com/open-policy-agent/gatekeeper): Policy-based control for cloud-native environments
 - [Jaeger](https://github.com/jaegertracing/jaeger): End-to-end distributed tracing and monitor for complex distributed systems
 - [Kiali](https://github.com/kiali/kiali): Observe Istio service mesh relations and connections

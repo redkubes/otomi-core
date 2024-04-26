@@ -722,15 +722,6 @@ environments:
                 limits:
                   cpu: 500m
                   memory: 512Mi
-          vault:
-            enabled: false
-            resources:
-              limits:
-                cpu: '1000m'
-                memory: 512Mi
-              requests:
-                cpu: 500m
-                memory: 256Mi
           velero:
             enabled: false
             restic:
@@ -776,8 +767,6 @@ environments:
               enabled: false
             harbor:
               enabled: false
-            vault:
-              enabled: false
             argo:
               enabled: false
             minio:
@@ -805,8 +794,8 @@ environments:
           enabled: false
           upgrade:
             version: main
-        # TODO: update this when schema version changes: (and think more?)
-        version: 22
+        # TODO: update this when schema version changes
+        version: 23
         letsencryptRootCA: |
           -----BEGIN CERTIFICATE-----
           MIIFmDCCA4CgAwIBAgIQU9C87nMpOIFKYpfvOHFHFDANBgkqhkiG9w0BAQsFADBm
