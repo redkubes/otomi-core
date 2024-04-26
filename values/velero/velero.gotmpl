@@ -266,21 +266,6 @@ schedules:
       includeClusterResources: true
       storageLocation: otomi
 {{- end }}
-{{- if $b.vault.enabled }}
-  vault:
-    disabled: false
-    schedule: {{ $b.vault.schedule }}
-    useOwnerReferencesInBackup: false
-    template:
-      ttl: {{ $b.vault.ttl }}
-      includedNamespaces:
-      - vault
-      includedResources:
-      - pv
-      - pvc
-      includeClusterResources: true
-      storageLocation: otomi
-{{- end }}
 {{- if $b.argo.enabled }}
   argocd:
     disabled: false
