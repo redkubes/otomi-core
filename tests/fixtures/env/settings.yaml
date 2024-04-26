@@ -92,8 +92,6 @@ platformBackups:
             enabled: false
         minio:
             enabled: false
-        vault:
-            enabled: false
 smtp:
     auth_username: no-reply@doma.in
     from: no-reply@doma.in
@@ -126,4 +124,4 @@ status:
         deployingVersion: 0.21.0
         status: deployed
         version: 0.21.0
-version: 22
+version: 23
