@@ -3,6 +3,8 @@
   "docker": {
     "enabled": false
   },
+  "baseBranches": ["auto-chart-update"],
+  "schedule": "before 5am every weekday",
   "extends": ["github>redkubes/renovate-config"],
   "helm-requirements": {
     "enabled": false
@@ -14,6 +16,11 @@
     "enabled": false
   },
   "helmv3": {
-    "enabled": false
+    "enabled": true,
+    "registryAliases": {
+      "stable": "https://charts.helm.sh/stable"
+    },
+    "commitMessageTopic": "helm chart {{depName}}",
+    "fileMatch": ["^chart/otomi-deps/Chart\\.yaml$"]
   }
 }

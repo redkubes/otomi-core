@@ -1,0 +1,38 @@
+name: Renovate
+on:
+  # This lets you dispatch a renovate job with different cache options if you want to reset or disable the cache manually.
+  workflow_dispatch:
+    inputs:
+      repoCache:
+        description: 'Reset or disable the cache?'
+        type: choice
+        default: enabled
+        options:
+          - enabled
+          - disabled
+          - reset
+  schedule:
+    # Run every 30 minutes:
+    - cron: '0,30 * * * *'
+
+# Adding these as env variables makes it easy to re-use them in different steps and in bash.
+env:
+  cache_archive: renovate_cache.tar.gz
+  # This is the dir renovate provides -- if we set our own directory via cacheDir, we can run into permissions issues.
+  # It is also possible to cache a higher level of the directory, but it has minimal benefit. While renovate execution
+  # time gets faster, it also takes longer to upload the cache as it grows bigger.
+  cache_dir: /tmp/renovate/cache/renovate/repository
+  # This can be manually changed to bust the cache if neccessary.
+  cache_key: renovate-cache
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.4
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v40.1.11
+        with:
+          configurationFile: .github/renovate.json
+          token: ${{ secrets.RENOVATE_TOKEN }}
