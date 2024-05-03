@@ -1,4 +1,4 @@
 api: main
 console: main
-tasks: 2.4.0
+tasks: me-fix-offline-token-keycloak
 tools: 1.6.4
