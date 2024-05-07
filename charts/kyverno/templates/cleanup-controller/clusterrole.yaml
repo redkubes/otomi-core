@@ -19,6 +19,12 @@ metadata:
     {{- include "kyverno.cleanup-controller.labels" . | nindent 4 }}
 rules:
   - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+  - apiGroups:
       - admissionregistration.k8s.io
     resources:
       - validatingwebhookconfigurations
@@ -45,6 +51,20 @@ rules:
     verbs:
       - list
       - watch
+  - apiGroups:
+      - kyverno.io
+    resources:
+      - globalcontextentries
+      - globalcontextentries/status
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+      - deletecollection
   - apiGroups:
       - kyverno.io
     resources:

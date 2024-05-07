@@ -29,7 +29,6 @@ spec:
       - resources:
           kinds:
           - Pod
-    skipBackgroundRequests: true
     validate:
       message: "An image tag is required."
       pattern:
@@ -42,7 +41,6 @@ spec:
       - resources:
           kinds:
           - Pod
-    skipBackgroundRequests: true
     validate:
       message: "Using a mutable image tag e.g. 'latest' is not allowed."
       pattern:

@@ -50,6 +50,8 @@ spec:
       resources:
         - clusterpolicies
         - clusterpolicies/status
+        - globalcontextentries
+        - globalcontextentries/status
         - clusteradmissionreports
         - clusterbackgroundscanreports
       verbs:
@@ -72,6 +74,35 @@ spec:
         - updaterequests/status
         - admissionreports
         - backgroundscanreports
+      verbs:
+        - create
+        - delete
+        - get
+        - list
+        - patch
+        - update
+        - watch
+        - deletecollection
+    - apiGroups:
+        - reports.kyverno.io
+      clusterScope: true
+      resources:
+        - clusterephemeralreports
+      verbs:
+        - create
+        - delete
+        - get
+        - list
+        - patch
+        - update
+        - watch
+        - deletecollection
+    - apiGroups:
+        - reports.kyverno.io
+      namespaces:
+        - '*'
+      resources:
+        - ephemeralreports
       verbs:
         - create
         - delete

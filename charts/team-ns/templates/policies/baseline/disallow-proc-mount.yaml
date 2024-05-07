@@ -29,7 +29,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Changing the proc mount from the default is not allowed. The fields

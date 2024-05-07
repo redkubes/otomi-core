@@ -25,7 +25,6 @@ spec:
       - resources:
           kinds:
           - Pod
-    skipBackgroundRequests: true
     validate:
       message: "The label `otomi.io/app` is required."
       pattern:

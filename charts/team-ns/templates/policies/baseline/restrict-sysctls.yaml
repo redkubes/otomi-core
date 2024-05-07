@@ -31,7 +31,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Setting additional sysctls above the allowed type is disallowed.

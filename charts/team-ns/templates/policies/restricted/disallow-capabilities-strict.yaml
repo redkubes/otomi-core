@@ -28,7 +28,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Containers must drop `ALL` capabilities.
@@ -46,7 +45,11 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
+      preconditions:
+        all:
+        - key: "{{`{{ request.operation || 'BACKGROUND' }}`}}"
+          operator: NotEquals
+          value: DELETE
       validate:
         message: >-
           Any capabilities added other than NET_BIND_SERVICE are disallowed.

@@ -36,7 +36,6 @@ spec:
         value:
         - CREATE
         - UPDATE
-    skipBackgroundRequests: true
     validate:
       message: "Liveness probe is required for all containers."
       foreach:

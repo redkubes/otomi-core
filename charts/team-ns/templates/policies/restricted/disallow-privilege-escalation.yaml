@@ -27,7 +27,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Privilege escalation is disallowed. The fields

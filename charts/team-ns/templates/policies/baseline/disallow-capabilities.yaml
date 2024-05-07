@@ -25,7 +25,11 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
+      preconditions:
+        all:
+        - key: "{{`{{ request.operation || 'BACKGROUND' }}`}}"
+          operator: NotEquals
+          value: DELETE
       validate:
         message: >-
           Any capabilities added beyond the allowed list (AUDIT_WRITE, CHOWN, DAC_OVERRIDE, FOWNER,

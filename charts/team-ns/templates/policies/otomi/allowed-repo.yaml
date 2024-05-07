@@ -1,0 +1,41 @@
+{{- $v := .Values }}
+{{- $p := index $v.policies "allowed-repo" }}
+{{- if and (get (index $v.apps "kyverno") "enabled") $p }}
+---
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: allowed-repo
+  annotations:
+    policies.kyverno.io/title: Allowed Image Repository
+    policies.kyverno.io/category: otomi
+    policies.kyverno.io/severity: {{ $p.severity }}
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      In addition to restricting the image registry from which images are pulled, in some cases
+      and environments it may be required to also restrict which image repositories are used, 
+      for example in some restricted Namespaces. This policy ensures that the only allowed
+      image repositories present in a given Pod, across any container type, come from the
+      designated list.
+  labels: {{- include "team-ns.chart-labels" $ | nindent 4 }} 
+spec:
+  validationFailureAction: {{ $p.action }}
+  background: true
+  failurePolicy: Fail
+  rules:
+    - name: good-otomi-repo
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: >-
+          All images in this Pod must come from an authorized repository.          
+        deny:
+          conditions:
+            all:
+            - key: "{{`{{ images.[containers, initContainers, ephemeralContainers][].*.name[] }}`}}"
+              operator: AnyNotIn
+              value: harbor.{{ $v.cluster.domainSuffix }}
+{{- end }}

@@ -29,7 +29,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Running with root group IDs is disallowed. The fields
@@ -66,7 +65,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Containers cannot run with a root primary or supplementary GID. The field
@@ -82,7 +80,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Containers cannot run with a root primary or supplementary GID. The field

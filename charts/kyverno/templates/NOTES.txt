@@ -22,9 +22,9 @@ The following components have been installed in your cluster:
 {{- end }}
 
 {{ if not .Values.admissionController.replicas }}
-⚠️  WARNING: Setting the admission controller replica count below 3 means Kyverno is not running in high availability mode.
-{{- else if lt (int .Values.admissionController.replicas) 3 }}
-⚠️  WARNING: Setting the admission controller replica count below 3 means Kyverno is not running in high availability mode.
+⚠️  WARNING: Setting the admission controller replica count below 2 means Kyverno is not running in high availability mode.
+{{- else if lt (int .Values.admissionController.replicas) 2 }}
+⚠️  WARNING: Setting the admission controller replica count below 2 means Kyverno is not running in high availability mode.
 {{- end }}
 
 {{- if semverCompare "<1.21.0" .Capabilities.KubeVersion.Version }}
@@ -40,7 +40,7 @@ The following components have been installed in your cluster:
 {{- end }}
 
 {{- with .Values.features.validatingAdmissionPolicyReports.enabled }}
-⚠️  WARNING: Generating reports from ValidatingAdmissionPolicies require a Kubernetes 1.27+ cluster with `ValidatingAdmissionPolicy` feature gate and `admissionregistration.k8s.io` API group enabled.
+⚠️  WARNING: Generating reports from ValidatingAdmissionPolicies requires a Kubernetes 1.27+ cluster with `ValidatingAdmissionPolicy` feature gate and `admissionregistration.k8s.io` API group enabled.
 {{- end }}
 
 💡 Note: There is a trade-off when deciding which approach to take regarding Namespace exclusions. Please see the documentation at https://kyverno.io/docs/installation/#security-vs-operability to understand the risks.

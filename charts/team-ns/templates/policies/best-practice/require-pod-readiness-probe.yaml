@@ -36,7 +36,6 @@ spec:
         value:
         - CREATE
         - UPDATE
-    skipBackgroundRequests: true
     validate:
       message: "Readiness are required for all containers."
       foreach:

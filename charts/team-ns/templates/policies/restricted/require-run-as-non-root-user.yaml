@@ -27,7 +27,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Running as root is not allowed. The fields spec.securityContext.runAsUser,

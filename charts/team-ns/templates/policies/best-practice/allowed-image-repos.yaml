@@ -29,7 +29,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           All images in this Pod must come from an authorized repository.          

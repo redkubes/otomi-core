@@ -1,8 +1,8 @@
 apiVersion: v2
 type: application
 name: kyverno
-version: 3.1.4
-appVersion: v1.11.4
+version: 3.2.2
+appVersion: v1.12.1
 icon: https://github.com/kyverno/kyverno/raw/main/img/logo.png
 description: Kubernetes Native Policy Management
 keywords:
@@ -31,10 +31,14 @@ annotations:
   artifacthub.io/links: |
     - name: Documentation
       url: https://kyverno.io/docs
+  # valid kinds are: added, changed, deprecated, removed, fixed and security
+  artifacthub.io/changes: |
+    - kind: added
+      description: make webhook pod annotations configurable
 dependencies:
   - name: grafana
-    version: "0.0.0"
+    version: 3.2.2
     condition: grafana.enabled
   - name: crds
-    version: "3.1.4"
+    version: 3.2.2
     condition: crds.install

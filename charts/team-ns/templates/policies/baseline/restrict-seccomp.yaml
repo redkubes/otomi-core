@@ -29,7 +29,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      skipBackgroundRequests: true
       validate:
         message: >-
           Use of custom Seccomp profiles is disallowed. The fields

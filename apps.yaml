@@ -221,7 +221,7 @@ appsInfo:
     integration: Knative serving can be activated to deliver Container-as-a-Service (CaaS) functionality with a scale-to-zero option. It can be compared to Functions-as-a-service (FaaS) but is container oriented, and takes only one manifest to configure an auto scaling service based on a container image of choice. Otomi offers an on-the-fly Knative service deployment, making it very easy to deploy containerized services without the hassle of providing all the supporting resources involved with Helm charts. Istio Virtual Services are used to route traffic coming in for a public domain to its backing Knative Service, allowing it to set a custom domain.
   kyverno:
     title: Kyverno
-    appVersion: 1.11.3
+    appVersion: 1.12.1
     repo: https://github.com/kyverno/kyverno
     maintainers: Nirmata
     relatedLinks:
