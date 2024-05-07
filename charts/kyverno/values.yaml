@@ -507,6 +507,16 @@ webhooksCleanup:
   # -- Node affinity constraints.
   nodeAffinity: {}
 
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
   # -- Security context for the hook containers
   securityContext:
     runAsUser: 65534
@@ -564,6 +574,16 @@ policyReportsCleanup:
 
   # -- Node affinity constraints.
   nodeAffinity: {}
+
+  resources:
+    # -- Pod resource limits
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    # -- Pod resource requests
+    requests:
+      cpu: 10m
+      memory: 64Mi
 
   # -- Security context for the hook containers
   securityContext:
