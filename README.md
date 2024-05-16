@@ -25,7 +25,7 @@ Otomi has been acquired by <a href="https://www.linode.com/otomi/">Akamai</a>. W
 Otomi turns any Kubernetes cluster into an Application Platform to provide paved roads from code to production
 </h4>
 
-## Getting started
+## Getting started - Test
 
 ### Helm
 
