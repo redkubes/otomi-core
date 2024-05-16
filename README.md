@@ -25,7 +25,7 @@ Otomi has been acquired by <a href="https://www.linode.com/otomi/">Akamai</a>. W
 Otomi turns any Kubernetes cluster into an Application Platform to provide paved roads from code to production
 </h4>
 
-## Getting started - Test
+## Getting started - Test - Test
 
 ### Helm
 
@@ -37,7 +37,7 @@ To install Otomi, make sure to have a K8s cluster running with at least:
 - A default storage class configured
 - When using the `custom` provider, make sure the K8s LoadBalancer Service created by `Otomi` can obtain an external IP (using a cloud load balancer or MetalLB)
 
-> **_NOTE:_**  Install Otomi with DNS to unlock it's full potential. Check [otomi.io](https://otomi.io) for more info.
+> **_NOTE:_** Install Otomi with DNS to unlock it's full potential. Check [otomi.io](https://otomi.io) for more info.
 
 Add the Helm repository:
 
