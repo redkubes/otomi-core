@@ -31,3 +31,5 @@ kms: {}
 giteaPassword: ""
 
 cloneUnsecure: false
+
+otomiVersion: 0.1.0

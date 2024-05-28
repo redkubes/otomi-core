@@ -16,6 +16,7 @@
     "adrlog",
     "adrlogstop",
     "anyuid",
+    "acquired",
     "trivy",
     "appgw",
     "auths",

@@ -1,7 +1,13 @@
 <h1 align="center">
   <img src="https://otomi.io/img/otomi-logo.svg" width="224px"/><br/>
-  Self-hosted DevSecOps Platform for Kubernetes
+  Self-hosted Application Platform for Kubernetes
 </h1>
+
+<h3 align="center">Announcement 👇👇
+<br></br>
+Otomi has been acquired by <a href="https://www.linode.com/otomi/">Akamai</a>. We believe that with Akamai’s support and resources, we can create an even more powerful Kubernetes application platform. More details will follow later this year.
+<br></br>
+</h3>
 
 <p align="center">
   <a href="https://github.com/redkubes/otomi-core/releases/"><img alt="Releases" src="https://img.shields.io/github/release-date/redkubes/otomi-core?label=latest%20release" /></a>
@@ -16,38 +22,8 @@
 <p align="center"><img src="https://github.com/redkubes/otomi-core/blob/main/docs/img/otomi-console.png/?raw=true" width="100%" align="center" alt="Otomi integrated applications"></p>
 
 <h4 align="center">
-Otomi turns any Kubernetes cluster into a DevOps Platform to provide paved roads from code to production
+Otomi turns any Kubernetes cluster into an Application Platform to provide paved roads from code to production
 </h4>
-
-## How Otomi helps
-
-**DevSecOps Teams** - With self-service, automation and visibility to let them take full-service ownership
-
-- Scan source code for vulnerabilities
-- Build OCI compliant images from application code and store them in a private registry
-- Deploy containerized workloads using a catalog with pre-filled golden path templates
-- Automatically update container images of workloads
-- Publicly expose applications
-- Get instant access to logs, metrics and traces, vulnerabilities, threads and policy violations
-- Configure network policies, response headers and CNAMEs
-- Manage secrets
-
-**Platform teams** - To setup a Kubernetes-based platform for DevOps teams and provide them a paved road to production
-
-- Create a platform profile and deploy to any Kubernetes cluster
-- Onboard DevSecOps teams in a comprehensive multi-tenant setup and allow them to take full ownership over their applications
-- Get all the required capabilities in an integrated and automated way
-- Ensure governance with security policies
-- Implement zero-trust networking
-- Change the desired state of the platform based on Configuration-as-Code
-- Support multi- and hybrid cloud scenarios
-- Prevent cloud provider lock-in
-- Implement full observability (metrics, logs, traces, alerts)
-- Create Golden path templates and offer them to teams on the platform through a catalog
-
-<!-- Check the video below to see how Otomi can be used as a self service portal for developers 
-
-[![Use Otomi as a self service portal for developers](https://img.youtube.com/vi/RI4pIVxbhS0/maxresdefault.jpg)](https://www.youtube.com/watch?v=RI4pIVxbhS0) -->
 
 ## Getting started
 

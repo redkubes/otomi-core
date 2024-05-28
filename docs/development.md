@@ -418,7 +418,7 @@ npm run install-deps
 Then instruct Otomi to not run in docker:
 
 ```
-export IN_DOCKER=1
+export IN_DOCKER=false
 ```
 
 Next you can execute `otomi apply` or `otomi status` against your to connect with your kubernetes cluster.

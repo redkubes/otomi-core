@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 readonly script=otomi
-readonly branch=${OTOMI_TAG:-main}
+readonly current_branch=$(git rev-parse --abbrev-ref HEAD)
+readonly branch=${OTOMI_TAG:-$current_branch}
 readonly remote=https://raw.githubusercontent.com/redkubes/otomi-core/$branch/binzx/$script
 readonly path=/usr/local/bin
 
@@ -38,6 +39,9 @@ if [[ $SHELL == *zsh* ]] || [[ $SHELL == *bash* ]]; then
       acPath='/usr/local/share/zsh/site-functions/_otomi'
       if [[ $SHELL == *bash* ]]; then
         acPath='/usr/local/etc/bash_completion.d/otomi.bash'
+        mkdir -p /usr/local/etc/bash_completion.d
+      else
+        mkdir -p /usr/local/share/zsh/site-functions
       fi
       otomi completion | tr -d '\r' >$acPath
       chmod +x $acPath
@@ -50,6 +54,9 @@ if [[ $SHELL == *zsh* ]] || [[ $SHELL == *bash* ]]; then
       ;;
   esac
 fi
+
+# The /tmp/otomi is created by regular user. Installer creates it with root permisions only
+rm -rf /tmp/otomi
 
 echo "Otomi has been installed in $file"
 echo 'You can now run it by calling `otomi`'

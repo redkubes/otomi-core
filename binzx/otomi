@@ -14,15 +14,21 @@
 # shellcheck disable=SC2128
 [ "${BASH_VERSINFO:-0}" -lt 4 ] && echo "You are using $BASH_VERSINFO, while we only support Bash -ge than version 4. Please upgrade." && exit 1
 calling_args="$*"
+if [ -z "$IN_DOCKER" ]; then
+  IN_DOCKER=false
+fi
 if [ "$NODE_ENV" == "test" ]; then
   CI=1
   ENV_DIR="$PWD/tests/fixtures"
   NOPULL=1
   OTOMI_TAG="main"
-elif [ -z "$ENV_DIR" ] && [ -n "$IN_DOCKER" ]; then
+elif [ -z "$ENV_DIR" ] && [ "${IN_DOCKER,,}" == "false" ]; then
   ENV_DIR="$PWD/env"
-elif [ -z "$IN_DOCKER" ] && [ -n "$ENV_DIR" ]; then
-  mkdir -p $ENV_DIR
+elif [ -z "$IN_DOCKER" ]; then
+  IN_DOCKER=false
+  if [ -n "$ENV_DIR" ]; then
+    mkdir -p $ENV_DIR
+  fi
 fi
 [[ "$ENV_DIR" == *"../"* ]] && echo "Don't provide an ENV_DIR that contains '../'!" && exit 1
 # treat CI and chart as non interactive
@@ -176,7 +182,7 @@ check_update() {
   fi
 }
 
-[ -z $DONT_CHECK_UPDATE ] && [ -z $IN_DOCKER ] && silent echo "Checking for updates" && check_update
+[ -z $DONT_CHECK_UPDATE ] && [ "${IN_DOCKER,,}" != "false" ] && silent echo "Checking for updates" && check_update
 
 tmp_env=$(mktemp)
 
@@ -232,7 +238,7 @@ dump_vars "${vars[@]}"
 
 cat >>$tmp_env <<EOF
 OTOMI_CALLER_COMMAND=${BASH_SOURCE[0]##*/}
-IN_DOCKER=1
+IN_DOCKER=false
 EOF
 
 helm_config="$HOME/.config/helm"
@@ -279,7 +285,7 @@ if [ "$1" = "bash" ] && [ "$#" = "1" ]; then
   cmd="bash"
 fi
 
-if { { [ "$otomi_version_used" = 'latest' ] || [ "$otomi_version_used" = 'main' ]; } || [ -n "$FORCE_PULL" ]; } && [ -z $NOPULL ] && [ -z $IN_DOCKER ]; then
+if { { [ "$otomi_version_used" = 'latest' ] || [ "$otomi_version_used" = 'main' ]; } || [ -n "$FORCE_PULL" ]; } && [ -z $NOPULL ] && [ "${IN_DOCKER,,}" != "false" ]; then
   silent echo "Pulling latest version of the docker image, please wait"
   silent docker pull $otomi_tools_image
   status=$?
@@ -304,7 +310,7 @@ mkdir -p /tmp/otomi
 # Issue arises due to OSX not assuming UTF-8 format: https://unix.stackexchange.com/a/64905 need to set LC_ALL=C
 container_name="otomi-core-$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)"
 
-if [ -n "$IN_DOCKER" ]; then
+if [ "${IN_DOCKER,,}" == "false" ]; then
   silent echo $cmd
   $cmd
   status=$?

@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to build and push'
+        description: 'Placeholder, this value is not yet used.'
         required: false
-        default: 'latest'
+        default: 'run'
         type: string
   push:
     branches:
@@ -26,6 +26,13 @@ jobs:
         with:
           fetch-depth: '2'
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -46,7 +53,7 @@ jobs:
 
           if git log --format=%B -n 1 ${{ github.sha }} | grep -q "\[TOOLS\]\[MAJOR\]"; then
             # If a "[TOOLS][MAJOR]" commit is found, increment the major version by one and reset the minor and patch version to '0'.
-            NEW_VERSION="$(echo ${OLD_VERSION} | awk -F. -v OFS=. '{$1 = $1 + 1; $2 = 0; $3 = 0} {print $0}')"
+            NEW_VERSION="$(echo ${OLD_VERSION} | sed 's/^v//' | awk -F. -v OFS=. '{$1 = $1 + 1; $2 = 0; $3 = 0} {print "v"$0}')"
             echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
             echo OLD_VERSION = ${OLD_VERSION}
             echo NEW_VERSION = ${NEW_VERSION}
@@ -63,20 +70,7 @@ jobs:
             echo OLD_VERSION = ${OLD_VERSION}
             echo NEW_VERSION = ${NEW_VERSION}
           fi
-
           echo "No need to bump the version. Will skip next steps."
-
-      - name: Build and tag Docker image
-        if: ${{ env.NEW_VERSION != null }}
-        run: |
-          docker buildx build --load -t ${{ env.NAMESPACE }}/${{ env.REPO }} -f tools/Dockerfile .
-          docker tag ${{ env.NAMESPACE }}/${{ env.REPO }} ${{ env.NAMESPACE }}/${{ env.REPO }}:${{ env.NEW_VERSION }}
-
-      - name: Squash image
-        if: ${{ env.NEW_VERSION != null }}
-        run: |
-          pip3 install docker-squash
-          docker-squash otomi/tools -t ${{ env.NAMESPACE }}/${{ env.REPO }}:${{ env.NEW_VERSION }}
 
       - name: Login to GitHub Container Registry
         if: ${{ env.NEW_VERSION != null }}
@@ -84,8 +78,11 @@ jobs:
         with:
           username: 'otomi'
           password: '${{ secrets.DOCKERHUB_OTOMI_TOKEN }}'
-
-      - name: Push Docker image
-        if: ${{ env.NEW_VERSION != null }}
-        run: |
-          docker push ${{ env.NAMESPACE }}/${{ env.REPO }}:${{ env.NEW_VERSION }}
+      - name: image build and push tag for branch
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          platforms: linux/amd64
+          file: tools/Dockerfile
+          tags: |
+            ${{ env.NAMESPACE }}/${{ env.REPO }}:${{ env.NEW_VERSION }}

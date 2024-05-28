@@ -46,7 +46,6 @@ env:
   CUSTOM_ROOT_CA: |
     {{- $v._derived.caCert | nindent 4 }}
   {{- end }}
-  IN_DOCKER: '1'
   EDITOR_INACTIVITY_TIMEOUT: {{ $o.editorInactivityTimeout }}
   DRONE_WEBHOOK_SECRET: {{ $d | get "sharedSecret" }}
 

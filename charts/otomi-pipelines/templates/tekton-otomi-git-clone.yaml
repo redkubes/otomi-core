@@ -25,7 +25,7 @@ spec:
   stepTemplate:
     computeResources: {{- toYaml .Values.tektonTask.resources | nindent 6 }}
     workingDir: $(workspaces.source.path)
-    image: otomi/core:v1.0.0
+    image: otomi/core:{{ .Values.otomiVersion }}
   steps:
     - name: git-clone
       script: |
@@ -63,7 +63,7 @@ spec:
             echo -n "0" > $(results.CI.path) && export CI="0" && echo "Finished"
         fi
         
-        echo -n "$(yq r values/env/settings.yaml otomi.version)" > $(results.OTOMI_VERSION.path)
+        echo -n "$(yq '.otomi.version' values/env/settings.yaml)" > $(results.OTOMI_VERSION.path)
         cd values
         # Check if team files has been changed
         if git diff --name-only  HEAD~1 | grep  -e "env/.*.teams" -e "env/teams"; then

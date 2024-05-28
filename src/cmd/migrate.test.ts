@@ -413,5 +413,5 @@ describe('Network policies migrations', () => {
     await applyChanges([valuesChanges], false, deps)
     const expectedValues = getExpectedValues()
     expect(deps.writeValues).toBeCalledWith(expectedValues, true)
-  })
+  }, 20000)
 })

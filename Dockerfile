@@ -1,4 +1,4 @@
-FROM otomi/tools:v1.6.0 as ci
+FROM otomi/tools:v2.0.0 as ci
 
 ENV APP_HOME=/home/app/stack
 
@@ -9,7 +9,6 @@ ARG SKIP_TESTS='false'
 ENV NODE_ENV='test'
 ENV CI=true
 ENV ENV_DIR=$APP_HOME/env
-ENV IN_DOCKER='1'
 ENV VERBOSITY='2'
 ENV DISABLE_SYNC='1'
 ENV NODE_PATH='dist'
@@ -28,11 +27,10 @@ FROM ci as clean
 RUN npm prune --production
 
 #-----------------------------
-FROM otomi/tools:v1.6.0 as prod
+FROM otomi/tools:v2.0.0 as prod
 
 ENV APP_HOME=/home/app/stack
 ENV ENV_DIR=/home/app/stack/env
-ENV IN_DOCKER='1'
 ENV VERBOSITY='0'
 ENV NODE_NO_WARNINGS='1'
 ENV NODE_PATH='dist'

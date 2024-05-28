@@ -30,7 +30,7 @@ spec:
     - name: CI
       value: $(params["CI"])
     - name: IN_DOCKER
-      value: '1'
+      value: 'false'
     - name: ENV_DIR
       value: /home/app/stack/env
     - name: VERBOSE

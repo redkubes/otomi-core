@@ -49,7 +49,7 @@ function build() {
 function decorate() {
   echo "Decorating template/constraints files with properties."
   local map_constraints_expr='.policies as $constraints |  $constraints | keys[] | {(.): $constraints[.]}'
-  for constraint in $(yq r $policies_file -j | jq --raw-output -S -c "$map_constraints_expr"); do
+  for constraint in $(yq -o=json $policies_file | jq --raw-output -S -c "$map_constraints_expr"); do
     local key=$(echo $constraint | jq --raw-output '. | keys[0]')
     # NOTE:
     # Konstraint library is generating filenames from folder names using the dash symbol "-" as uppercase markup. Example:  file-name => FileName
@@ -58,16 +58,16 @@ function decorate() {
     # decorate constraints with parameters
     local constraints_file=$(ls $tmp_path/constraint_* | grep -i "$filename.yaml")
     local parameters=$(echo $constraint | jq --raw-output -c "{\"spec\":{\"parameters\": {\"$key\"} }}")
-    local constraints=$(yq r -P -j $constraints_file | jq --raw-output -c '.')
-    jq -n --argjson constraints $constraints --argjson parameters $parameters '$constraints * $parameters | .' | yq r -P - >"$constraints_file"
+    local constraints=$(yq -o=json $constraints_file | jq --raw-output -c '.')
+    jq -n --argjson constraints $constraints --argjson parameters $parameters '$constraints * $parameters | .' | yq -o=yaml - >"$constraints_file"
     # decorate constraint templates with openAPI schema properties
     local map_properties_expr='. as $properties | {"spec":{"crd":{"spec":{"validation": {"openAPIV3Schema": $properties }}}}} | .'
     local policy_json_path="properties.policies.properties[${key}]"
-    local properties=$(yq -j r $compiled_schema_path $policy_json_path | yq d - '**.required.' | yq d - '**.default.' | yq d - '**.additionalProperties.' | jq -c --raw-output "$map_properties_expr")
+    local properties=$(yq e 'del(..|.required?, .default?, .additionalProperties?)' -o=json -I=0 $compiled_schema_path | jq -c --raw-output "$map_properties_expr")
     local ctemplates_file=$(ls $tmp_path/template_* | grep -i "$filename.yaml")
     local template_file=${ctemplates_file/$tmp_path/$templates_path}
-    local template=$(yq r -P -j $ctemplates_file | jq --raw-output -c '.')
-    jq -n --argjson template "$template" --argjson properties "$properties" '$template * $properties | .' | yq r -P - >"$template_file"
+    local template=$(yq e -o=json -I=0 $ctemplates_file | jq --raw-output -c '.')
+    jq -n --argjson template "$template" --argjson properties "$properties" '$template * $properties | .' | yq e -o=yaml - >"$template_file"
   done
 }
 

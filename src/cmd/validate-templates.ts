@@ -156,16 +156,16 @@ export const validateTemplates = async (): Promise<void> => {
   const skipFilenames = ['crd', 'constraint', 'knative-operator', 'buildpack', 'docker', 'git-clone', 'kaniko']
 
   d.log('Validating resources')
-  const quiet = !argv.verbose ? [] : ['--quiet']
+  const verbose = argv.verbose ? ['-verbose'] : []
   d.info(`Schema Output Path: ${schemaOutputPath}`)
   d.info(`Skip kinds: ${skipKinds.join(', ')}`)
   d.info(`Skip Filenames: ${skipFilenames.join(', ')}`)
   d.info(`K8S Resource Path: ${k8sResourcesPath}`)
   d.info(`Schema location: file://${schemaOutputPath}`)
   const kubevalOutput = await nothrow(
-    $`kubeval ${quiet} --skip-kinds ${skipKinds.join(',')} --ignored-filename-patterns ${skipFilenames.join(
-      ',',
-    )} -d ${k8sResourcesPath} --schema-location file://${schemaOutputPath} --kubernetes-version ${k8sVersion}`,
+    $`kubeconform ${verbose} -skip ${skipKinds.join(',')} -ignore-filename-pattern ${skipFilenames.join(
+      '|',
+    )} -schema-location ${schemaOutputPath}/${vk8sVersion}-standalone/{{.ResourceKind}}{{.KindSuffix}}.json ${k8sResourcesPath}`,
   )
 
   let passCount = 0

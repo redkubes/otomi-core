@@ -2,11 +2,3 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npm run lint
-
-# Not in main
-if ! git diff HEAD main --quiet; then
-  # if values files have BOTH been modified, then we know migrate is safe
-  if test $(git diff origin/main --name-only | awk 'xor(/values-schema.yaml/,/values-changes.yaml/)' | wc -l) = 2; then
-    npm run migrate-values
-  fi
-fi
