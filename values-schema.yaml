@@ -2700,6 +2700,8 @@ properties:
                 $ref: '#/definitions/resources'
               memcached:
                 $ref: '#/definitions/resources'
+              metricsGenerator:
+                $ref: '#/definitions/resources'
           autoscaling:
             properties:
               ingester:
