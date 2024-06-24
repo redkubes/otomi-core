@@ -24,7 +24,7 @@ k8s:
     - name: harbor
       app: harbor
     - name: gitea
-    - name: gitea-operator
+    - name: gitea-app
       disableIstioInjection: true
     - name: grafana
       app: grafana

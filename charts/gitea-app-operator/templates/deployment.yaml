@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gitea-operator.fullname" . }}
+  name: {{ include "gitea-app-operator.fullname" . }}
   labels:
-    {{- include "gitea-operator.labels" . | nindent 4 }}
+    {{- include "gitea-app-operator.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "gitea-operator.selectorLabels" . | nindent 6 }}
+      {{- include "gitea-app-operator.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,13 +16,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "gitea-operator.selectorLabels" . | nindent 8 }}
+        {{- include "gitea-app-operator.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "gitea-operator.serviceAccountName" . }}
+      serviceAccountName: {{ include "gitea-app-operator.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -32,20 +32,17 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [npm, run, operator:gitea]
+          env:
+            - name: GITEA_URL
+              value: "{{ .Values.env.GITEA_URL }}"
+            - name: GITEA_URL_PORT
+              value: "{{ .Values.env.GITEA_URL_PORT }}"
+            - name: GITEA_OPERATOR_NAMESPACE
+              value: "{{ .Values.env.GITEA_OPERATOR_NAMESPACE }}"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /live
-          #     port: 8080
-          #   failureThreshold: 3
-          #   initialDelaySeconds: 10
-          #   # Allow sufficient amount of time (90 seconds = periodSeconds * failureThreshold)
-          #   # for the registered shutdown handlers to run to completion.
-          #   periodSeconds: 30
-          #   successThreshold: 1
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

@@ -28,11 +28,17 @@ releases:
     labels:
       pkg: gitea
     <<: *raw
-  - name: gitea-operator
-    installed: true
-    namespace: gitea-operator
+  - name: gitea-app-operator-artifacts
+    installed: {{ $a | get "gitea.enabled" }}
+    namespace: gitea-app
     labels:
-      pkg: gitea-operator
+      pkg: gitea-app-operator
+    <<: *raw
+  - name: gitea-app-operator
+    installed: {{ $a | get "gitea.enabled" }}
+    namespace: gitea-app
+    labels:
+      pkg: gitea-app-operator
     <<: *default
   - name: kiali-operator-artifacts
     installed: {{ $a | get "kiali.enabled" }}

@@ -1,0 +1,1 @@
+The gitea-app-operator has been deployed.

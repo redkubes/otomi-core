@@ -1,4 +1,4 @@
-# Default values for gitea-operator.
+# Default values for gitea-app-operator.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -19,7 +19,7 @@ service:
 # Service Account requires access to gitea pod to edit the oauth through CLI commands
 serviceAccount:
   create: true
-  name: "gitea-operator"
+  name: "gitea-app-operator"
   annotations: {}
 
 podAnnotations: {}

@@ -1,1 +1,0 @@
-The gitea-operator has been deployed.

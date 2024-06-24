@@ -1,5 +1,5 @@
 {{- $v := .Values }}
-{{- $o := $v.apps | get "gitea-operator" }}
+{{- $o := $v.apps | get "gitea-app-operator" }}
 {{- $version := $v.versions.tasks }}
 {{- $isSemver := regexMatch "^[0-9.]+" $version }}
 image:
@@ -12,3 +12,8 @@ imagePullSecrets:
 {{- end }}
 
 resources: {{- toYaml $o.resources.operator | nindent 2 }}
+
+env:
+  GITEA_URL: http://gitea-http.gitea
+  GITEA_URL_PORT: '3000'
+  GITEA_OPERATOR_NAMESPACE: gitea-app
