@@ -1,0 +1,40 @@
+{{- $v := .Values }}
+{{- $c := $v.apps }}
+{{- $o := $v | get "oidc" dict }}
+{{- $h := $c.harbor }}
+{{- $k := $c.keycloak }}
+{{- $harborRepo := printf "harbor.%s" $v.cluster.domainSuffix }}
+{{- $teamNamespaces := list }}
+{{- range $teamId, $team := $v.teamConfig }}
+{{- $teamNamespaces = append $teamNamespaces $teamId }}
+{{- end }}
+{{- $teamNamespaces := $teamNamespaces | toJson }}
+
+resources:
+  - name: harbor-app-operator-secret
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: harbor-app-operator-secret
+      namespace: harbor-app
+    data:
+      harborPassword:  {{ $h.adminPassword | b64enc }}
+      harborUser: {{ "admin" | b64enc }}
+      oidcEndpoint: {{ $v._derived.oidcBaseUrl | b64enc }}
+      oidcClientId: {{ $k.idp.clientID | b64enc }}
+      oidcClientSecret: {{ $k.idp.clientSecret | b64enc }}
+  - name: harbor-app-operator-cm
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: harbor-app-operator-cm
+      namespace: harbor-app
+    data:
+      harborBaseRepoUrl: {{ $harborRepo }}
+      oidcAutoOnboard: "{{ $h.oidcAutoOnboard }}"
+      oidcUserClaim: {{ $h.oidcUserClaim }}
+      oidcGroupsClaim: groups
+      oidcName: keycloak
+      oidcScope: openid
+      oidcVerifyCert: '{{ not $v._derived.untrustedCA }}'
+      teamNamespaces: {{ $teamNamespaces | toJson }}
