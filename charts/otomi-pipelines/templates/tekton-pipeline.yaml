@@ -9,8 +9,11 @@ spec:
     - name: gitea-credentials
   params:
     - name: repoUrl
+      type: string
     - name: commitMessage
+      type: string
     - name: giteaCredentialsSecretName
+      type: string
   tasks:
     - name: otomi-git-clone
       params:
@@ -21,6 +24,7 @@ spec:
         - name: giteaCredentialsSecretName
           value: $(params.giteaCredentialsSecretName)
       taskRef:
+        kind: Task
         name: otomi-git-clone
       workspaces:
         - name: source
@@ -38,6 +42,7 @@ spec:
         - name: giteaCredentialsSecretName
           value: $(params.giteaCredentialsSecretName)
       taskRef:
+        kind: Task
         name: otomi-task
       workspaces:
         - name: source
@@ -64,6 +69,7 @@ spec:
         - name: giteaCredentialsSecretName
           value: $(params.giteaCredentialsSecretName)
       taskRef:
+        kind: Task
         name: otomi-task-teams
       workspaces:
         - name: source
