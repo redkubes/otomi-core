@@ -304,7 +304,7 @@ adminApps:
         auth: true
         removeRequestHeaders:
           - authorization
-  - name: otomi
+  - name: console
     hide: true
     isShared: true
     ownHost: true

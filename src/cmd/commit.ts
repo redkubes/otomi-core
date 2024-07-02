@@ -111,7 +111,7 @@ export const printWelcomeMessage = async (): Promise<void> => {
   const message = `
     ########################################################################################################################################
     #
-    #  To start using Otomi, go to https://otomi.${values.cluster.domainSuffix} and sign in to the web console
+    #  To start using APL, go to https://console.${values.cluster.domainSuffix} and sign in to the web console
     #  with username "${credentials.adminUsername}" and password "${credentials.adminPassword}".
     #
     ########################################################################################################################################`
