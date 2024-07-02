@@ -16,10 +16,3 @@ releases:
     installed: {{ $a | get "external-dns.enabled" }}
     namespace: external-dns
     <<: *default
-  - name: job-keycloak
-    installed: true
-    labels:
-      pkg: keycloak
-      group: jobs
-    <<: *jobs
-

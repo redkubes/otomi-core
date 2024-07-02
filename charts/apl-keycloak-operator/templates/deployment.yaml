@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "apl-keycloak-operator.fullname" . }}
+  labels:
+    {{- include "apl-keycloak-operator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "apl-keycloak-operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "apl-keycloak-operator.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "apl-keycloak-operator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if and .Values.configs (hasKey .Values.configs "tls") (hasKey .Values.configs.tls "certificates") }}
+          command: ['/bin/sh', '-c']
+          args: ['export NODE_EXTRA_CA_CERTS=/app/config/tls/certificates.crt && npm run operator:keycloak']
+          env:
+          - name: NODE_EXTRA_CA_CERTS
+            value: "/app/config/tls/certificates.crt"
+          {{- else }}
+          command: ['npm', 'run', 'operator:keycloak']
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: tls-certs
+            mountPath: /app/config/tls/certificates.crt
+            subPath: certificates.crt
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+          - name: tls-certs
+            configMap:
+              name: keycloak-operator-tls-certs-cm
+          - name: operator-config-kc
+            configMap:
+              name: apl-keycloak-operator-cm
+          - name: operator-secret-kc
+            secret:
+              secretName: apl-keycloak-operator-secret

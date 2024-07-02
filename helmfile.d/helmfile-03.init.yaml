@@ -22,6 +22,18 @@ releases:
     labels:
       pkg: otomi-operator
     <<: *default
+  - name: apl-keycloak-operator
+    installed: true
+    namespace: apl-keycloak-operator
+    labels:
+      pkg: apl-keycloak-operator
+    <<: *default
+  - name: apl-keycloak-operator-artifacts
+    installed: true
+    namespace: apl-keycloak-operator
+    labels:
+      pkg: apl-keycloak-operator
+    <<: *raw
   - name: gitea-artifacts
     installed: {{ $a | get "gitea.enabled" }}
     namespace: gitea

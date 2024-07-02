@@ -1,0 +1,77 @@
+{{- $v := .Values }}
+{{- $oi := $v | get "oidc" dict }}
+{{- $teamNames := list }}
+{{- $teamsMapping := dict }}
+{{- $teamIds := list }}
+{{- range $name, $team := omit .Values.teamConfig "admin" }}
+{{- $teamIds = append $teamIds $name }}
+{{- $teamNames = print "team-" $name | append $teamNames }}
+{{- if ($team | get "oidc.groupMapping" nil) }}
+{{- $teamsMapping = set $teamsMapping (printf "team-%s" $name) $team.oidc.groupMapping }}
+{{- end }}
+{{- end }}
+{{- $c := $v.apps }}
+{{- $cm := $c | get "cert-manager" }}
+{{- $o := $v.apps | get "apl-keycloak-operator" }}
+{{- $version := $v.versions.tasks }}
+{{- $isSemver := regexMatch "^[0-9.]+" $version }}
+{{- $k := $c | get "keycloak" }}
+{{- $doms := tpl (readFile "../../helmfile.d/snippets/domains.gotmpl") $v | fromYaml }}
+{{- $joinTpl := readFile "../../helmfile.d/utils/joinListWithSep.gotmpl" }}
+
+resources:
+{{- if $v._derived.untrustedCA }}
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: custom-ca
+    data:
+      custom-ca-certificates.crt: {{ .Values._derived.caCert | b64enc }}
+{{- end }}
+  - name: apl-keycloak-operator-secret
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: keycloak-admin
+      namespace: apl-keycloak-operator
+    data:
+      KEYCLOAK_ADMIN: {{ .Values.apps.keycloak.adminUsername | b64enc }}
+      KEYCLOAK_ADMIN_PASSWORD: {{ $k.adminPassword | b64enc }}
+      KEYCLOAK_CLIENT_SECRET: {{ $k.idp.clientSecret | b64enc }}
+      {{- if $v.otomi.hasExternalIDP }}
+      IDP_CLIENT_ID: {{ $oi.clientID | b64enc}}
+      IDP_CLIENT_SECRET: {{ $oi.clientSecret | b64enc }}
+      {{- end }}
+  - name: apl-keycloak-operator-cm
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: keycloak-cm
+      namespace: apl-keycloak-operator
+    data:
+      FEAT_EXTERNAL_IDP: "{{ $v.otomi.hasExternalIDP | toString }}"
+      KEYCLOAK_HOSTNAME_URL: https://keycloak.{{ $v.cluster.domainSuffix }}
+      KEYCLOAK_HOSTNAME: keycloak.{{ $v.cluster.domainSuffix }}
+      KEYCLOAK_ADDRESS_INTERNAL: http://keycloak-http.keycloak
+      KEYCLOAK_CLIENT_ID: {{ $k.idp.clientID }}
+      KEYCLOAK_REALM: 'master'
+      KEYCLOAK_THEME_LOGIN: {{ $k.theme }}
+      REDIRECT_URIS: '["https://{{ tpl $joinTpl (dict "list" (keys $doms | sortAlpha) "sep" "/*\",\"https://") }}/*"]'
+      TEAM_IDS: '{{ $teamIds | toJson }}'
+      WAIT_OPTIONS: '{"retries": "200"}'
+      {{- if $v.otomi.hasExternalIDP }}
+      IDP_ALIAS: {{ $k.idp.alias }}
+      {{- with $oi | get "usernameClaimMapper" nil }}
+      IDP_USERNAME_CLAIM_MAPPER: {{ . }}{{ end }}
+      {{- with $oi | get "subClaimMapper" nil }}
+      IDP_SUB_CLAIM_MAPPER: {{ . }}{{ end }}
+      IDP_GROUP_MAPPINGS_TEAMS: '{{ $teamsMapping | toJson }}'
+      {{- with $oi | get "adminGroupID" nil }}
+      IDP_GROUP_apl_ADMIN: {{ . }}{{ end }}
+      {{- with $oi | get "teamAdminGroupID" nil }}
+      IDP_GROUP_TEAM_ADMIN: {{ . }}{{ end }}
+      IDP_OIDC_URL: {{ $oi.issuer }}
+      {{- end }}
+      {{- if not $v.otomi.hasExternalIDP }}
+      IDP_ALIAS: 'apl-idp'
+      {{- end }}
