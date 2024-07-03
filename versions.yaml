@@ -1,4 +1,4 @@
 api: main
 console: apps-linode-styling
-tasks: fc-feat-harbor-operator
+tasks: fc-test-operators
 tools: 1.6.4
