@@ -461,11 +461,11 @@ environments:
             resources:
               operator:
                 requests:
-                  cpu: 100m
-                  memory: 128Mi
-                limits:
-                  cpu: 200m
+                  cpu: 250m
                   memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
           promtail:
             enabled: false
           prometheus-blackbox-exporter: {}
