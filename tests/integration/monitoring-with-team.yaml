@@ -70,7 +70,7 @@ teamConfig:
         path: otomi-deployment
         revision: b65583f614c800cb215b8418febbb42abbad5883
         selectedChart: custom
-        url: https://github.com/redkubes/otomi-charts
+        url: https://github.com/linode/apl-charts
   admin:
     services: []
     workloads: []

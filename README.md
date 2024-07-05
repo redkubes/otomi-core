@@ -37,7 +37,7 @@ To install Otomi, make sure to have a K8s cluster running with at least:
 - A default storage class configured
 - When using the `custom` provider, make sure the K8s LoadBalancer Service created by `Otomi` can obtain an external IP (using a cloud load balancer or MetalLB)
 
-> **_NOTE:_**  Install Otomi with DNS to unlock it's full potential. Check [otomi.io](https://otomi.io) for more info.
+> **_NOTE:_** Install Otomi with DNS to unlock it's full potential. Check [otomi.io](https://otomi.io) for more info.
 
 Add the Helm repository:
 
@@ -135,7 +135,7 @@ Otomi open source consists out of the following projects:
 - Otomi Core (this project): The heart of Otomi
 - [Otomi Tasks](https://github.com/redkubes/otomi-tasks): Autonomous jobs orchestrated by Otomi Core
 - [Otomi Clients](https://github.com/redkubes/otomi-clients): Factory to build and publish openapi clients used in by otomi-tasks
-- [Otomi Charts](https://github.com/redkubes/otomi-charts): Quickstart Helm templates offered in the Catalog
+- [Otomi Charts](https://github.com/linode/apl-charts): Quickstart Helm templates offered in the Catalog
 
 ## Documentation
 

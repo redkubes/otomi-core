@@ -8,9 +8,13 @@ metadata:
 spec:
   params:
     - name: OTOMI_VERSION
+      type: string
     - name: CI
+      type: string
     - name: repoUrl
+      type: string
     - name: giteaCredentialsSecretName
+      type: string
   workspaces:
     - name: source
       mountPath: /home/app/stack/env
@@ -37,6 +41,7 @@ spec:
       value: '1'
   steps:
     - name: git-clone
+      computeResources: {}
       script: |
         #!/bin/bash
         set -e
@@ -57,18 +62,21 @@ spec:
         git clone --depth 1 https://$GITEA_USERNAME:$GITEA_PASSWORD@$url $ENV_DIR
         {{- end }}
     - name: bootstrap
+      computeResources: {}
       command:
         - '/bin/bash'
       args:
         - '-c'
         - 'binzx/otomi bootstrap'
     - name: test
+      computeResources: {}
       command:
         - '/bin/bash'
       args:
         - '-c'
         - 'binzx/otomi validate-values'
     - name: apply
+      computeResources: {}
       script: |
         #!/bin/bash
         set -e

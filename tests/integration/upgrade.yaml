@@ -128,12 +128,12 @@ teamConfig:
         path: deployment
         revision: main
         selectedChart: deployment
-        url: https://github.com/redkubes/otomi-charts.git
+        url: https://github.com/linode/apl-charts.git
       - name: nginx-ksvc
         path: ksvc
         revision: main
         selectedChart: ksvc
-        url: https://github.com/redkubes/otomi-charts.git
+        url: https://github.com/linode/apl-charts.git
   admin:
     services: []
     workloads:

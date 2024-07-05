@@ -72,11 +72,11 @@ export const commit = async (): Promise<void> => {
 }
 
 export const cloneOtomiChartsInGitea = async (): Promise<void> => {
-  const d = terminal(`cmd:${cmdName}:gitea-otomi-charts`)
-  d.info('Cloning otomi-charts in Gitea')
+  const d = terminal(`cmd:${cmdName}:gitea-apl-charts`)
+  d.info('Cloning apl-charts in Gitea')
   const values = (await hfValues()) as Record<string, any>
   const { email, username, password } = getRepo(values)
-  const workDir = '/tmp/otomi-charts'
+  const workDir = '/tmp/apl-charts'
   const otomiChartsUrl = env.OTOMI_CHARTS_URL
   const giteaChartsUrl = `http://${username}:${password}@gitea-http.gitea.svc.cluster.local:3000/otomi/charts.git`
   try {
@@ -101,7 +101,7 @@ export const cloneOtomiChartsInGitea = async (): Promise<void> => {
   } catch (error) {
     d.info('CloneOtomiChartsInGitea Error:', error)
   }
-  d.info('Cloned otomi-charts in Gitea')
+  d.info('Cloned apl-charts in Gitea')
 }
 
 export const printWelcomeMessage = async (): Promise<void> => {
@@ -111,7 +111,7 @@ export const printWelcomeMessage = async (): Promise<void> => {
   const message = `
     ########################################################################################################################################
     #
-    #  To start using Otomi, go to https://otomi.${values.cluster.domainSuffix} and sign in to the web console
+    #  To start using APL, go to https://console.${values.cluster.domainSuffix} and sign in to the web console
     #  with username "${credentials.adminUsername}" and password "${credentials.adminPassword}".
     #
     ########################################################################################################################################`

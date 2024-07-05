@@ -6,17 +6,24 @@ metadata:
 spec:
   params:
     - name: repoUrl
+      type: string
     - name: commitMessage
+      type: string
     - name: giteaCredentialsSecretName
+      type: string
   results:
     - name: CI
       description: Determine if pipeline should run based on the commit message
+      type: string
     - name: OTOMI_VERSION
       description: Otomi version as in values/env/settings.yaml
+      type: string
     - name: TRIGGER_TEAMS_PIPELINE
       description: Determine if the otomi-task-teams is about to run
+      type: string
     - name: TRIGGER_PLATFORM_PIPELINE
       description: Determine if the otomi-task is about to run
+      type: string
   workspaces:
     - name: source
       mountPath: /home/app/stack/env/
@@ -28,6 +35,7 @@ spec:
     image: otomi/core:{{ .Values.otomiVersion }}
   steps:
     - name: git-clone
+      computeResources: {}
       script: |
         #!/bin/bash
         set -e

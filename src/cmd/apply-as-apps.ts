@@ -29,7 +29,7 @@ const setup = (): void => {
   mkdirSync(valuesDir, { recursive: true })
 }
 
-interface HelmRelese {
+interface HelmRelease {
   name: string
   namespace: string
   enabled: boolean
@@ -38,11 +38,11 @@ interface HelmRelese {
   chart: string
   version: string
 }
-const getAppName = (release: HelmRelese): string => {
+const getAppName = (release: HelmRelease): string => {
   return `${release.namespace}-${release.name}`
 }
 
-const getArgocdAppManifest = (release: HelmRelese, values: Record<string, any>, otomiVersion) => {
+const getArgocdAppManifest = (release: HelmRelease, values: Record<string, any>, otomiVersion) => {
   return {
     apiVersion: 'argoproj.io/v1alpha1',
     kind: 'Application',
@@ -80,17 +80,17 @@ const getArgocdAppManifest = (release: HelmRelese, values: Record<string, any>, 
   }
 }
 
-const removeApplication = async (release: HelmRelese): Promise<void> => {
+const removeApplication = async (release: HelmRelease): Promise<void> => {
   const name = getAppName(release)
   if (!(await isResourcePresent('application', name, 'argocd'))) return
 
-  // TODO: do we always want to remove finalisers?
+  // TODO: do we always want to remove finalizers?
   await $`kubectl -n argocd patch application ${name}  -p '{"metadata": {"finalizers": null}}' --type merge`
   const resDelete = await $`kubectl -n argocd delete application ${name}`
   d.info(resDelete.stdout.toString())
 }
 
-const writeApplicationManifest = async (release: HelmRelese, otomiVersion: string): Promise<void> => {
+const writeApplicationManifest = async (release: HelmRelease, otomiVersion: string): Promise<void> => {
   const appName = `${release.namespace}-${release.name}`
   // d.info(`Generating Argocd Application at ${appName}`)
   const applicationPath = `${appsDir}/${appName}.yaml`
@@ -125,9 +125,9 @@ export const applyAsApps = async (argv: HelmArguments): Promise<void> => {
   })
   const errors: Array<any> = []
   // Generate JSON object with all helmfile releases defined in helmfile.d
-  const releses: [] = JSON.parse(res.stdout.toString())
+  const releases: [] = JSON.parse(res.stdout.toString())
   await Promise.allSettled(
-    releses.map(async (release: HelmRelese) => {
+    releases.map(async (release: HelmRelease) => {
       try {
         if (release.installed) await writeApplicationManifest(release, otomiVersion)
         else {
@@ -147,10 +147,10 @@ export const applyAsApps = async (argv: HelmArguments): Promise<void> => {
     d.error(e)
     errors.push(e)
   }
-  if (errors.length === 0) d.info(`All applications has been deployed succesfully`)
+  if (errors.length === 0) d.info(`All applications has been deployed successfully`)
   else {
     errors.map((e) => d.error(e))
-    d.error(`Not all applications has been deployed succesfully`)
+    d.error(`Not all applications has been deployed successfully`)
   }
 }
 

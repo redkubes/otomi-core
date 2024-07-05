@@ -29,8 +29,8 @@ export const cliEnvSpec = {
   NODE_TLS_REJECT_UNAUTHORIZED: bool({ default: true }),
   OTOMI_DEV: bool({ default: false }),
   OTOMI_CHARTS_URL: str({
-    default: 'https://github.com/redkubes/otomi-charts.git',
-    desc: 'The otomi-charts repository url to clone into Gitea',
+    default: 'https://github.com/linode/apl-charts.git',
+    desc: 'The apl-charts repository url to clone into Gitea',
   }),
   OTOMI_IN_TERMINAL: bool({ default: true }),
   STATIC_COLORS: bool({ default: false }),

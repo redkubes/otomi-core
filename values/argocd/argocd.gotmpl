@@ -111,6 +111,20 @@ configs:
     users.anonymous.enabled: "false"
     # Note that the clientSecret is not actually used
     # as for now oauth2-proxy handles the login
+    resource.compareoptions: |
+        # disables status field diffing in specified resource types
+        ignoreAggregatedRoles: true
+    resource.exclusions: |
+        - apiGroups:
+          - "*"
+          kinds:
+          - "PipelineRun"
+          - "TaskRun"
+          clusters:
+          - "*"
+    resource.customizations.knownTypeFields.cert-manager.io_Certificate: |
+        - field: spec.duration
+          type: meta/v1/Duration
     oidc.config: |
       name: Otomi
       issuer: {{ $v._derived.oidcBaseUrl }}
