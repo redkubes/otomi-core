@@ -47,6 +47,8 @@ k8s:
       app: jaeger
       disableIstioInjection: true
     - name: keycloak
+    - name: apl-keycloak-operator
+      disableIstioInjection: true
     - name: kiali
       app: kiali
     - name: kiali-operator
