@@ -3,7 +3,7 @@
 readonly script=otomi
 readonly current_branch=$(git rev-parse --abbrev-ref HEAD)
 readonly branch=${OTOMI_TAG:-$current_branch}
-readonly remote=https://raw.githubusercontent.com/redkubes/otomi-core/$branch/binzx/$script
+readonly remote=https://raw.githubusercontent.com/linode/apl-core/$branch/binzx/$script
 readonly path=/usr/local/bin
 
 readonly msg="Please choose the default install location [$path]: "

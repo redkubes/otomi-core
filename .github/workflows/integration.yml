@@ -5,7 +5,7 @@ on:
       cloud_provider:
         description: Provider where Otomi will be installed
         type: string
-        default: scaleway
+        default: linode
       kubernetes_versions:
         description: "Kubernetes versions (JSON formatted list e.g.: ['1.27'])"
         type: string
@@ -50,7 +50,6 @@ on:
         options:
           - scaleway
           - linode
-          - digitalocean
         default: 'linode'
       kubernetes_versions:
         description: 'Kubernetes version'
@@ -123,16 +122,16 @@ on:
         default: 'yes'
 env:
   CACHE_REGISTRY: ghcr.io
-  CACHE_REPO: redkubes/otomi-core
+  CACHE_REPO: linode/apl-core
   REPO: otomi/core
-  GIT_USER: redkubesbot
+  GIT_USER: svcAPLBot
   SCALEWAY_NODE_TYPE: PRO2-M
   SCALEWAY_NODE_POOL_MIN_SIZE: 3
   SCALEWAY_VPC_ID: e1019b0c-7c7d-49ef-86e4-b02f55b2e0d3
-  DIGITALOCEAN_NODE_SIZE: s-8vcpu-16gb
-  DIGITALOCEAN_NODE_POOL_MIN_SIZE: 3
   CHECK_CONTEXT: continuous-integration/integration-test
   COMMIT_ID: '${{ github.event.pull_request.head.sha || github.sha }}'
+  BOT_EMAIL: ${{ vars.BOT_EMAIL }}
+  BOT_USERNAME: ${{ vars.BOT_USERNAME }}
 
 jobs:
   preprocess-input:
@@ -169,30 +168,6 @@ jobs:
           if [ -z '${{ inputs.kubernetes_versions }}' ]; then
             echo "Kubernetes versions not specified, determine Scaleway supported versions"
             versions=`scw k8s versions -o json | jq -ce '.[] | .name'`
-          else
-            versions='${{ inputs.kubernetes_versions }}'
-          fi
-          echo $versions
-          echo "versions=$versions" >> $GITHUB_OUTPUT
-
-  preprocess-digitalocean-input:
-    needs: preprocess-input
-    if: ${{ inputs.cloud_provider == 'digitalocean' }}
-    name: Preprocess input variables for digital ocean
-    runs-on: ubuntu-latest
-    outputs:
-      kubernetes_versions: ${{ steps.k8s-versions.outputs.versions }}
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - id: k8s-versions
-        name: Process k8s version input
-        run: |
-          if [ -z '${{ inputs.kubernetes_versions }}' ]; then
-            echo "Kubernetes versions not specified, determine DO supported versions"
-            versions=`doctl kubernetes options versions -o json | jq -ce 'map(.kubernetes_versions)'`
           else
             versions='${{ inputs.kubernetes_versions }}'
           fi
@@ -283,8 +258,8 @@ jobs:
         run: |
           kubectl create secret docker-registry reg-otomi-github \
             --docker-server=${{ env.CACHE_REGISTRY }} \
-            --docker-username=${{ env.GIT_USER }} \
-            --docker-password='${{ secrets.NPM_TOKEN }}'
+            --docker-username=${{ env.BOT_USERNAME }} \
+            --docker-password='${{ secrets.BOT_PULL_TOKEN }}'
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare Otomi chart
@@ -292,7 +267,7 @@ jobs:
         run: |
           ref=${{ github.event.pull_request.head.ref || github.ref }}
           tag=${ref##*/}
-          sed --in-place "s/APP_VERSION_PLACEHOLDER/$tag/g" chart/otomi/Chart.yaml
+          sed --in-place "s/APP_VERSION_PLACEHOLDER/$tag/g" chart/apl/Chart.yaml
           sed --in-place "s/CONTEXT_PLACEHOLDER/${{ env.SCALEWAY_CLUSTER_CONTEXT }}/g" tests/integration/${{ inputs.install_profile }}.yaml
           sed --in-place "s/OTOMI_VERSION_PLACEHOLDER/${GITHUB_REF##*/}/g" tests/integration/${{ inputs.install_profile }}.yaml
           touch values-container-registry.yaml
@@ -325,7 +300,7 @@ jobs:
           [[ '${{ inputs.certificate }}' == 'letsencrypt_staging' ]] && echo "$LETSENCRYPT_STAGING" >> values.yaml
           [[ '${{ inputs.certificate }}' == 'letsencrypt_production' ]] && echo "$LETSENCRYPT_PRODUCTION" >> values.yaml
 
-          install_args="--wait --wait-for-jobs --timeout 90m0s otomi chart/otomi \
+          install_args="--wait --wait-for-jobs --timeout 90m0s otomi chart/apl \
             --values tests/integration/${{ inputs.install_profile }}.yaml \
             --values values-container-registry.yaml
             --values values.yaml \
@@ -351,140 +326,6 @@ jobs:
         if: ${{ always() && inputs.cluster_persistence != 'preserve' }}
         run: |
           scw k8s cluster delete ${{ env.SCALEWAY_CLUSTER_ID }} with-additional-resources=true region=nl-ams
-      - name: Slack Notification
-        if: always()
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: github-ci
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_ICON: https://github.com/redkubes.png?size=48
-          SLACK_TITLE: Scheduled integration tests
-          SLACK_USERNAME: RedKubesBot
-
-  run-integration-test-digitalocean:
-    if: ${{ inputs.cloud_provider == 'digitalocean' }}
-    name: Run integration test on digitalocean cluster
-    needs: preprocess-digitalocean-input
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        kubernetes_versions: ${{ fromJSON(needs.preprocess-digitalocean-input.outputs.kubernetes_versions) }}
-      max-parallel: 5
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - name: Set k8s cluster name
-        run: |
-          echo "DIGITALOCEAN_CLUSTER_NAME=$(echo ${{ github.actor }} | tr '[:upper:]' '[:lower:]')-$(TZ='GMT-2' date +'%m-%d-%H-%M')" >> $GITHUB_ENV
-          # Cluster name must be no longer than 63 characters
-      - name: Determine exact k8s version
-        run: |
-          echo "DIGITALOCEAN_K8S_VERSION=$(doctl kubernetes options versions -o json | jq -r '.[] | select(.kubernetes_version | startswith("${{ matrix.kubernetes_versions }}")) | .slug')" >> $GITHUB_ENV
-
-      - name: Get default VPC for region
-        run: |
-          echo DIGITALOCEAN_VPC_UUID=`doctl vpcs list -o json | jq -re 'map(select((.region == "ams3") and .default)) | .[0] | .id'` >> $GITHUB_ENV
-      - name: Create k8s cluster for testing
-        run: |
-          doctl kubernetes cluster create ${{ env.DIGITALOCEAN_CLUSTER_NAME }} \
-            --tag source:github \
-            --ha \
-            --maintenance-window any=03:00 \
-            --region ams3 \
-            --vpc-uuid ${{ env.DIGITALOCEAN_VPC_UUID }} \
-            --node-pool "name=int-test-${{ strategy.job-index }}-${{ env.COMMIT_ID }};size=${{ env.DIGITALOCEAN_NODE_SIZE }};tag=integration-test;auto-scale=true;min-nodes=${{ env.DIGITALOCEAN_NODE_POOL_MIN_SIZE }};max-nodes=5;count=${{ env.DIGITALOCEAN_NODE_POOL_MIN_SIZE }};" \
-            --version ${{ env.DIGITALOCEAN_K8S_VERSION }} \
-            --wait
-      - name: Retrieve cluster id
-        run: echo DIGITALOCEAN_CLUSTER_ID=`doctl kubernetes cluster get ${{ env.DIGITALOCEAN_CLUSTER_NAME }} --format ID --no-header` >> $GITHUB_ENV
-      - name: Assign the cluster to the project
-        run: doctl projects resources assign ${{ secrets.DIGITALOCEAN_PROJECT }} --resource=do:kubernetes:${{ env.DIGITALOCEAN_CLUSTER_ID }}
-      - name: Save kubectl config with auth token
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 36000 ${{ env.DIGITALOCEAN_CLUSTER_NAME }}
-      - name: Get kubectl environment
-        run: echo DIGITALOCEAN_CLUSTER_CONTEXT=`kubectl config current-context` >> $GITHUB_ENV
-      - name: Create image pull secret on test cluster
-        run: |
-          kubectl create secret docker-registry reg-otomi-github \
-            --docker-server=${{ env.CACHE_REGISTRY }} \
-            --docker-username=${{ env.GIT_USER }} \
-            --docker-password='${{ secrets.NPM_TOKEN }}'
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Prepare Otomi chart
-        if: ${{ inputs.install_profile != 'no-otomi' }}
-        run: |
-          ref=${{ github.event.pull_request.head.ref || github.ref }}
-          tag=${ref##*/}
-          sed --in-place "s/APP_VERSION_PLACEHOLDER/$tag/g" chart/otomi/Chart.yaml
-          sed --in-place "s/CONTEXT_PLACEHOLDER/${{ env.DIGITALOCEAN_CLUSTER_CONTEXT }}/g" tests/integration/${{ inputs.install_profile }}.yaml
-          sed --in-place "s/OTOMI_VERSION_PLACEHOLDER/${GITHUB_REF##*/}/g" tests/integration/${{ inputs.install_profile }}.yaml
-          touch values-container-registry.yaml
-
-          # If a pipeline installs Otomi from the semver tag then pull container image from DockerHub
-          [[ ${GITHUB_REF##*/} =~ ^v[0-9].+$ ]] && exit 0
-
-          # Pull image from cache registry
-          cat << EOF > values-container-registry.yaml
-          imageName: "${{ env.CACHE_REGISTRY }}/${{ env.CACHE_REPO }}"
-          imagePullSecretNames:
-            - reg-otomi-github
-          EOF
-      - name: Otomi install
-        if: ${{ inputs.install_profile != 'no-otomi' }}
-        env:
-          AZ_DNS: ${{ secrets.AZ_DNS }}
-          AZ_KMS: ${{ secrets.AZ_KMS }}
-          AZ_OIDC: ${{ secrets.AZ_OIDC }}
-          LETSENCRYPT_STAGING: ${{ secrets.LETSENCRYPT_STAGING }}
-          LETSENCRYPT_PRODUCTION: ${{ secrets.LETSENCRYPT_PRODUCTION }}
-          OTOMI_LICENSE: ${{ secrets.OTOMI_LICENSE }}
-        run: |
-          domainSuffix=''
-          touch values.yaml
-          [[ '${{ inputs.license }}' == 'yes' ]] && echo "$OTOMI_LICENSE" >> values.yaml
-          [[ '${{ inputs.dns }}' == 'az_dns' ]] && echo "$AZ_DNS" >> values.yaml && domainSuffix='--set cluster.domainSuffix=tst-${{ github.run_id }}.aks.redkubes.net'
-          [[ '${{ inputs.kms }}' == 'az_kms' ]] && echo "$AZ_KMS" >> values.yaml
-          [[ '${{ inputs.oidc }}' == 'az_oidc' ]] && echo "$AZ_OIDC" >> values.yaml
-          [[ '${{ inputs.certificate }}' == 'letsencrypt_staging' ]] && echo "$LETSENCRYPT_STAGING" >> values.yaml
-          [[ '${{ inputs.certificate }}' == 'letsencrypt_production' ]] && echo "$LETSENCRYPT_PRODUCTION" >> values.yaml
-
-          install_args="--wait --wait-for-jobs --timeout 90m0s otomi chart/otomi \
-            --values tests/integration/${{ inputs.install_profile }}.yaml \
-            --values values-container-registry.yaml
-            --values values.yaml \
-            --set cluster.provider=${{ inputs.cloud_provider }}
-            $domainSuffix"
-
-          [[ '${{ inputs.generate_password }}' == 'no' ]] && install_args="$install_args --set otomi.adminPassword=welcomeotomi"
-
-          helm install $install_args
-
-      - name: Gather k8s events on failure
-        if: failure()
-        run: |
-          kubectl get events --sort-by='.lastTimestamp' -A
-      - name: Gather k8s pods on failure
-        if: failure()
-        run: |
-          kubectl get pods -A -o wide
-      - name: Gather otomi logs on failure
-        if: failure()
-        run: |
-          kubectl logs jobs/otomi --tail 150
-      - name: Gather otomi-e2e logs on failure
-        if: failure()
-        run: |
-          kubectl logs -n maintenance -l app.kubernetes.io/instance=job-e2e --tail 15000
-      - name: Remove the test cluster
-        if: always()
-        run: |
-          [[ "${{ inputs.cluster_persistence }}" == "preserve" ]] && echo "The cluster ${{ env.DIGITALOCEAN_CLUSTER_NAME }} will NOT be destroyed!!" && exit 0
-          doctl kubernetes cluster delete ${{ env.DIGITALOCEAN_CLUSTER_NAME }} -f --dangerous
       - name: Slack Notification
         if: always()
         uses: rtCamp/action-slack-notify@v2
@@ -572,8 +413,8 @@ jobs:
         run: |
           kubectl create secret docker-registry reg-otomi-github \
             --docker-server=${{ env.CACHE_REGISTRY }} \
-            --docker-username=${{ env.GIT_USER }} \
-            --docker-password='${{ secrets.NPM_TOKEN }}'
+            --docker-username=${{ env.BOT_USERNAME }} \
+            --docker-password='${{ secrets.BOT_PULL_TOKEN }}'
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare Otomi chart
@@ -581,7 +422,7 @@ jobs:
         run: |
           ref=${{ github.event.pull_request.head.ref || github.ref }}
           tag=${ref##*/}
-          sed --in-place "s/APP_VERSION_PLACEHOLDER/$tag/g" chart/otomi/Chart.yaml
+          sed --in-place "s/APP_VERSION_PLACEHOLDER/$tag/g" chart/apl/Chart.yaml
           sed --in-place "s/CONTEXT_PLACEHOLDER/${{ env.LINODE_CLUSTER_CONTEXT }}/g" tests/integration/${{ inputs.install_profile }}.yaml
           sed --in-place "s/OTOMI_VERSION_PLACEHOLDER/${GITHUB_REF##*/}/g" tests/integration/${{ inputs.install_profile }}.yaml
           touch values-container-registry.yaml
@@ -614,7 +455,7 @@ jobs:
           [[ '${{ inputs.certificate }}' == 'letsencrypt_staging' ]] && echo "$LETSENCRYPT_STAGING" >> values.yaml
           [[ '${{ inputs.certificate }}' == 'letsencrypt_production' ]] && echo "$LETSENCRYPT_PRODUCTION" >> values.yaml
 
-          install_args="--wait --wait-for-jobs --timeout 90m0s otomi chart/otomi \
+          install_args="--wait --wait-for-jobs --timeout 90m0s otomi chart/apl \
             --values tests/integration/${{ inputs.install_profile }}.yaml \
             --values values-container-registry.yaml
             --values values.yaml \

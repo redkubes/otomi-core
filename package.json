@@ -1,7 +1,7 @@
 {
   "author": "RedKubes",
   "bugs": {
-    "url": "https://github.com/redkubes/otomi-core/issues"
+    "url": "https://github.com/linode/apl-core/issues"
   },
   "config": {
     "commitizen": {
@@ -94,7 +94,7 @@
     "npm": ">=8.0.0 <9.0.0",
     "node": ">=16.0.0 <17.0.0"
   },
-  "homepage": "https://github.com/redkubes/otomi-core#readme",
+  "homepage": "https://github.com/linode/apl-core#readme",
   "license": "Apache-2.0",
   "lint-staged": {
     "*.{json,yml,yaml}": [
@@ -105,11 +105,11 @@
     ]
   },
   "main": "src/otomi.ts",
-  "name": "otomi-core",
+  "name": "apl-core",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/redkubes/otomi-core.git"
+    "url": "git+https://github.com/linode/apl-core.git"
   },
   "run-if-changed": {
     "package-lock.json": "npm install --prefer-offline --no-audit",
@@ -130,7 +130,7 @@
     "eslint:fix": "eslint --fix --ext ts .",
     "format": "prettier --check \"**/*.{json,md,yml,yaml}\"",
     "format:fix": "prettier --write \"**/*.{json,md,yml,yaml}\"",
-    "gen:chart-schema": "js-yaml values-schema.yaml > chart/otomi/values.schema.json",
+    "gen:chart-schema": "js-yaml values-schema.yaml > chart/apl/values.schema.json",
     "lint": "run-p spellcheck lint:hf lint:ts lint:types",
     "lint-staged": "lint-staged",
     "lint:fix": "prettier --write tests/**/*.yaml --write '.values/env/**/*.yaml' && npm run lint:ts:fix",

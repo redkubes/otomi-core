@@ -161,7 +161,7 @@ export const stringContainsSome = (str: string, ...args: string[]): boolean => {
 
 const isCoreCheck = (): boolean => {
   if (packagePath === '/home/app/stack' || !existsSync(`${packagePath}/package.json`)) return false
-  return pkg.name === 'otomi-core'
+  return pkg.name === 'apl-core'
 }
 
 export const isCore: boolean = isCoreCheck()

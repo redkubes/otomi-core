@@ -65,7 +65,7 @@ const getArgocdAppManifest = (release: HelmRelease, values: Record<string, any>,
       project: 'default',
       source: {
         path: release.chart.replace('../', ''),
-        repoURL: 'https://github.com/redkubes/otomi-core.git',
+        repoURL: 'https://github.com/linode/apl-core.git',
         targetRevision: otomiVersion,
         helm: {
           releaseName: release.name,

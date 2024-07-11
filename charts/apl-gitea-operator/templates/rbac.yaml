@@ -1,0 +1,62 @@
+{{- if .Values.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "apl-gitea-operator.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace | quote }}
+automountServiceAccountToken: true
+---
+# Role for configmaps and secrets in apl-gitea-operator namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "apl-gitea-operator.fullname" . }}-configs-secrets
+  namespace: apl-gitea-operator
+rules:
+# Allows the operator to read and watch configmaps and secrets in the operator namespace. This is necessary to set up the gitea configuration.
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "watch", "list"]
+---
+# RoleBinding for the above Role in apl-gitea-operator namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "apl-gitea-operator.fullname" . }}-configs-secrets-binding
+  namespace: apl-gitea-operator
+subjects:
+- kind: ServiceAccount
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "apl-gitea-operator.serviceAccountName" . }}
+roleRef:
+  kind: Role
+  name: {{ include "apl-gitea-operator.fullname" . }}-configs-secrets
+  apiGroup: rbac.authorization.k8s.io
+---
+# Role for pods/exec in gitea namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "apl-gitea-operator.fullname" . }}-pod-exec
+  namespace: gitea
+rules:
+# Allows the operator to execute commands within pods in the gitea namespace. This is necessary to set up gitea group mapping and OIDC configuration.
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create", "get", "post"]
+---
+# RoleBinding for the above Role in gitea namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "apl-gitea-operator.fullname" . }}-pod-exec-binding
+  namespace: gitea
+subjects:
+- kind: ServiceAccount
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "apl-gitea-operator.serviceAccountName" . }}
+roleRef:
+  kind: Role
+  name: {{ include "apl-gitea-operator.fullname" . }}-pod-exec
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

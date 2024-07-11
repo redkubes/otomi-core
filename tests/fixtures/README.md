@@ -2,6 +2,6 @@
 
 Part of Otomi Container Platform.
 
-Repo that holds cluster configuration to be used by [otomi-core](https://github.com/redkubes/otomi-core).
+Repo that holds cluster configuration to be used by [apl-core](https://github.com/linode/apl-core).
 
 Please read the online [otomi documentation](https://otomi.io/) for instructions on how to work with the platform.

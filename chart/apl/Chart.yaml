@@ -1,5 +1,5 @@
 apiVersion: v2
-name: otomi
+name: apl
 description: A Helm chart for installing otomi in Kubernetes
 home: https://otomi.io/
 icon: https://otomi.io/img/otomi-logo.svg
@@ -19,4 +19,4 @@ keywords:
   - metrics
   - tracing
 sources:
-  - https://github.com/redkubes/otomi-core
+  - https://github.com/linode/apl-core

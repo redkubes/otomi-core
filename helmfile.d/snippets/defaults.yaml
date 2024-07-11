@@ -181,15 +181,6 @@ environments:
           gitea:
             enabled: true
             adminUsername: otomi-admin
-          gitea-operator:
-            resources:
-              operator:
-                requests:
-                  cpu: 100m
-                  memory: 128Mi
-                limits:
-                  cpu: 200m
-                  memory: 256Mi
           grafana:
             enabled: false
           harbor:
@@ -457,15 +448,33 @@ environments:
                 limits:
                   cpu: 200m
                   memory: 256Mi
-          harbor-app-operator:
+          apl-harbor-operator:
             resources:
               operator:
                 requests:
-                  cpu: 250m
-                  memory: 256Mi
+                  cpu: 100m
+                  memory: 128Mi
                 limits:
-                  cpu: 500m
-                  memory: 512Mi
+                  cpu: 200m
+                  memory: 256Mi
+          apl-gitea-operator:
+            resources:
+              operator:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+          apl-keycloak-operator:
+            resources:
+              operator:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
           promtail:
             enabled: false
           prometheus-blackbox-exporter: {}
@@ -727,7 +736,7 @@ environments:
           upgrade:
             version: main
         # TODO: update this when schema version changes: (and think more?)
-        version: 22
+        version: 24
         letsencryptRootCA: |
           -----BEGIN CERTIFICATE-----
           MIIFmDCCA4CgAwIBAgIQU9C87nMpOIFKYpfvOHFHFDANBgkqhkiG9w0BAQsFADBm

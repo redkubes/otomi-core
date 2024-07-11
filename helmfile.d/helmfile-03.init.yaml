@@ -22,17 +22,47 @@ releases:
     labels:
       pkg: otomi-operator
     <<: *default
+  - name: apl-keycloak-operator
+    installed: true
+    namespace: apl-keycloak-operator
+    labels:
+      pkg: apl-keycloak-operator
+    <<: *default
+  - name: apl-keycloak-operator-artifacts
+    installed: true
+    namespace: apl-keycloak-operator
+    labels:
+      pkg: apl-keycloak-operator
+    <<: *raw
   - name: gitea-artifacts
     installed: {{ $a | get "gitea.enabled" }}
     namespace: gitea
     labels:
       pkg: gitea
     <<: *raw
-  - name: gitea-operator
-    installed: true
-    namespace: gitea-operator
+  - name: apl-gitea-operator-artifacts
+    installed: {{ $a | get "gitea.enabled" }}
+    namespace: apl-gitea-operator
     labels:
-      pkg: gitea-operator
+      pkg: apl-gitea-operator
+    <<: *raw
+  - name: apl-gitea-operator
+    installed: {{ $a | get "gitea.enabled" }}
+    namespace: apl-gitea-operator
+    labels:
+      pkg: apl-gitea-operator
+    <<: *default
+  - name: apl-harbor-operator-artifacts
+    installed: {{ $a | get "harbor.enabled" }}
+    namespace: apl-harbor-operator
+    labels:
+      pkg: apl-harbor-operator
+    <<: *raw
+  - name: apl-harbor-operator
+    installed: {{ $a | get "harbor.enabled" }}
+    namespace: apl-harbor-operator
+    labels:
+      pkg: apl-harbor-operator
     <<: *default
   - name: harbor-app-operator-artifacts
     installed: {{ $a | get "harbor.enabled" }}

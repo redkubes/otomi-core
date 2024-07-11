@@ -1,4 +1,4 @@
 api: main
-console: apps-linode-styling
-tasks: fc-test-operators
+console: main
+tasks: main
 tools: 1.6.4

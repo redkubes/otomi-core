@@ -1,7 +1,7 @@
 set -eu
 
 # Run:
-# export ENV_DIR=/tmp/env-dir && rm -rf /tmp/env-dir && mkdir /tmp/env-dir && chart/otomi/localtest.sh
+# export ENV_DIR=/tmp/env-dir && rm -rf /tmp/env-dir && mkdir /tmp/env-dir && chart/apl/localtest.sh
 
 # echo "127.0.0.1 gitea-http.gitea.svc.cluster.local" >> /etc/hosts
 

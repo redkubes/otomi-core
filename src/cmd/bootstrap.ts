@@ -116,7 +116,7 @@ export const copySchema = async (deps = { terminal, rootDir, env, isCore, loadYa
     // for validation of .values/env/* files we also generate a schema here:
     // deps.outputFile(devOnlyPath, trimmedVS)
     await deps.copyFile(sourcePath, devOnlyPath)
-    d.debug(`Stored loose YAML schema for otomi-core devs at: ${devOnlyPath}`)
+    d.debug(`Stored loose YAML schema for apl-core devs at: ${devOnlyPath}`)
   }
 }
 

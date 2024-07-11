@@ -1,0 +1,28 @@
+{{- $v := .Values }}
+{{- $o := $v.apps | get "apl-keycloak-operator" }}
+{{- $version := $v.versions.tasks }}
+{{- $isSemver := regexMatch "^[0-9.]+" $version }}
+
+image:
+  tag: {{ printf "%s%s" ($isSemver | ternary "v" "") $version }}
+  pullPolicy: {{ $isSemver | ternary "IfNotPresent" "Always" }}
+
+{{- with $v.otomi | get "globalPullSecret" nil }}
+imagePullSecrets:
+  - name: apl-pullsecret-global
+{{- end }}
+configs:
+  tls:
+    certificates:
+    {{ if $v._derived.untrustedCA }}
+      caCert: |
+        {{- $v._derived.caCert | nindent 8 }}
+    {{- else }}
+      {}
+{{ end }}
+script: |
+  {{- if $v._derived.untrustedCA }}
+  export NODE_EXTRA_CA_CERTS=/app/config/tls/certificates.crt
+  {{- end }}
+
+resources: {{- toYaml $o.resources.operator | nindent 2 }}

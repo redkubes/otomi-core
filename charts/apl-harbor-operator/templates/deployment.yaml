@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gitea-operator.fullname" . }}
+  name: {{ include "apl-harbor-operator.fullname" . }}
   labels:
-    {{- include "gitea-operator.labels" . | nindent 4 }}
+    {{- include "apl-harbor-operator.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "gitea-operator.selectorLabels" . | nindent 6 }}
+      {{- include "apl-harbor-operator.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,13 +16,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "gitea-operator.selectorLabels" . | nindent 8 }}
+        {{- include "apl-harbor-operator.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "gitea-operator.serviceAccountName" . }}
+      serviceAccountName: {{ include "apl-harbor-operator.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -31,21 +31,18 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: [npm, run, operator:gitea]
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /live
-          #     port: 8080
-          #   failureThreshold: 3
-          #   initialDelaySeconds: 10
-          #   # Allow sufficient amount of time (90 seconds = periodSeconds * failureThreshold)
-          #   # for the registered shutdown handlers to run to completion.
-          #   periodSeconds: 30
-          #   successThreshold: 1
+          command: [npm, run, operator:harbor]
+          env:
+            - name: DEBUG
+              value: "{{ .Values.env.DEBUG }}"
+            - name: HARBOR_BASE_URL
+              value: "{{ .Values.env.HARBOR_BASE_URL }}"
+            - name: HARBOR_BASE_URL_PORT
+              value: "{{ .Values.env.HARBOR_BASE_URL_PORT }}"
+            - name: HARBOR_OPERATOR_NAMESPACE
+              value: "{{ .Values.env.HARBOR_OPERATOR_NAMESPACE }}"
+            - name: HARBOR_SYSTEM_NAMESPACE
+              value: "{{ .Values.env.HARBOR_SYSTEM_NAMESPACE }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

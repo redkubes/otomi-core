@@ -1,0 +1,1 @@
+The apl-gitea-operator has been deployed.

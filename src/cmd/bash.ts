@@ -1,9 +1,9 @@
-import { Argv, CommandModule } from 'yargs'
-import { $, nothrow } from 'zx'
 import { prepareEnvironment } from 'src/common/cli'
 import { terminal } from 'src/common/debug'
 import { getFilename } from 'src/common/utils'
 import { BasicArguments, getParsedArgs, parser, setParsedArgs } from 'src/common/yargs'
+import { Argv, CommandModule } from 'yargs'
+import { $, nothrow } from 'zx'
 
 const cmdName = getFilename(__filename)
 
@@ -31,7 +31,7 @@ const bash = async (): Promise<void> => {
 
 export const module: CommandModule = {
   command: cmdName,
-  describe: 'Run interactive bash shell in otomi-core container',
+  describe: 'Run interactive bash shell in apl-core container',
   builder: (args: Argv): Argv => args,
 
   handler: async (argv: BasicArguments): Promise<void> => {

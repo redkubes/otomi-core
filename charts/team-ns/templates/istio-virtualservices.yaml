@@ -60,7 +60,7 @@ spec:
             prefix: /logout-otomi
       redirect:
         authority: auth.{{ $v.cluster.domainSuffix }}
-        uri: /oauth2/sign_out?rd={{ $kkMaster }}/protocol/openid-connect/logout?redirect_uri=https://{{ printf "otomi.%s" $v.cluster.domainSuffix }}
+        uri: /oauth2/sign_out?rd={{ $kkMaster }}/protocol/openid-connect/logout?redirect_uri=https://{{ printf "console.%s" $v.cluster.domainSuffix }}
     -
         {{- with $s.paths | default (list "/") }}
       match:

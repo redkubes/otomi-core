@@ -1,0 +1,30 @@
+{{- $v := .Values }}
+{{- $c := $v.apps }}
+{{- $g := $c.gitea }}
+{{- $k := $c.keycloak }}
+{{- $teamConfig := dict }}
+{{- range $teamId, $team := $v.teamConfig }}
+  {{- $_ := set $teamConfig $teamId (dict "selfService" (dict "apps" ($team | get "selfService.apps" list))) }}
+{{- end }}
+{{- $teamConfig := $teamConfig | toJson }}
+
+resources:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: apl-gitea-operator-cm
+      namespace: apl-gitea-operator
+    data:
+      hasArgocd: "{{ $v.apps.argocd.enabled | toString }}"
+      domainSuffix: "{{ $v.cluster.domainSuffix }}"
+      teamConfig: {{ $teamConfig | toJson }}
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: apl-gitea-operator-secret
+      namespace: apl-gitea-operator
+    data:
+      giteaPassword: {{ $g.adminPassword | b64enc }}
+      oidcClientId: {{ $k.idp.clientID | b64enc }}
+      oidcClientSecret: {{ $k.idp.clientSecret | b64enc }}
+      oidcEndpoint: {{ $v._derived.oidcBaseUrl | b64enc }}

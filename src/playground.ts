@@ -11,7 +11,7 @@ async function play() {
   // const releases = await getHelmReleases()
   const data = await hfValues(
     { withWorkloadValues: true },
-    '/Users/jehoszafatzimnowoda/workspace/redkubes/otomi-core/tests/fixtures',
+    '/Users/jehoszafatzimnowoda/workspace/linode/apl-core/tests/fixtures',
   )
   // await writeValuesToFile(`/tmp/status.yaml`, { status: { otomi: state, helm: releases } }, true)
 }

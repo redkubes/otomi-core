@@ -1,4 +1,3 @@
-{{- $pinnedConsoleVersion := "v1.4.0" }}
 {{- $v := .Values }}
 {{- $k := $v | get "apps.keycloak" }}
 
@@ -31,7 +30,7 @@ spec:
   ingress: 
     enabled: false
   hostname:
-    hostname: keycloak.{{ .Values.cluster.domainSuffix }}
+    hostname: keycloak.{{ $v.cluster.domainSuffix }}
     strict: false
     strictBackchannel: false
   unsupported:
@@ -51,7 +50,7 @@ spec:
           emptyDir: {}
         initContainers:
         - name: init-container-theme-copy # Otomi branding init container
-          image: docker.io/otomi/console:{{ $pinnedConsoleVersion }}
+          image: docker.io/otomi/console:{{ $v.versions.console }}
           resources: {{ $k.resources.keycloak | toYaml  | nindent 12 }}
           command: 
           - sh 

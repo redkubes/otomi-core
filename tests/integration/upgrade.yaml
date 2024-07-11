@@ -123,7 +123,7 @@ teamConfig:
       - name: httpbin
         path: charts/httpbin
         revision: HEAD
-        url: https://github.com/redkubes/otomi-core.git
+        url: https://github.com/linode/apl-core.git
       - name: nginx-deployment
         path: deployment
         revision: main

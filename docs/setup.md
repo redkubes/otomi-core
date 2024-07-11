@@ -16,9 +16,9 @@ The bulk of the work in this repo consists of go templates. These are highlighte
 
 A prefilled values repo with valid values can be generated quickly like this:
 
-1. Create a yaml file with the [minimal chart values](https://github.com/redkubes/otomi-core/blob/main/chart/otomi/values.yaml) (Only the 3 in `otomi.*` are sufficient)
+1. Create a yaml file with the [minimal chart values](https://github.com/linode/apl-core/blob/main/chart/apl/values.yaml) (Only the 3 in `otomi.*` are sufficient)
 2. Point to a location for the repo: `export ENV_DIR=...`
-3. Generate the repo: `VALUES_INPUT={location of chart values} chart/otomi/localtest.sh`
+3. Generate the repo: `VALUES_INPUT={location of chart values} chart/apl/localtest.sh`
 
 ### The CLI
 

@@ -17,7 +17,7 @@ Effective development starts with an understanding the code structure and the re
 ## Project structure
 
 ```
-otomi-core
+apl-core
 ├── .values                     # Boilerplate for initializing git repository
 ├── adr                         # Architectural Decision Records [read more](https://adr.github.io/madr/)
 ├── bin                         # Otomi CLI entrypoint (deprecated)
@@ -44,7 +44,7 @@ otomi-core
 It is important that you get familiar with reusable code snippets located at `helmfile.d/snippets`. Below, I describe the most essential ones:
 
 ```
-otomi-core/helmfile.d/snippets
+apl-core/helmfile.d/snippets
 ├── defaults.yaml             # static defaults that can be overwritten by user values and/or derived values
 ├── derived.gotmpl            # values derived from default and user values
 ├── env.gotmpl                # define helmfile environment settings
@@ -141,7 +141,7 @@ In the [Code structure](#Code-structure) chapter, you have learned about reusabl
 
 > We present `myapp` integration. The `myapp` is an arbitrary name and can be anything else.
 
-> A core apps are those defined in otomi-core. Do not confuse them with team services, which are defined in the values repo.
+> A core apps are those defined in apl-core. Do not confuse them with team services, which are defined in the values repo.
 
 ## Using the default code snippet
 
@@ -316,11 +316,11 @@ TBD
 
 ## Using CLI while developing templates
 
-Using Otomi CLI can be very helpful while integrating apps or developing new features that involve the execution of Helmfile because it allows you to render and validate manifests. It is possible to use Otomi CLI in development mode, so the Otomi CLI reflects changes made in your local `otomi-core` directory.
+Using Otomi CLI can be very helpful while integrating apps or developing new features that involve the execution of Helmfile because it allows you to render and validate manifests. It is possible to use Otomi CLI in development mode, so the Otomi CLI reflects changes made in your local `apl-core` directory.
 
 To run Otomi CLI in the development mode, you must:
 
-- execute Otomi CLI commands from a root directory of the `otomi-core` project
+- execute Otomi CLI commands from a root directory of the `apl-core` project
 - export `ENV_DIR`
 
 First, run `npm install` to build all modules required for CLI.
