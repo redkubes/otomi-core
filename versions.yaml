@@ -1,4 +1,4 @@
 api: main
 console: main
-tasks: main
+tasks: fc-test-gitea-operator
 tools: 1.6.4
