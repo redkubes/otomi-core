@@ -1,4 +1,4 @@
 api: main
 console: main
-tasks: main
+tasks: me-fix-operator-pod-restarting
 tools: 1.6.4
