@@ -2035,6 +2035,52 @@ properties:
             properties:
               dashboard:
                 $ref: '#/definitions/resources'
+      thanos:
+        properties:
+          _rawValues:
+            $ref: '#/definitions/rawValues'
+          enabled:
+            type: boolean
+            default: false
+          query:
+            properties:
+              replicaCount:
+                description: Number of Thanos Query replicas.
+                type: integer
+                default: 1
+          compactor:
+            description: Resolution and Retention flags.
+            properties:
+              retentionResolutionRaw:
+                type: string
+                default: 30d
+              retentionResolution5m:
+                type: string
+                default: 30d
+              retentionResolution1h:
+                type: string
+                default: 10y
+          resources:
+            additionalProperties: false
+            properties:
+              query:
+                $ref: '#/definitions/resources'
+              storegateway:
+                $ref: '#/definitions/resources'
+              compactor:
+                $ref: '#/definitions/resources'
+        persistence:
+          properties:
+            storegateway:
+              properties:
+                size:
+                  $ref: '#/definitions/size'
+                  default: 10Gi
+            compactor:
+              properties:
+                size:
+                  $ref: '#/definitions/size'
+                  default: 10Gi
       loki:
         additionalProperties: false
         properties:
@@ -2264,6 +2310,9 @@ properties:
           enabled:
             type: boolean
             default: false
+          thanosEnabled:
+            type: boolean
+            default: false
           disabledRules:
             type: array
             items:
@@ -2369,8 +2418,6 @@ properties:
               queryFrontend:
                 $ref: '#/definitions/resources'
               memcached:
-                $ref: '#/definitions/resources'
-              metricsGenerator:
                 $ref: '#/definitions/resources'
           autoscaling:
             properties:

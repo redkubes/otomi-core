@@ -1,0 +1,62 @@
+{{- $v := .Values }}
+{{- $t:= $v.apps.thanos }}
+{{- $obj := $v.obj.provider }}
+{{- $bu := $v.obj.buckets }}
+
+## @section Thanos Query parameters
+query:
+  enabled: true
+  replicaCount: {{ $t.query.replicaCount }}
+  service:
+    additionalHeadless: true
+  dnsDiscovery:
+    enabled: true
+    sidecarsService: prometheus-operated
+    sidecarsNamespace: monitoring
+  stores:
+    - "thanos-storegateway:10901"
+    - "dnssrv+_grpc._tcp.thanos-storegateway.monitoring.svc"
+  resources: {{- $t.resources.query | toYaml | nindent 4 }}
+  extraFlags:
+    - "--query.auto-downsampling"
+
+## @section Thanos Query Frontend parameters
+queryFrontend:
+  enabled: false
+
+## @section Thanos Compactor parameters
+compactor:
+  enabled: true
+  ## By default, there is NO retention set for object storage data. This means that data is stored forever, 
+  ## which is a valid and recommended way of running Thanos.
+  retentionResolutionRaw: {{ $t.compactor.retentionResolutionRaw }}
+  retentionResolution5m: {{ $t.compactor.retentionResolution5m }}
+  retentionResolution1h: {{ $t.compactor.retentionResolution1h }}
+  persistence:
+    size: {{ $t.persistence.compactor.size }}
+  resources: {{- $t.resources.compactor | toYaml | nindent 4 }}
+
+## @section Thanos Store Gateway parameters
+storegateway:
+  enabled: true
+  persistence:
+    size: {{ $t.persistence.storegateway.size }}
+  resources: {{- $t.resources.storegateway | toYaml | nindent 4 }}
+
+## @section Thanos Receive parameters
+receive:
+  enabled: false
+
+## @section Thanos receive distributor parameters
+receiveDistributor:
+  enabled: false
+
+existingObjstoreSecret: thanos-objectstore
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    labels:
+      prometheus: system

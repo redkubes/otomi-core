@@ -29,7 +29,13 @@ releases:
       - {{- $a | get "prometheus._rawValues" dict | toYaml | nindent 8 }}
       - alertmanager: {{- $a | get "alertmanager._rawValues" dict | toYaml | nindent 10 }} 
       - grafana: {{- $a | get "grafana._rawValues" dict | toYaml | nindent 10 }}
-    <<: *upgrade 
+    <<: *upgrade
+  - name: thanos
+    installed: {{ $a | get "prometheus.thanosEnabled" }}
+    namespace: monitoring
+    labels:
+      pkg: thanos
+    <<: *default
   - name: kured
     installed: {{ $a | get "kured.enabled" }}
     namespace: kube-system

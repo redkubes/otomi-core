@@ -94,6 +94,7 @@ obj:
         velero: my-clusterid-velero
         harbor: my-clusterid-harbor
         tempo: my-clusterid-tempo
+        thanos: my-clusterid-thanos
     provider:
         # type: minioLocal
         linode:

@@ -1,0 +1,35 @@
+apps:
+    thanos:
+        query:
+            replicaCount: 1
+        compactor:
+            retentionResolutionRaw: 30d
+            retentionResolution5m: 30d
+            retentionResolution1h: 10y
+        persistence:
+            compactor:
+                size: 10Gi
+            storegateway:
+                size: 10Gi
+        resources:
+            query:
+                requests:
+                    cpu: 100m
+                    memory: 128Mi
+                limits:
+                    cpu: 900m
+                    memory: 512Mi
+            compactor:
+                requests:
+                    cpu: 100m
+                    memory: 128Mi
+                limits:
+                    cpu: 900m
+                    memory: 512Mi
+            storegateway:
+                requests:
+                    cpu: 100m
+                    memory: 128Mi
+                limits:
+                    cpu: 900m
+                    memory: 512Mi

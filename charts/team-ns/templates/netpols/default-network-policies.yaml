@@ -107,6 +107,12 @@ spec:
           podSelector:
             matchLabels:
               app.kubernetes.io/name: {{ $v.teamId }}-po-grafana
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: thanos
   podSelector:
     matchLabels:
       app.kubernetes.io/instance: {{ $v.teamId }}-po-prometheus

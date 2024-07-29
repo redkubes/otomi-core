@@ -68,6 +68,7 @@ provisioning:
     - name: harbor
     - name: tempo
     - name: cnpg
+    - name: thanos
   policies:
     - name: otomi-apps
       statements:
@@ -84,6 +85,7 @@ provisioning:
           - arn:aws:s3:::harbor
           - arn:aws:s3:::tempo
           - arn:aws:s3:::cnpg
+          - arn:aws:s3:::thanos
         - effect: Allow
           principal:
             AWS:
@@ -96,6 +98,7 @@ provisioning:
           - arn:aws:s3:::harbor
           - arn:aws:s3:::tempo
           - arn:aws:s3:::cnpg
+          - arn:aws:s3:::thanos
           condition:
             StringEquals:
               s3:prefix:
@@ -116,3 +119,4 @@ provisioning:
           - arn:aws:s3:::harbor/**
           - arn:aws:s3:::tempo/**
           - arn:aws:s3:::cnpg/**
+          - arn:aws:s3:::thanos/**
