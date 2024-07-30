@@ -1,4 +1,4 @@
-api: main
-console: main
+api: dvk-app-values-and-object-storage
+console: dvk-app-values-and-object-storage
 tasks: 3.0.0
 tools: 1.6.4
