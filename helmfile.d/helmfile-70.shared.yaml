@@ -12,21 +12,6 @@ bases:
 {{- $a := $v.apps }}
 
 releases:
-  - name: drone
-    installed: {{ $a | get "drone.enabled" }}
-    namespace: drone
-    labels:
-      pkg: drone
-    <<: *default
-  - name: drone-admit-members
-    installed: {{ $a | get "drone-admit-members.enabled" }}
-    namespace: drone
-    labels:
-      pkg: drone
-    chart: ../charts/drone-admit-members
-    values:
-      - ../values/drone/drone-admit-members.gotmpl
-      - snippets/common.gotmpl
   - name: harbor
     installed: {{ $a | get "harbor.enabled" }}
     namespace: harbor
@@ -60,8 +45,4 @@ releases:
     namespace: otomi
     labels:
       pkg: otomi
-    <<: *default
-  - name: redis
-    installed: {{ $a | get "redis-shared.enabled" }}
-    namespace: redis
     <<: *default
