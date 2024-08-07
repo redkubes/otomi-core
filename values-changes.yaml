@@ -275,3 +275,8 @@ changes:
       - 'platformBackups.persistentVolumes.drone'
       - 'platformBackups.persistentVolumes.harbor'
       - 'platformBackups.persistentVolumes.keycloak'
+  - version: 26
+    deletions:
+      - 'apps.drone'
+      - 'apps.oauth2-proxy-redis'
+      - 'apps.redis-shared'

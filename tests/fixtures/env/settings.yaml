@@ -51,6 +51,18 @@ kms:
             clientId: somesecretvalue
             keys: somesecretvalue
             tenantId: somesecretvalue
+obj:
+    buckets:
+        cnpg: my-clusterid-cnpg
+        harbor: my-clusterid-harbor
+        loki: my-clusterid-loki
+        tempo: my-clusterid-tempo
+        velero: my-clusterid-velero
+    provider:
+        linode:
+            accessKeyId: someaccessKeyId
+            region: nl-ams-1
+        type: linode
 oidc:
     adminGroupID: someAdminGroupID
     clientID: someClientID
@@ -72,6 +84,10 @@ otomi:
     version: main
 platformBackups:
     database:
+        gitea:
+            enabled: true
+            retentionPolicy: 7d
+            schedule: 0 0 0 * * *
         harbor:
             enabled: true
             retentionPolicy: 7d
@@ -80,27 +96,9 @@ platformBackups:
             enabled: true
             retentionPolicy: 7d
             schedule: 0 0 0 * * *
-        gitea:
-            enabled: true
-            retentionPolicy: 7d
-            schedule: 0 0 0 * * *
     persistentVolumes:
         gitea:
             enabled: false
-obj:
-    buckets:
-        loki: my-clusterid-loki
-        cnpg: my-clusterid-cnpg
-        velero: my-clusterid-velero
-        harbor: my-clusterid-harbor
-        tempo: my-clusterid-tempo
-    provider:
-        # type: minioLocal
-        linode:
-            region: nl-ams-1
-            accessKeyId: someaccessKeyId
-        type: linode
-        # type: disabled
 smtp:
     auth_username: no-reply@doma.in
     from: no-reply@doma.in
@@ -133,4 +131,4 @@ status:
         deployingVersion: 0.21.0
         status: deployed
         version: 0.21.0
-version: 25
+version: 26
