@@ -491,7 +491,6 @@ environments:
                 cpu: 1
                 memory: 1Gi
           oauth2-proxy: {}
-          oauth2-proxy-redis: {}
           otomi-api:
             editorInactivityTimeout: 1
           otomi-console: {}
@@ -546,8 +545,6 @@ environments:
             scrapeInterval: 60s
             retentionSize: 4GB
             storageSize: 5Gi
-          redis-shared:
-            enabled: false
           otel:
             enabled: false
             collector:
