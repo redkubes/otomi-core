@@ -1,4 +1,4 @@
 api: main
 console: main
-tasks: 3.0.0
+tasks: fc-feat-wait-for
 tools: 1.6.4
