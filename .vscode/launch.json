@@ -66,6 +66,16 @@
       "envFile": ".env",
       "console": "integratedTerminal",
       "cwd": "${workspaceRoot}"
+    },
+    {
+      "name": "Migrate values",
+      "request": "launch",
+      "runtimeArgs": ["run", "migrate-values"],
+      "runtimeExecutable": "npm",
+      "type": "node",
+      "envFile": ".env",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceRoot}"
     }
   ]
 }

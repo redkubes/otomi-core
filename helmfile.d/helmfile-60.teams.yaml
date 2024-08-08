@@ -254,28 +254,4 @@ releases:
         svc: prometheus-blackbox-exporter
         port: 9115
   {{- end }}
-  {{- range $job := $team | get "jobs" list }}
-  - name: job-{{ $teamId }}-{{ $job.name }}
-    installed: {{ $job.enabled }}
-    namespace: team-{{ $teamId }}
-    chart: ../charts/jobs
-    labels:
-      group: jobs
-      tag: teams
-      team: {{ $teamId }}
-      pipeline: otomi-task-teams
-    hooks:
-      - events: [presync]
-        showlogs: true
-        command: ../bin/job-presync.sh
-        args:
-          - job-{{ $teamId }}-{{ $job.name }}
-          {{- if hasKey $job "runPolicy" }}
-          - "{{ $job.runPolicy }}"    
-          {{- end }}
-    values:
-      - teamSecrets: {{- $team | get "secrets" nil | toYaml | nindent 10 }}
-        teamId: {{ $teamId }}
-      - {{- $job | toYaml | nindent 8 }}
-  {{- end }}
 {{- end }}

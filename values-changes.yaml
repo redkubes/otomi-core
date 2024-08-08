@@ -278,3 +278,8 @@ changes:
   - version: 26
     relocations:
       - 'apps.metrics-server.apiServer.enabled': 'apps.metrics-server.apiServer.create'
+  - version: 27
+    deletions:
+      - 'teamConfig.{team}.jobs'
+    fileDeletions:
+      - env/teams/jobs.{team}.yaml

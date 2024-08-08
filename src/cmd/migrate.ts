@@ -28,6 +28,7 @@ interface Change {
   clones?: Array<{
     [targetPath: string]: string
   }>
+  fileDeletions?: Array<string>
   deletions?: Array<string>
   relocations?: Array<{
     [oldLocation: string]: string
@@ -49,6 +50,22 @@ interface Change {
 }
 
 export type Changes = Array<Change>
+
+export const deleteFile = async (
+  relativeFilePath: string,
+  dryRun = false,
+  deps = { pathExists, renameSync, terminal, copy, rm },
+): Promise<void> => {
+  const d = deps.terminal(`cmd:${cmdName}:rename`)
+  const path = `${env.ENV_DIR}/${relativeFilePath}`
+  if (!(await deps.pathExists(path))) {
+    d.warn(`File does not exist: "${path}". Already removed?`)
+    return
+  }
+  if (!dryRun) {
+    await deps.rm(path)
+  }
+}
 
 export const rename = async (
   oldName: string,
@@ -332,6 +349,13 @@ export const applyChanges = async (
           await setDeep(values, path, tmplStr)
         }
       }
+    // Lastly we remove files
+    for (const change of changes) {
+      change.fileDeletions?.forEach((entry) => {
+        const paths = unparsePaths(entry, values)
+        paths.forEach((path) => deleteFile(path))
+      })
+    }
 
     if (c.networkPoliciesMigration) await networkPoliciesMigration(values)
 

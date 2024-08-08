@@ -1088,8 +1088,6 @@ definitions:
       id:
         $ref: '#/definitions/idName'
         description: Must be the same as the name.
-      jobs:
-        $ref: '#/definitions/jobs'
       limitRange:
         description: 'Kubernetes limit range. As is.'
         properties:

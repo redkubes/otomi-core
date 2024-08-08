@@ -214,7 +214,6 @@ export const writeValues = async (inValues: Record<string, any>, overwrite = fal
       'apps',
       'backups',
       'builds',
-      'jobs',
       'secrets',
       'netpols',
       'sealedsecrets',

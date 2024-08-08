@@ -785,4 +785,4 @@ environments:
           upgrade:
             version: main
         # TODO: update this when schema version changes: (and think more?)
-        version: 26
+        version: 27
