@@ -117,7 +117,9 @@
   },
   "scripts": {
     "install-deps": "bin/install-deps.sh",
-    "app-versions:csv": "echo 'name,appVersion,chartVersion'; for f in $(find charts -name Chart.yaml -type f -maxdepth 2| sort); do yq e -o=json -I=0 $f | jq -rc '. | [.name, .appVersion, .version] | @csv' | tr -d '\"'; done",
+    "app-versions:csv": "echo 'name,appVersion,chartVersion'; for f in $(find charts -name Chart.yaml -type f -maxdepth 2| sort); do yq eval -o=json $f | jq -rc '. | [.name, .appVersion, .version] | @csv' | tr -d '\"'; done",
+    "charts-update": "cd chart/otomi-deps && helm dep update",
+    "charts-gen-deps": "for f in $(find charts -name Chart.yaml -type f -maxdepth 2| sort); do yq eval $f -o=json | jq '{name, version, repository}';done |   jq -s '.' | yq eval -P",
     "adr": "adr-log -d adr -i",
     "check-policies": "ENV_DIR=$PWD/tests/fixtures NODE_ENV=test binzx/otomi check-policies",
     "clean": "rm -rf dist >/dev/null",
