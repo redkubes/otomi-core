@@ -21,6 +21,7 @@ releases:
     namespace: gitea
     labels:
       pkg: gitea
+    timeout: 120
     <<: *default
   - name: velero
     installed: {{ $a | get "velero.enabled" }}
