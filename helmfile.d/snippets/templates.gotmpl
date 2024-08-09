@@ -51,12 +51,3 @@ templates:
           - OnSpecChange
     values:
       - ../values/jobs/{{ .Release.Name | replace "job-" "" }}.gotmpl
-  wait: &wait
-    chart: ../charts/wait-for
-    hooks:
-      - events: [presync]
-        showlogs: true
-        command: ../bin/job-presync.sh
-        args:
-          - '{{ .Release.Name }}'
-          - OnSpecChange

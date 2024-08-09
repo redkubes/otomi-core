@@ -12,7 +12,7 @@ import { getCurrentVersion, getImageTag, writeValuesToFile } from 'src/common/va
 import { HelmArguments, getParsedArgs, helmOptions, setParsedArgs } from 'src/common/yargs'
 import { ProcessOutputTrimmed } from 'src/common/zx-enhance'
 import { Argv, CommandModule } from 'yargs'
-import { $, nothrow } from 'zx'
+import { $ } from 'zx'
 import { applyAsApps } from './apply-as-apps'
 import { cloneOtomiChartsInGitea, commit, printWelcomeMessage } from './commit'
 import { upgrade } from './upgrade'
@@ -141,8 +141,6 @@ const apply = async (): Promise<void> => {
         await applyAll()
       } catch (e) {
         d.error(e)
-        await nothrow($`helm uninstall wait-for-otomi-realm -n maintenance`)
-        await nothrow($`kubectl delete job wait-for-otomi-realm -n maintenance`)
         d.info(`Retrying in ${retryOptions.maxRetryTime} ms`)
         throw e
       }
